@@ -40,22 +40,24 @@ transactions_div_id = "idc7c"
 tbody = soup.find("tbody", {"id": transactions_div_id})
 
 
-# Now getting
+# Now getting all tranaction row out of the tbody.
 transaction_rows = tbody.findAll(attrs={"class": "even state-expanded"})
-#[comment.extract() for comment in comments]
 
-#print  'info_elemnt: %s\n' % info_element
-#for attr in info_elements
+# Loop trough all rows. Getting all the elements out of transaction row
 for i in range(len(transaction_rows)):
-    span_tag = info_elements[i].findAll('span')
-    td_tag = info_elements[i].find('td')
+    span_tags = transaction_rows[i].findAll('span')
+    td_tag = transaction_rows[i].find('td')
 
-    for j in range(len(span_tag)):
-        to_remove = span_tag[j].findAll(text=True)
+    # Print now all Elements from a single row, with no HTML-Tag
+    for j in range(len(span_tags)):
+        data_items = span_tags[j].findAll(text=True) # This will just return text
         if j == 0:
-            print '%s\n' % to_remove
+            print '%s\n' % data_items
         else:
-            print to_remove
+            print data_items
+
+
+# ToDO: Need to filter the span elements: not everything is a vaild information.
 
 
 
