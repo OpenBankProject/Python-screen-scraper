@@ -41,6 +41,24 @@ tbody = soup.find("tbody", {"id": transactions_div_id})
 # Now getting all tranaction row out of the tbody.
 transaction_rows = tbody.findAll(attrs={"class": "even state-expanded"})
 
+"""
+We want to end up with the following data items
+Prefix with obp_ so we have consistent meaning
+
+obp_transaction_date_start = the date the transaction was started
+obp_transactions_date_complete = the date the transaction went live
+obp_transaction_type_en = the type of transaction in english
+obp_transaction_type_de = the type of transaction in german
+obp_transaction_data_blob = the big blob of unorganised data
+opb_from_account
+obp_to_account
+obp_transaction_currency
+obp_transaction_amount
+obp_transaction_new_balance
+"""
+
+
+
 # Loop trough all rows. Getting all the elements out of transaction row
 for i in range(len(transaction_rows)):
     span_tags = transaction_rows[i].findAll('span')
