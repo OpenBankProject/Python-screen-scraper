@@ -12,26 +12,23 @@ import pdb
 
 #f = urllib.urlopen("http://Volumes/not_on_your_nelly/Bank_statements/Postbank-Online-Banking_100_days.html")
 
-f = open('./Postbank-Online-Banking_100_days_minus_javascript_cut_down.html', 'r')
+
+file = open('./Postbank-Online-Banking_100_days_minus_javascript_cut_down.html', 'r')
 
 # Read from the object, storing the page's contents in 's'.
-s = f.read()
-f.close()
-
-
-html = s
-
+html = file.read()
+file.close()
 soup = BeautifulSoup(html)
 
 
 
+# Getting the <div>, where all transactions are stroed.
 # note: this id seems to change!
-#
 transactions_div_id = "idc7c"
 tbody = soup.find("tbody", {"id": transactions_div_id})
 
 
-
+# Now getting
 transaction_rows = tbody.findAll(attrs={"class": "even state-expanded"})
 #[comment.extract() for comment in comments]
 
