@@ -19,8 +19,6 @@ from BeautifulSoup import BeautifulSoup, Comment
 
 
 import urllib
-import re
-import pdb
 
 #f = urllib.urlopen("http://Volumes/not_on_your_nelly/Bank_statements/Postbank-Online-Banking_100_days.html")
 
