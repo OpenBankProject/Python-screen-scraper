@@ -1,4 +1,6 @@
-__author__ = ['simonredfern (simon@tesobe.com)',' Jan Alexander Slabiak (alex@tesobe.com)']
+__author__ = ['simonredfern (simon@tesobe.com)'
+             , 'Jan Alexander Slabiak (alex@tesobe.com)']
+
 __license__ = """
   Copyright 2011 Music Pictures Ltd / TESOBE
 
@@ -38,8 +40,8 @@ def get_obp_transactions_date_complete(input_data):
     data = clean_data
     return data
 
-def get_obp_transaction_type_de(input_data):
 
+def get_obp_transaction_type_de(input_data):
     html_data = input_data[0].findAll('span')
     clean_data = html_data[0].find(text=True)
     data = clean_data
@@ -151,7 +153,7 @@ def do_scrape():
 
 
 
-    """
+"""
     We want to end up with the following data items
     Prefix with obp_ so we have consistent meaning
 
@@ -165,7 +167,7 @@ def do_scrape():
     obp_transaction_currency
     obp_transaction_amount
     obp_transaction_new_balance
-    """
+"""
 
 
 
