@@ -55,7 +55,6 @@ def get_obp_transaction_data_blob(input_data):
     #for n in range(len(html_data)):
     #    clean_data = []
     #    clean_data.append(html_data[n].find(text=True))
-    import pdb;pdb.set_trace()
     data = clean_data
     return data
 
@@ -83,12 +82,17 @@ def do_scrape():
 
 
     print ('starting import')
-    connection = Connection('dev.local', 27017)
-    db = connection.obp_imports
-    collection = db.post_bank_musicpictures
+    connection = Connection('obp_mongodb', 27017)
+    # db = connection.obp_imports
+    db = connection.OBP003
+    collection = db.obptransactions
 
 
-    file = open('./Postbank-Online-Banking_100_days_minus_javascript_cut_down.html', 'r')
+    #file = open('./Postbank-Online-Banking_100_days_minus_javascript_cut_down.html', 'r')
+    #file = open('/Volumes/not_on_your_nelly/Bank_statements/Postbank-Online-Banking_100_days_minus_javascript_cut_down.html', 'r')
+
+    file = open('/Volumes/not_on_your_nelly/Bank_statements/Postbank-Online-Banking_100_days_minus_javascript.html', 'r')
+
 
     # Read from the object, storing the page's contents in 's'.
     html = file.read()
@@ -143,7 +147,7 @@ def do_scrape():
 
         # Will tkae obp_transaction_row to convert it to a json
 
-        collection = db.post_bank_musicpictures.insert(obp_transaction_row)
+        collection = db.obptransactions.insert(obp_transaction_row)
         #print obp_transaction_row
     #    doc = { author : 'joe', created : new Date('03/28/2009'), ... }
     #    db.posts.insert(doc);

@@ -57,7 +57,6 @@ def do_import():
     #transactionReader = unicode_csv_reader(open(csv_path, 'rb'), delimiter=delimiter, quotechar=quote_char)
 
     for row in a:
-        #import pdb; pdb.set_trace()
         print row
 
     print 'done'
