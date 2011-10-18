@@ -111,7 +111,16 @@ def do_scrape():
     #tbody = soup.find("tbody", {"id": transactions_div_id})
 
     # Now getting all tranaction row out of the tbody.
-    transaction_rows = soup.findAll(attrs={"class": "even state-expanded"})
+    transaction_rows_even = soup.findAll(attrs={"class": "even state-expanded"})
+    transaction_rows_odd = soup.findAll(attrs={"class": "odd state-expanded"})
+    # There a two row class, have to merge them now tougther or we lost the
+    # sorting. First Even the odd
+    transaction_rows = transaction_rows_even + transaction_rows_odd
+    #transaction_rows_sorted = transaction_rows_merge.sort()
+
+    #transaction_rows = transaction_rows_sorted
+    #import pdb;pdb.set_trace()
+    #exit(-1)
 
     # Loop trough all rows. Getting all the elements out of transaction row
     for i in range(len(transaction_rows)):
@@ -121,7 +130,7 @@ def do_scrape():
         header_note = transaction_rows[i].findAll(attrs={"class": "headers-entry-note"})
         header_amount = transaction_rows[i].findAll(attrs={"class": "headers-amount"})
         header_balance = transaction_rows[i].findAll(attrs={"class": "headers-balance"})
-#        span_tags = transaction_rows[i].findAll('span')
+        span_tags = transaction_rows[i].findAll('span')
         td_tag = transaction_rows[i].find('td')
 
         #print '%s\n%s' % (header_data_start, header_date_end)
