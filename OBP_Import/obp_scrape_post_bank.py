@@ -31,7 +31,6 @@ def get_field_tdc(data, field_name):
 def get_obp_transaction_date_start(input_data):
     html_data = input_data[0].findAll('span')
     clean_data = html_data[0].find(text=True)
-    #import pdb;pdb.set_trace()
     data = clean_data
     return data
 
@@ -64,7 +63,7 @@ def get_obp_transaction_data_blob(input_data):
 
 def get_obp_transaction_amount(input_data):
     html_data = input_data[0].findAll('span')
-    #import pdb;pdb.set_trace()
+    # This will check for a existing -, if not it will return None
     if html_data[1].find(text=True) == None:
         clean_data = html_data[2].find(text=True)
     else:
@@ -122,7 +121,7 @@ def do_scrape():
         header_note = transaction_rows[i].findAll(attrs={"class": "headers-entry-note"})
         header_amount = transaction_rows[i].findAll(attrs={"class": "headers-amount"})
         header_balance = transaction_rows[i].findAll(attrs={"class": "headers-balance"})
-        span_tags = transaction_rows[i].findAll('span')
+#        span_tags = transaction_rows[i].findAll('span')
         td_tag = transaction_rows[i].find('td')
 
         #print '%s\n%s' % (header_data_start, header_date_end)
