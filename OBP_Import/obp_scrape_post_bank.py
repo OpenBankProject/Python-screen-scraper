@@ -92,9 +92,11 @@ def do_scrape():
 
 
     print ('starting import')
-    connection = Connection('dev.local', 27017)
-    db = connection.obp_imports
-    collection = db.post_bank_musicpictures
+    connection = Connection('obp_mongodb', 27017)
+    # db = connection.obp_imports
+    db = connection.OBP003
+    collection = db.obptransactions
+
 
     file = open('/tmp/Postbank_Online-Banking_oct_18.html', 'r')
 
@@ -146,6 +148,7 @@ def do_scrape():
         # Will tkae obp_transaction_row to convert it to a json
         print obp_transaction_row
         collection = db.post_bank_musicpictures.insert(obp_transaction_row)
+
         #print obp_transaction_row
     #    doc = { author : 'joe', created : new Date('03/28/2009'), ... }
     #    db.posts.insert(doc);
