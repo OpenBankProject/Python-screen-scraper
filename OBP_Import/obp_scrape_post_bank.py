@@ -1,5 +1,5 @@
-__author__ = ['simonredfern (simon@tesobe.com)'
-             , 'Jan Alexander Slabiak (alex@tesobe.com)']
+__author__ = ['simonredfern (simon@tesobe.com)',
+             'Jan Alexander Slabiak (alex@tesobe.com)']
 
 __license__ = """
   Copyright 2011 Music Pictures Ltd / TESOBE
@@ -35,6 +35,7 @@ def get_obp_transaction_date_start(input_data):
     data = clean_data
     return data
 
+
 def get_obp_transactions_date_complete(input_data):
     clean_data = input_data[0].find(text=True)
     data = clean_data
@@ -47,23 +48,30 @@ def get_obp_transaction_type_de(input_data):
     data = clean_data
     return data
 
+
 # ToDo here we need better slicing
 def get_obp_transaction_data_blob(input_data):
     html_data = input_data[0].findAll('span')
-    clean_data = html_data[len(html_data)-1].find(text=True) #get the last data
+    #get the last data
+    clean_data = html_data[len(html_data) - 1].find(text=True)
     # of the html_data
     #for n in range(len(html_data)):
     #    clean_data = []
     #    clean_data.append(html_data[n].find(text=True))
-    import pdb;pdb.set_trace()
     data = clean_data
     return data
 
+
 def get_obp_transaction_amount(input_data):
     html_data = input_data[0].findAll('span')
-    clean_data = html_data[1].find(text=True) + html_data[2].find(text=True)
+    #import pdb;pdb.set_trace()
+    if html_data[1].find(text=True) == None:
+        clean_data = html_data[2].find(text=True)
+    else:
+            clean_data = html_data[1].find(text=True) + html_data[2].find(text=True)
     data = clean_data
     return data
+
 
 def get_obp_transaction_new_balance(input_data):
     clean_data = input_data[0].find(text=True)
@@ -75,6 +83,7 @@ def get_obp_transaction_new_balance(input_data):
 def do_scrape():
     from BeautifulSoup import BeautifulSoup, Comment
     from pymongo import Connection
+    import time
     from sys import exit
     import urllib
 
@@ -87,29 +96,21 @@ def do_scrape():
     db = connection.obp_imports
     collection = db.post_bank_musicpictures
 
-
-    file = open('./Postbank-Online-Banking_100_days_minus_javascript_cut_down.html', 'r')
+    file = open('/tmp/Postbank_Online-Banking_oct_18.html', 'r')
 
     # Read from the object, storing the page's contents in 's'.
     html = file.read()
     file.close()
     soup = BeautifulSoup(html)
 
-
-
     # Getting the <div>, where all transactions are stroed.
     # note: this id seems to change!
-    transactions_div_id = "idc7c"
-    tbody = soup.find("tbody", {"id": transactions_div_id})
-
+    # Will now using the orginal HTML file
+    #transactions_div_id = "idc7c"
+    #tbody = soup.find("tbody", {"id": transactions_div_id})
 
     # Now getting all tranaction row out of the tbody.
-    transaction_rows = tbody.findAll(attrs={"class": "even state-expanded"})
-
-
-
-
-
+    transaction_rows = soup.findAll(attrs={"class": "even state-expanded"})
 
     # Loop trough all rows. Getting all the elements out of transaction row
     for i in range(len(transaction_rows)):
@@ -123,7 +124,7 @@ def do_scrape():
         td_tag = transaction_rows[i].find('td')
 
         #print '%s\n%s' % (header_data_start, header_date_end)
-        obp_transaction_row = {'obp_transaction_date_start': get_obp_transaction_date_start(header_data_start)
+        obp_transaction_row = {    'obp_transaction_date_start': get_obp_transaction_date_start(header_data_start)
                                 ,'obp_transactions_date_complete': get_obp_transactions_date_complete(header_date_end)
                                 ,'get_obp_transaction_type_de': get_obp_transaction_type_de(header_type)
                                 ,'obp_transaction_data_blob':get_obp_transaction_data_blob(header_note)
@@ -133,7 +134,8 @@ def do_scrape():
        # exit()
         # Print now all Elements from a single row, with no HTML-Tag
         for j in range(len(span_tags)):
-            data_item = span_tags[j].findAll(text=True) # This will just return text
+            # This will just return text
+            data_item = span_tags[j].findAll(text=True)
             if j == 0:
                 print '\n%s' % data_item
 
@@ -142,15 +144,11 @@ def do_scrape():
 
 
         # Will tkae obp_transaction_row to convert it to a json
-
+        print obp_transaction_row
         collection = db.post_bank_musicpictures.insert(obp_transaction_row)
         #print obp_transaction_row
     #    doc = { author : 'joe', created : new Date('03/28/2009'), ... }
     #    db.posts.insert(doc);
-
-
-    # ToDO: Need to filter the span elements: not everything is a vaild information.
-
 
 
 """
@@ -168,8 +166,6 @@ def do_scrape():
     obp_transaction_amount
     obp_transaction_new_balance
 """
-
-
 
 
 if __name__ == '__main__':
