@@ -63,13 +63,14 @@ def do_import():
 
     for row in transactionReader:
 
-        obp_transaction_row = {    'obp_transaction_date_start': row[0]
+        obp_transaction_row = {  'obp_transaction_date_start': row[0]
                                 ,'obp_transactions_date_complete': row[1]
                                 ,'get_obp_transaction_type_de': row[2]
-                                ,'obp_transaction_data_blob': row[5]
+                                ,'obp_transaction_data_blob': row[3] + row[4] + row[5]
                                 ,'obp_transaction_amount':row[6]
                                 ,'obp_transaction_new_balance':row[7]}
-        
+       
+        print obp_transaction_row
         collection = db.post_bank_musicpictures.insert(obp_transaction_row)
 
 
