@@ -38,11 +38,13 @@ def utf_8_encoder(unicode_csv_data):
         yield line.encode('utf-8')
 '''
 
+#def get 
 
 
 
 def do_import():
     import re
+    import json
     print ('starting import')
     connection = Connection('obp_mongod', 27017)
     db = connection.obp_imports
@@ -61,11 +63,12 @@ def do_import():
     transactionReader = csv.reader(open(csv_path, 'rb'), delimiter=delimiter, quotechar=quote_char)
 
     for row in transactionReader:
-        #import pdb;pdb.set_trace()
+
         # The first vaild entry has always a date, checking for it
         if data_expression.match(row[0]) == None:
             continue
         else:
+            #import pdb;pdb.set_trace()
             obp_transaction_row = {  'obp_transaction_date_start': row[0]
                                     ,'obp_transactions_date_complete': row[1]
                                     ,'get_obp_transaction_type_de': row[2]
@@ -73,9 +76,25 @@ def do_import():
                                     ,'obp_transaction_amount':row[6]
                                     ,'obp_transaction_new_balance':row[7]}
        
-            print obp_transaction_row
+            #print obp_transaction_row
+            # Will now formating obp_string to json
+            obp_transaction_json = json.dumps([u'Date', {
+                                      u'obp_transaction_date_start': row[0]
+                                      ,u'obp_transactions_date_complete' : row[1]}
+                             ,u'Info',{
+                                      u'get_obp_transaction_type_de': row[2]
+                                     ,u'obp_transaction_data_comment1': row[3]
+                                     ,u'obp_transaction_data_comment2': row[4]
+                                     ,u'obp_transaction_data_blob': row[5]}
+                             ,u'Amount',{ 
+                                      u'obp_transaction_amount': row[6]
+                                      ,u'obp_transaction_new_balance': row[7]
+                                      }
+                             ], separators=(',',':'))#, sort_keys=True, indent=4)
+
         #import pdb;pdb.set_trace()
-        #collection = db.post_bank_musicpictures.insert(obp_transaction_row)
+        print "In the JSON is:\n%s" % obp_transaction_json
+        #collection = db.post_bank_musicpictures.insert(obp_transaction_json)
 
 
 
