@@ -42,43 +42,42 @@ def utf_8_encoder(unicode_csv_data):
 
 
 def do_import():
+    import re
     print ('starting import')
     connection = Connection('obp_mongod', 27017)
     db = connection.obp_imports
 
-    #collection = db.post_bank_musicpictures
 
-    # Note: enca command line tool can show char set info
     csv_path = '/home/akendo/PB_Umsatzauskunft_198_rows.csv'
-    delimiter = ','
+    delimiter = ';'
     quote_char = '"'
 
-    #a = open("PB_Umsatzauskunft.csv", "rb")
-    #a = codecs.open(csv_path, 'rb', 'UTF-8')
-    #print a
-    #transactionReader = csv.reader((codecs.open(csv_path, 'rb', 'UTF-8')), delimiter=delimiter, quotechar=quote_char)
-  
-    #import pdb;pdb.set_trace()
+    # Need a header check, so to make sure that only transaction data get insert
+    # best would be a test for a vaild date format. 
+    # re : \d\d\.\d\d\.\d\d\d\d
+    data_expression = re.compile('\d\d\.\d\d\.\d\d\d\d')
+
+    
     transactionReader = csv.reader(open(csv_path, 'rb'), delimiter=delimiter, quotechar=quote_char)
 
     for row in transactionReader:
-
-        obp_transaction_row = {  'obp_transaction_date_start': row[0]
-                                ,'obp_transactions_date_complete': row[1]
-                                ,'get_obp_transaction_type_de': row[2]
-                                ,'obp_transaction_data_blob': row[3] + row[4] + row[5]
-                                ,'obp_transaction_amount':row[6]
-                                ,'obp_transaction_new_balance':row[7]}
+        #import pdb;pdb.set_trace()
+        # The first vaild entry has always a date, checking for it
+        if data_expression.match(row[0]) == None:
+            continue
+        else:
+            obp_transaction_row = {  'obp_transaction_date_start': row[0]
+                                    ,'obp_transactions_date_complete': row[1]
+                                    ,'get_obp_transaction_type_de': row[2]
+                                    ,'obp_transaction_data_blob': row[5]
+                                    ,'obp_transaction_amount':row[6]
+                                    ,'obp_transaction_new_balance':row[7]}
        
-        print obp_transaction_row
-        collection = db.post_bank_musicpictures.insert(obp_transaction_row)
+            print obp_transaction_row
+        #import pdb;pdb.set_trace()
+        #collection = db.post_bank_musicpictures.insert(obp_transaction_row)
 
 
 
 if __name__ == '__main__':
     do_import()
-
-
-
-
-
