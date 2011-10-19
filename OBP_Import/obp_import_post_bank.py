@@ -38,8 +38,13 @@ def utf_8_encoder(unicode_csv_data):
         yield line.encode('utf-8')
 '''
 
-#def get 
+def get_replace_dot(dotted_input):
+    #The first Dot has beeing replaced
+    pass
 
+def get_numbers(input_number):
+    
+    pass
 
 
 def do_import():
@@ -68,7 +73,7 @@ def do_import():
         if data_expression.match(row[0]) == None:
             continue
         else:
-            #import pdb;pdb.set_trace()
+            """
             obp_transaction_row = {  'obp_transaction_date_start': row[0]
                                     ,'obp_transactions_date_complete': row[1]
                                     ,'get_obp_transaction_type_de': row[2]
@@ -76,26 +81,30 @@ def do_import():
                                     ,'obp_transaction_amount':row[6]
                                     ,'obp_transaction_new_balance':row[7]}
        
+            print type(obp_transaction_row)
+            """
             #print obp_transaction_row
             # Will now formating obp_string to json
-            obp_transaction_json = json.dumps([u'Date', {
-                                      u'obp_transaction_date_start': row[0]
-                                      ,u'obp_transactions_date_complete' : row[1]}
-                             ,u'Info',{
-                                      u'get_obp_transaction_type_de': row[2]
-                                     ,u'obp_transaction_data_comment1': row[3]
-                                     ,u'obp_transaction_data_comment2': row[4]
-                                     ,u'obp_transaction_data_blob': row[5]}
-                             ,u'Amount',{ 
-                                      u'obp_transaction_amount': row[6]
-                                      ,u'obp_transaction_new_balance': row[7]
-                                      }
-                             ], separators=(',',':'))#, sort_keys=True, indent=4)
+            #$import pdb;pdb.set_trace()
+            # For some resone we can just use dic no json to insert data
+            obp_transaction_json = {
+                                      'obp_transaction_date_start': row[0]
+                                      ,'obp_transactions_date_complete' : row[1]
+                                      ,'get_obp_transaction_type_de': row[2]
+                                     ,'obp_transaction_data_comment1': row[3]
+                                     ,'obp_transaction_data_comment2': row[4]
+                                     ,'obp_transaction_data_blob': row[5]
+                                     ,'obp_transaction_amount': re.sub("\D", "", row[6]) 
+                                     ,'obp_transaction_new_balance': re.sub("\D", "", row[7])}
+                                    
+                             #])#, encoding=("UTF-8"), separators=(',',':'))#, sort_keys=True, indent=4)
 
         #import pdb;pdb.set_trace()
-        print "In the JSON is:\n%s" % obp_transaction_json
-        #collection = db.post_bank_musicpictures.insert(obp_transaction_json)
+        print "%s\nIn the JSON is:\n%s\n" % (type(obp_transaction_json), obp_transaction_json )
 
+        collection = db.post_bank_musicpictures.insert(obp_transaction_json)
+
+        #collection = db.post_bank_musicpictures.insert(obp_transaction_json, manipulate=True)
 
 
 if __name__ == '__main__':
