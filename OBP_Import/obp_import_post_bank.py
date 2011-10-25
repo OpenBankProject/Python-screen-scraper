@@ -112,9 +112,8 @@ def do_import():
                                      ,u'obp_transaction_data_comment2': row[4]
                                      ,u'obp_transaction_data_blob': row[5]}
                              ,u'Amount',{ 
-                                      u'obp_transaction_amount': row[6]
-                                      ,u'obp_transaction_new_balance': row[7]
-                                      }
+                                      u'obp_transaction_amount': re.sub("\D", "", row[6])
+                                      ,u'obp_transaction_new_balance': re.sub("\D", "", row[7])}
                              ], separators=(',',':'), default=bson.json_util.default)#, sort_keys=True, indent=4)
             
             #obp_transaction_json =  3
