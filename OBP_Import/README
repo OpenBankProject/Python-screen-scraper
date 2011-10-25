@@ -1,0 +1,12 @@
+Software Requierments:
+# Need
+# =>python.2.7 <= python3.0
+# =>pymongo2.0.1 
+# =>mongodb1.8
+
+A addional Host Entry that points out for obp_mongodb
+
+
+Example:
+ping obp_mongod
+
