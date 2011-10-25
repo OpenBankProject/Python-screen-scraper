@@ -1,4 +1,4 @@
-qq#!/usr/bin/env python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*
 __author__ = ['simonredfern (simon@tesobe.com)',' Jan Alexander Slabiak (alex@tesobe.com)']
 __license__ = """
@@ -24,6 +24,7 @@ import os
 
 
 from pymongo import Connection
+from bson import son
 from bson import json_util
 
 
@@ -117,13 +118,13 @@ def do_import():
                              ], separators=(',',':'), default=bson.json_util.default)#, sort_keys=True, indent=4)
             
             #obp_transaction_json =  3
-            posting = {'Bank Account':580591101 
+            posting = son.SON({'Bank Account':580591101 
                     ,'Transaction Data': obp_transaction_json
-                    }
+                    })
 
         #import pdb;pdb.set_trace()
-        #print "In the JSON is:\n%s" % obp_transaction_json
-            collection = db.post_bank_musicpictures.insert(posting)
+        print "In the JSON is:\n%s" % posting
+        collection = db.post_bank_musicpictures.insert(posting)
 
         #collection = db.post_bank_musicpictures.insert(obp_transaction_json, manipulate=True)
 
