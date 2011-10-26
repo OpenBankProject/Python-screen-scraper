@@ -23,11 +23,17 @@ from socket import gethostbyname
 import unittest
 import json
 import os 
+import pdb
 
 # This will start checking Database
 # Drop, Create, Insert, Tables Style ,Drop
 # Using on the testcase assertisNot instead of assertEqual,
 # http://docs.python.org/library/unittest.html#deprecated-aliases
+
+
+def debug():
+    pdb.set_trace()
+
 
 
 class TestMongoDB(unittest.TestCase):
@@ -48,15 +54,56 @@ class TestMongoDB(unittest.TestCase):
         self.assertIsNot(result,None)
         result.disconnect()
 
-    # Skiping the Database test, MongoDB creating automatlic a Datbase
-    # so that every test for a database will pass
-    #def test_mongodb_database_collections 
-    #    self.connection = Connection('obp_mongod', 27017)
-    #    self.mongodb = self.obp_imports_testdb
-    #    result = self.mongodb.collection_names()
+    def test_mongodb_database_collections(self):
+        self.connection = Connection('obp_mongod', 27017)
+        # This line below, ensure that we don't have dupiclaed db
+        self.connection.drop_database('imports_testdb') 
+        self.mongo_db = self.connection.imports_testdb
+        result = self.mongo_db.collection_names()
+        # Nothing for insert, so nothing is created, should return a 0 in len
+        self.assertEqual(len(result), 0)
+        
+        should_result = [u'imports_testdb', u'system.indexes']
+        self.mongo_db.imports_testdb.insert({'test':123})
+        result = self.mongo_db.collection_names()
+        self.assertEqual(result, should_result)
+        self.connection.drop_database('imports_testdb')
 
+        # Check for no collection in imports_testdb
+        self.mongo_db = self.connection.imports_testdb
+        result = self.mongo_db.collection_names()
+        # Should return a 0 in len
+        self.assertEqual(len(result), 0)
+
+
+class TestImporting(unittest.TestCase):
+
+      def setUp(self):
+          self.connection = Connection('obp_mongod', 27017)
+          self.mongo_db = self.connection.imports_testdb
+
+
+      def test_basic_import(self):
+          self.import_data ={u'Bank Account':u'1234561231'
+                              ,u'Bank Info': [u'Jesus',u'Christ']
+                              ,u'Bank Numer ':u'123'
+                             } 
+          result = self.mongo_db.imports_testdb.insert(self.import_data)
+          test_db_collection = self.mongo_db.imports_testdb
+          result = test_db_collection.find_one(result)
+          self.assertEqual(result,self.import_data)
+
+
+      def test_baisc_date_type(self):
+          pass
+          
 
         
+
+
+#class TestImportedData(self):
+
+
 
 
          
