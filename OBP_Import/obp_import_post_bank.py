@@ -21,8 +21,10 @@ import csv
 import codecs
 import bson
 import os
+import datetime
 
 
+from socket import gethostname
 from pymongo import Connection
 from bson import son
 from bson import json_util
@@ -103,30 +105,31 @@ def do_import():
             """
             #print obp_transaction_row
             # Will now formating obp_string to json
-            
-            obp_transaction_json = json.dumps([u'Date', {
-                                      u'obp_transaction_date_start': row[0]
-                                      ,u'obp_transactions_date_complete' : row[1]}
-                             ,u'Info',{
-                                      u'get_obp_transaction_type_de': row[2]
-                                     ,u'obp_transaction_data_comment1': row[3]
-                                     ,u'obp_transaction_data_comment2': row[4]
-                                     ,u'obp_transaction_data_blob': row[5]}
-                             ,u'Amount',{ 
-                                      u'obp_transaction_amount': re.sub("\D", "", row[6])
-                                      ,u'obp_transaction_new_balance': re.sub("\D", "", row[7])}
-                             ], separators=(',',':'), default=bson.json_util.default)#, sort_keys=True, indent=4)
+            #import pdb;pdb.set_trace() 
+            amount = re.match("[+-]?((\d+(\.\d*)?)|\.\d+)([eE][+-]?[0-9]+)?", row[6])
+            new_balance = re.match("[+-]?((\d+(\.\d*)?)|\.\d+)([eE][+-]?[0-9]+)?", row[7])
+            obp_transaction_json = json.dumps({
+                                      u'date_start': row[0]
+                                     ,u'date_complete': row[1]
+                                     ,u'transaction_type_de': row[2]
+                                     ,u'comment1': row[3]
+                                     ,u'comment2': row[4]
+                                     ,u'blob': row[5]
+                                     ,u'amount': amount.group() 
+                                     ,u'new_balance': new_balance.group()
+                             }, separators=(',',':'), default=bson.json_util.default)#, sort_keys=True, indent=4)
             
             #obp_transaction_json =  3
-            posting = son.SON({'Bank Account':580591101 
-                    ,'Transaction Data': obp_transaction_json
+            posting = son.SON({
+                     'Bank Account':1234567
+                    ,'Host': gethostname() 
+                    ,'date of insert': datetime.datetime.utcnow() 
+                    ,'obp_transation': obp_transaction_json
                     })
 
         #import pdb;pdb.set_trace()
         print "In the JSON is:\n%s" % posting
         collection = db.post_bank_musicpictures.insert(posting)
-
-        #collection = db.post_bank_musicpictures.insert(obp_transaction_json, manipulate=True)
 
 
 if __name__ == '__main__':

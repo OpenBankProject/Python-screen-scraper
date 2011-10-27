@@ -55,47 +55,56 @@ class TestMongoDB(unittest.TestCase):
         result.disconnect()
 
     def test_mongodb_database_collections(self):
+        """
+            Check  baisc function test for MongoDB. So we can ensure that all use function exist
+            and are not gone. 
+        """
         self.connection = Connection('obp_mongod', 27017)
         # This line below, ensure that we don't have dupiclaed db
-        self.connection.drop_database('imports_testdb') 
-        self.mongo_db = self.connection.imports_testdb
+        self.connection.drop_database('test_obp_import_db') 
+        self.mongo_db = self.connection.test_obp_import_db
         result = self.mongo_db.collection_names()
         # Nothing for insert, so nothing is created, should return a 0 in len
         self.assertEqual(len(result), 0)
         
-        should_result = [u'imports_testdb', u'system.indexes']
-        self.mongo_db.imports_testdb.insert({'test':123})
+        should_result = [u'test_obp_import_db', u'system.indexes']
+        self.mongo_db.test_obp_import_db.insert({'test':123})
         result = self.mongo_db.collection_names()
         self.assertEqual(result, should_result)
-        self.connection.drop_database('imports_testdb')
+        self.connection.drop_database('test_obp_import_db')
 
-        # Check for no collection in imports_testdb
-        self.mongo_db = self.connection.imports_testdb
+        # Check for no collection in test_obp_import_db
+        self.mongo_db = self.connection.test_obp_import_db
         result = self.mongo_db.collection_names()
         # Should return a 0 in len
         self.assertEqual(len(result), 0)
+
 
 
 class TestImporting(unittest.TestCase):
 
       def setUp(self):
           self.connection = Connection('obp_mongod', 27017)
-          self.mongo_db = self.connection.imports_testdb
+          self.mongo_db = self.connection.test_obp_import_db
 
 
-      def test_basic_import(self):
+      def test_string_insert(self):
           self.import_data ={u'Bank Account':u'1234561231'
-                              ,u'Bank Info': [u'Jesus',u'Christ']
-                              ,u'Bank Numer ':u'123'
+                              ,u'Bank Info': [u'Tester',u'it']
+                              ,u'Bank Number ':u'123'
                              } 
-          result = self.mongo_db.imports_testdb.insert(self.import_data)
-          test_db_collection = self.mongo_db.imports_testdb
+          result = self.mongo_db.test_obp_import_db.insert(self.import_data)
+          test_db_collection = self.mongo_db.test_obp_import_db
           result = test_db_collection.find_one(result)
           self.assertEqual(result,self.import_data)
+          #make differne insering of data, like fist a string, numerbs
 
 
       def test_baisc_date_type(self):
           pass
+
+
+
           
 
         
