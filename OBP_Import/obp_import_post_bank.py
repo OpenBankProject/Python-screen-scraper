@@ -48,15 +48,15 @@ def utf_8_encoder(unicode_csv_data):
 
 def do_import():
     print ('starting import')
-
     connection = Connection('obp_mongod', 27017)
-    db = connection.OBP004 # Name of the Database with connecting to. 
+    db = connection.OBP005
 
     # Alex Path
     csv_path = '/home/akendo/PB_Umsatzauskunft_198_rows.csv'
 
     # Simons Path
     #csv_path = '/Volumes/not_on_your_nelly/Bank_statements/PB_Umsatzauskunft_KtoNr0580591101_04-10-2011_1624_saved.csv'
+
 
     delimiter = ';'
     quote_char = '"'
@@ -98,7 +98,7 @@ def do_import():
                      'bank_account':1234567
                     ,'uploader_host': gethostname()
                     ,'insert_date': datetime.datetime.utcnow()
-                    ,'obp_transation': obp_transaction_json
+                    ,'obp_transaction': obp_transaction_json
                     })
 
         # This will print the no binary JSON, that get insert to mongodb
@@ -108,6 +108,7 @@ def do_import():
         print "In the JSON is:\n%s" % posting 
         # Inserting the finisch JSON to the collection 
         collection = db.obptransactions.insert(posting)
+        # plural name, no spaces -> singular no spaces model name in Lift mongo record
 
 
 
