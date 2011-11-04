@@ -88,7 +88,7 @@ def do_import():
                                      ,u'obp_transaction_data_blob': row[5]
                                      ,u'obp_transaction_amount': amount.group()
                                      ,u'obp_transaction_new_balance': new_balance.group()
-                             }, separators=(',',':'), default=bson.json_util.default) indent=4)
+                             }, separators=(',',':'))
             
             # Will call a dic which get decode from the BSON, so we can insert
             # the single elements not as unicode string. 
