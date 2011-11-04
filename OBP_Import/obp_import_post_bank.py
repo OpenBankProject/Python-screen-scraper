@@ -79,16 +79,16 @@ def do_import():
             # Also covering + and - 
             amount = re.match("[+-]?((\d+(\.\d*)?)|\.\d+)([eE][+-]?[0-9]+)?", row[6])
             new_balance = re.match("[+-]?((\d+(\.\d*)?)|\.\d+)([eE][+-]?[0-9]+)?", row[7])
-            obp_transaction_json = json.dumps({
+            obp_transaction_dict = {
                                       u'obp_transaction_date_start': row[0]
                                      ,u'obp_transaction_date_complete': row[1]
                                      ,u'obp_transaction_transaction_type_de': row[2]
-                                     ,u'obp_transaction_comment1': row[3]
-                                     ,u'obp_transaction_comment2': row[4]
+                                     ,u'obp_transaction_comment1': row[3].rstrip()
+                                     ,u'obp_transaction_comment2': row[4].rstrip()
                                      ,u'obp_transaction_data_blob': row[5]
                                      ,u'obp_transaction_amount': amount.group()
                                      ,u'obp_transaction_new_balance': new_balance.group()
-                             }, separators=(',',':'))
+                             }
             
             # Will call a dic which get decode from the BSON, so we can insert
             # the single elements not as unicode string. 
@@ -98,7 +98,7 @@ def do_import():
                      'bank_account':1234567
                     ,'uploader_host': gethostname()
                     ,'insert_date': datetime.datetime.utcnow()
-                    ,'obp_transaction': obp_transaction_json
+                    ,'obp_transaction': obp_transaction_dict
                     })
 
         # This will print the no binary JSON, that get insert to mongodb
