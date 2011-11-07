@@ -20,6 +20,8 @@ __license__ = """
 
 from pymongo import Connection 
 from socket import gethostbyname
+from bson import son
+import bson
 import unittest
 import json
 import os 
@@ -36,7 +38,7 @@ def debug():
 
 
 
-class TestMongoDB(unittest.TestCase):
+class TestMongoDBBasic(unittest.TestCase):
 
     def setUp(self):
         pass
@@ -100,17 +102,43 @@ class TestImporting(unittest.TestCase):
           #make differne insering of data, like fist a string, numerbs
 
 
-      def test_baisc_date_type(self):
+      def test_number_insert_type(self):
+          self.import_data ={u'Number insering':1234561231
+                              ,u'Bank Number ':123
+                             } 
+
+          self.inserting_data = son.SON(self.import_data)
+          result = self.mongo_db.test_obp_import_db.insert(self.inserting_data)
+          test_db_collection = self.mongo_db.test_obp_import_db
+          result = test_db_collection.find_one(result)
+          for keys, values in result.items():
+              if type(values) is bson.objectid.ObjectId:
+                  continue
+              elif type(values) is int:
+                  self.values_eq_int = 1
+              else:
+                  self.values_eq_int = 0 
+              self.assertEqual(self.values_eq_int,1)
+              
+
+
+class TestImportCSVa(self):
+      """
+          This Class will parse a CSV file. 
+      """
+      def setUp(self):
+          self.connection = Connection('obp_mongod', 27017)
+          self.mongo_db = self.connection.test_obp_import_db
+
+
+      def CSV_converter_to_UTF8:
           pass
 
 
-
+      def Import_CSV:
+          pass
           
 
-        
-
-
-#class TestImportedData(self):
 
 
 
