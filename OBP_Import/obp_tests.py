@@ -122,20 +122,30 @@ class TestImporting(unittest.TestCase):
               
 
 
-class TestImportCSVa(self):
+class TestImportCSV(unittest.TestCase):
       """
           This Class will parse a CSV file. 
       """
       def setUp(self):
           self.connection = Connection('obp_mongod', 27017)
           self.mongo_db = self.connection.test_obp_import_db
+          self.delimiter = ';'
+          self.quote_char = '"'
 
 
-      def CSV_converter_to_UTF8:
+      def test_for_existing_csv(self):
+          csv_path = os.path.join(os.getcwd(),'tests')
+          csv_file = 'test_example_latin1.csv'
+
+          file = os.path.join(csv_path, csv_file)
+          self.assertTrue(os.path.isfile(file))
+
+      
+      def CSV_converter_to_UTF8(self):
           pass
 
 
-      def Import_CSV:
+      def Import_CSV(self):
           pass
           
 
