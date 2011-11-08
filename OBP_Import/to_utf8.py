@@ -7,11 +7,12 @@ import sys
 import codecs
 
 
-sourceFormats = ['ascii', 'iso-8859-1']
+sourceFormats = ['windows-1252']
+#sourceFormats = ['iso-8859-15']
 targetFormat = 'utf-8'
 outputDir = '/tmp'
-INPUT_FILE = 'test_example_latin1.csv'
-fileName = INPUT_FILE
+#INPUT_FILE = 'test_example_latin1.csv'
+
 
 def convertFile(fileName):
     print("Converting '" + fileName + "'...")
@@ -32,5 +33,10 @@ def writeConversion(file):
         for line in file:
             targetFile.write(line)
 
+def main(input_file):
+    global fileName
+    fileName = input_file
+    convertFile(fileName)
+
 if __name__ == '__main__':
-    convertFile(INPUT_FILE)
+    print "__main__"
