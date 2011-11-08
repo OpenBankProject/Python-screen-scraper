@@ -25,7 +25,7 @@ import bson
 import unittest
 import json
 import os 
-import pdb
+import to_utf8
 
 # This will start checking Database
 # Drop, Create, Insert, Tables Style ,Drop
@@ -131,28 +131,38 @@ class TestImportCSV(unittest.TestCase):
           self.mongo_db = self.connection.test_obp_import_db
           self.delimiter = ';'
           self.quote_char = '"'
+          self.here = os.getcwd()
 
 
       def test_for_existing_csv(self):
           csv_path = os.path.join(os.getcwd(),'tests')
           csv_file = 'test_example_latin1.csv'
-
+          file = os.path.join(csv_path, csv_file)
+          self.assertTrue(os.path.isfile(file))
+      
+      def test_CSV_converter_to_UTF8(self):
+          csv_path = os.path.join(os.getcwd(),'tests')
+          csv_file = 'test_example_latin1.csv'
           file = os.path.join(csv_path, csv_file)
           self.assertTrue(os.path.isfile(file))
 
-      
-      def CSV_converter_to_UTF8(self):
-          pass
+          os.chdir('tests')
+
+          # This call the main function of to_utf8, this will crea
+          result = to_utf8.main(csv_file)
+          self.assertTrue(os.path.isfile(result))
+
+          os.remove(result)
+          self.assertFalse(os.path.isfile(result))
+
+          os.chdir('../')
+          result = os.getcwd()
+          self.assertEqual(result,self.here)
 
 
       def Import_CSV(self):
           pass
           
-
-
-
-
-
          
 
 if __name__ == '__main__':
