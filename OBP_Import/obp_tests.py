@@ -18,14 +18,18 @@ __license__ = """
 """
 
 
+import os
+import csv
+import pdb
+import bson
+import json
+import to_utf8
+import unittest
+import obp_import_post_bank
+
+from bson import son
 from pymongo import Connection 
 from socket import gethostbyname
-from bson import son
-import bson
-import unittest
-import json
-import os 
-import to_utf8
 
 # This will start checking Database
 # Drop, Create, Insert, Tables Style ,Drop
@@ -139,18 +143,26 @@ class TestImportCSV(unittest.TestCase):
           csv_file = 'test_example_latin1.csv'
           file = os.path.join(csv_path, csv_file)
           self.assertTrue(os.path.isfile(file))
+
       
       def test_CSV_converter_to_UTF8(self):
           csv_path = os.path.join(os.getcwd(),'tests')
           csv_file = 'test_example_latin1.csv'
           file = os.path.join(csv_path, csv_file)
           self.assertTrue(os.path.isfile(file))
-
+          
           os.chdir('tests')
-
-          # This call the main function of to_utf8, this will crea
           result = to_utf8.main(csv_file)
           self.assertTrue(os.path.isfile(result))
+
+          csv_reader = csv.reader(open(result, 'rb'),delimiter=';', quotechar='"')
+          self.utf8_file = obp_import_post_bank.get_info_from_row(csv_reader.next())
+          for element in self.utf8_file:
+            if type(element) is unicode:
+                self.values_eq_unicode = 1
+            else:
+                self.values_eq_unicode = 0
+          self.assertEqual(self.values_eq_unicode,1)
 
           os.remove(result)
           self.assertFalse(os.path.isfile(result))
