@@ -1,16 +1,19 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 from __future__ import with_statement
 
 import os
 import sys
 import codecs
+from obp_config import TMP
 
 
 sourceFormats = ['windows-1252']
 #sourceFormats = ['iso-8859-15']
 targetFormat = 'utf-8'
-outputDir = '/tmp'
+#outputDir = '/tmp'
+outputDir = TMP
 #INPUT_FILE = 'test_example_latin1.csv'
 
 
@@ -37,6 +40,7 @@ def main(input_file):
     global fileName
     fileName = input_file
     convertFile(fileName)
+    return os.path.join(TMP,fileName)
 
 if __name__ == '__main__':
     print "__main__"
