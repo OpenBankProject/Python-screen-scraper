@@ -42,9 +42,6 @@ def debug():
     pdb.set_trace()
 
 
-
-
-
 class TestMongoDBBasic(unittest.TestCase):
 
     def setUp(self):
