@@ -25,6 +25,7 @@ import bson
 import json
 import to_utf8
 import unittest
+import obp_config
 import obp_import_post_bank
 
 from bson import son
@@ -42,12 +43,18 @@ def debug():
 
 
 
+
+
 class TestMongoDBBasic(unittest.TestCase):
 
     def setUp(self):
         pass
         # TODO: It would be better to have a configuration file.
         # That would be loaded at this place. J.A.S
+
+    def test_config_settings(self):
+        self.assertEqual(obp_config.MONGODB_SERVER,'obp_mongod')
+        self.assertEqual(obp_config.MONGODB_SERVER_PORT,'27017')
 
 
     def test_host_entry(self):
@@ -164,6 +171,7 @@ class TestImportCSV(unittest.TestCase):
                 self.values_eq_unicode = 0
           self.assertEqual(self.values_eq_unicode,1)
 
+
           os.remove(result)
           self.assertFalse(os.path.isfile(result))
 
@@ -172,9 +180,56 @@ class TestImportCSV(unittest.TestCase):
           self.assertEqual(result,self.here)
 
 
-      def Import_CSV(self):
-          pass
+      def test_Import_CSV(self):
+          csv_path = os.path.join(os.getcwd(),'tests')
+          csv_file = 'test_example_latin1.csv'
+          file = os.path.join(csv_path, csv_file)
+          self.assertTrue(os.path.isfile(file))
           
+          os.chdir('tests')
+          result = to_utf8.main(csv_file)
+          self.assertTrue(os.path.isfile(result))
+
+          csv_reader = csv.reader(open(result, 'rb'),delimiter=';', quotechar='"')
+          self.utf8_file = obp_import_post_bank.get_info_from_row(csv_reader.next())
+          for element in self.utf8_file:
+            if type(element) is unicode:
+                self.values_eq_unicode = 1
+            else:
+                self.values_eq_unicode = 0
+          self.assertEqual(self.values_eq_unicode,1)
+
+
+          self.connection = Connection('obp_mongod', 27017)
+          self.mongo_db = self.connection.test_obp_import_db
+          self.collection = self.mongo_db.test_obp_import_db.insert(son.SON(self.utf8_file))
+          self.find_in_mongo = self.mongo_db.test_obp_import_db.find_one(self.collection)
+          self.find_should = {
+                  u'obp_transaction_date_complete': u'07.11.2011',
+                  u'obp_transaction_new_balance': u'5.314',
+                  u'obp_transaction_comment2': u'PETRA PFIFFIG',
+                  u'obp_transaction_amount': u'-328',
+                  u'obp_transaction_comment1': u'111111/1000000000/37050198 Finanzkasse 3991234 Steuernummer 00703434',
+                  u'obp_transaction_data_blob': u'Finanzkasse K\xf6ln-S\xfcd',
+                  u'obp_transaction_transaction_type_de': u'\xdcberweisung',
+                  u'_id': "ObjectId('4eba776731533f464d000000')",
+                  u'obp_transaction_date_start': u'07.11.2011'
+                  }
+          # This is a new test from Pyhon2.7, it will sort the input of the
+          # test and then comapre them like assertEqual
+          # LINK:
+          # http://docs.python.org/library/unittest.html#unittest.TestCase.assertItemsEqual
+          self.assertItemsEqual(self.find_should,self.find_in_mongo)
+
+          os.remove(result)
+          self.assertFalse(os.path.isfile(result))
+
+          os.chdir('../')
+          result = os.getcwd()
+          self.assertEqual(result,self.here)
+
+
+             
          
 
 if __name__ == '__main__':
