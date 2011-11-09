@@ -18,12 +18,10 @@ outputDir = TMP
 
 
 def convertFile(fileName):
-    print("Converting '" + fileName + "'...")
     for format in sourceFormats:
         try:
             with codecs.open(fileName, 'rU', format) as sourceFile:
                 writeConversion(sourceFile)
-                print('Done.')
                 return
         except UnicodeDecodeError:
             pass
