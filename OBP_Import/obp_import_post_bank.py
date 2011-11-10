@@ -29,11 +29,25 @@ from socket import gethostname
 from pymongo import Connection
 from bson import son
 from bson import json_util
+from obp_config import *
+
+def connect_to_mongod(mongdod_host,mongod_host_port):
+    mongod_connection = Connection(mongdod_host,mongod_host_port)
+    return mongod_connection
 
 
-def insert_into_mongodb(data_to_insert):
-    collection = db.obptransactions.insert(data_to_insert)
-    return collection
+def connect_to_mongod_db(connection,mongod_db):
+    mongodb = connection.mongod_db
+    return mongodb
+
+def mongodb_to_collection(mongodb,mongo_collection):
+    mongodb_collection = mongodb.mongo_collection
+    return mongodb_collection
+
+
+def insert_into_mongodb(mongodb,collection,data_to_insert):
+    object_id = mongodb.collection.insert(data_to_insert)
+    return object_id
 
 
 def get_bank_account():
@@ -95,14 +109,14 @@ def parse_row_of_csv(csv_file_to_parse):
             # LINK: http://www.mongodb.org/display/DOCS/Indexes#Indexes-UniqueIndexes
             print "In the JSON is:\n%s" % posting 
             # Inserting the finisch JSON to the collection 
-            #result = insert_into_mongodb(posting) 
+            result = insert_into_mongodb(posting) 
             # plural name, no spaces -> singular no spaces model name in Lift mongo record
 
 
 def main():
-    print ('starting import')
-    connection = Connection('obp_mongod', 27017)
-    db = connection.OBP005
+    connection = connect_to_mongod(MONGODB_SERVER,MONGODB_SERVER_PORT)
+    connect_to_mongod_db(connection,MONGODB_DATABASE)
+    mongodb_to_collection(connect_to_mongod_db,MONGODB_COLLECTION)
 
     # Alex Path
     csv_path = '/home/akendo/PB_Umsatzauskunft_198_rows.csv'
