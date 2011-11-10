@@ -51,7 +51,7 @@ class TestMongoDBBasic(unittest.TestCase):
 
     def test_config_settings(self):
         self.assertEqual(obp_config.MONGODB_SERVER,'obp_mongod')
-        self.assertEqual(obp_config.MONGODB_SERVER_PORT,'27017')
+        self.assertEqual(obp_config.MONGODB_SERVER_PORT,27017)
 
 
     def test_host_entry(self):
