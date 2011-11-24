@@ -13,4 +13,7 @@ MONGODB_COLLECTION='obptransactions'
 SAVEDIR=''
 TMP='/tmp/'
 
+CSV_FILE_PATH = '/home/akendo/PB_Umsatzauskunft_198_rows.csv'
+HTML_FILE_PATH = 'Postbank-Online-Banking_100_days_minus_javascript_cut_down.html'
+
 
