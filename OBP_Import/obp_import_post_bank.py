@@ -24,16 +24,14 @@ import os
 import datetime
 import re
 import json
+import obp_config  
 
 from socket import gethostname
 from pymongo import Connection
 from bson import son
 from bson import json_util
+from libs.mongodb_handler import insert_into_mongodb
 
-
-def insert_into_mongodb(data_to_insert):
-    collection = db.obptransactions.insert(data_to_insert)
-    return collection
 
 
 def get_bank_account():
