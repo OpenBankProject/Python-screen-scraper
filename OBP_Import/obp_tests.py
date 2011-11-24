@@ -23,10 +23,11 @@ import csv
 import pdb
 import bson
 import json
-import to_utf8
+import libs.to_utf8
 import unittest
 import obp_config
 import obp_import_post_bank
+
 
 from bson import son
 from pymongo import Connection 
@@ -51,7 +52,7 @@ class TestMongoDBBasic(unittest.TestCase):
 
     def test_config_settings(self):
         self.assertEqual(obp_config.MONGODB_SERVER,'obp_mongod')
-        self.assertEqual(obp_config.MONGODB_SERVER_PORT,'27017')
+        self.assertEqual(obp_config.MONGODB_SERVER_PORT,27017)
 
 
     def test_host_entry(self):
@@ -156,7 +157,7 @@ class TestImportCSV(unittest.TestCase):
           self.assertTrue(os.path.isfile(file))
           
           os.chdir('tests')
-          result = to_utf8.main(csv_file)
+          result = libs.to_utf8.main(csv_file)
           self.assertTrue(os.path.isfile(result))
 
           csv_reader = csv.reader(open(result, 'rb'),delimiter=';', quotechar='"')
@@ -184,7 +185,7 @@ class TestImportCSV(unittest.TestCase):
           self.assertTrue(os.path.isfile(file))
           
           os.chdir('tests')
-          result = to_utf8.main(csv_file)
+          result = libs.to_utf8.main(csv_file)
           self.assertTrue(os.path.isfile(result))
 
           csv_reader = csv.reader(open(result, 'rb'),delimiter=';', quotechar='"')
