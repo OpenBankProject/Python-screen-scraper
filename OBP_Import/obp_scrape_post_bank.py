@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 __author__ = ['simonredfern (simon@tesobe.com)',
              'Jan Alexander Slabiak (alex@tesobe.com)']
 
@@ -26,6 +27,21 @@ def get_field_tdc(data, field_name):
     if field_name == 'get_obp_transactions_date_complete':
         field_value = get_obp_transactions_date_complete(data)
 """
+
+import time
+import urllib
+import datetime
+
+from sys import exit
+from bson import son
+from obp_config import *
+from libs.import_helper import *
+from libs.debugger import *
+from libs.mongodb_handler import *
+from socket import gethostname
+from BeautifulSoup import BeautifulSoup, Comment
+
+
 
 
 def get_obp_transaction_date_start(input_data):
@@ -77,38 +93,26 @@ def get_obp_transaction_new_balance(input_data):
     data = clean_data
     return data
 
+def read_html_file(file):
+    file_open = open(file,'r')
+    file_read = file_open.read()
+    # Read from the object, storing the page's contents in 'file_read'.
+    file_open.close
+    return file_read
 
 
 def do_scrape():
-
-    from sys import exit
-    from pymongo import Connection
-    from BeautifulSoup import BeautifulSoup, Comment
-
-    import time
-    import urllib
-    import obp_config
-
     print ('starting import')
-    connection = Connection(obp_config.MONGODB_SERVER,obp_config.MONGODB_SERVER_PORT)
-    # db = connection.obp_imports
-    db = connection.obp_config.MONGODB_DATABASE
-    collection = db.obptransactions
+    connection = connect_to_mongod(MONGODB_SERVER,MONGODB_SERVER_PORT)
+    database = connect_to_mongod_db(connection,MONGODB_DATABASE)
+    collection = mongodb_to_collection(database,MONGODB_COLLECTION)
 
-
-
-    file = open('/tmp/Postbank_Online-Banking_oct_18.html', 'r')
-
-    # Read from the object, storing the page's contents in 's'.
-    html = file.read()
-    file.close()
+    html = read_html_file(HTML_FILE_PATH)
     soup = BeautifulSoup(html)
 
     # Getting the <div>, where all transactions are stroed.
     # note: this id seems to change!
     # Will now using the orginal HTML file
-    #transactions_div_id = "idc7c"
-    #tbody = soup.find("tbody", {"id": transactions_div_id})
 
     # Now getting all tranaction row out of the tbody.
     transaction_rows_even = soup.findAll(attrs={"class": "even state-expanded"})
@@ -116,11 +120,7 @@ def do_scrape():
     # There a two row class, have to merge them now tougther or we lost the
     # sorting. First Even the odd
     transaction_rows = transaction_rows_even + transaction_rows_odd
-    #transaction_rows_sorted = transaction_rows_merge.sort()
 
-    #transaction_rows = transaction_rows_sorted
-    #import pdb;pdb.set_trace()
-    #exit(-1)
 
     # Loop trough all rows. Getting all the elements out of transaction row
     for i in range(len(transaction_rows)):
@@ -154,12 +154,15 @@ def do_scrape():
 
 
         # Will tkae obp_transaction_row to convert it to a json
-        print obp_transaction_row
-        collection = db.post_bank_musicpictures.insert(obp_transaction_row)
+        posting = son.SON({
+            'bank_account':get_bank_account(),
+            'uploader_host':gethostname(),
+            'insert_date':datetime.datetime.utcnow(),
+            'obp_transaction': obp_transaction_row
+            })
 
-        #print obp_transaction_row
-    #    doc = { author : 'joe', created : new Date('03/28/2009'), ... }
-    #    db.posts.insert(doc);
+        print posting
+        result = insert_into_mongodb(collection,posting)
 
 
 """
@@ -176,8 +179,12 @@ def do_scrape():
     obp_transaction_currency
     obp_transaction_amount
     obp_transaction_new_balance
-"""
 
+
+def main():
+    do_scrape()
+
+"""
 
 if __name__ == '__main__':
     do_scrape()
