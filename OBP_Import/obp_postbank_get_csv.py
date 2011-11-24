@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 __author__ = [' Jan Alexander Slabiak (alex@tesobe.com)']
 __license__ = """
   Copyright 2011 Music Pictures Ltd / TESOBE
@@ -54,10 +55,10 @@ if not os.path.exists(csv_save_path):
 # LINK: http://seleniumhq.org/docs/03_webdriver.html#getting-started-with-selenium-webdriver
 # J.A.S
 
-
 # Setting up a Profile for Firefox.
 # There a the Proxy disabled (to make sure) and the 
 # that he is just download files with asking.
+'''
 fp = webdriver.FirefoxProfile()
 fp.set_preference("network.proxy.type", 0)
 fp.set_preference("browser.download.folderList",2)
@@ -68,6 +69,8 @@ fp.set_preference("browser.helperApps.neverAsk.saveToDisk","text/csv")
 
 
 browser = webdriver.Firefox(firefox_profile=fp) # Get local session of firefox
+'''
+browser = webdriver.Chrome('/usr/bin/chromium') # Get local session of chrome
 browser.get("https://banking.postbank.de/rai/login") # Load page
 assert "Postbank Online-Banking" in browser.title
 
