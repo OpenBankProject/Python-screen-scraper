@@ -20,7 +20,6 @@ __license__ = """
 
 import os
 import csv
-import pdb
 import bson
 import json
 import libs.to_utf8
@@ -32,15 +31,12 @@ import obp_import_post_bank
 from bson import son
 from pymongo import Connection 
 from socket import gethostbyname
+from libs.debugger import *
 
 # This will start checking Database
 # Drop, Create, Insert, Tables Style ,Drop
 # Using on the testcase assertisNot instead of assertEqual,
 # http://docs.python.org/library/unittest.html#deprecated-aliases
-
-
-def debug():
-    pdb.set_trace()
 
 
 class TestMongoDBBasic(unittest.TestCase):
