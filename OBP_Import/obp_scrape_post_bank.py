@@ -80,21 +80,21 @@ def get_obp_transaction_new_balance(input_data):
 
 
 def do_scrape():
-    from BeautifulSoup import BeautifulSoup, Comment
-    from pymongo import Connection
-    import time
+
     from sys import exit
+    from pymongo import Connection
+    from BeautifulSoup import BeautifulSoup, Comment
+
+    import time
     import urllib
-
-    #f = urllib.urlopen("http://Volumes/not_on_your_nelly/Bank_statements/Postbank-Online-Banking_100_days.html")
-
-
+    import obp_config
 
     print ('starting import')
-    connection = Connection('obp_mongodb', 27017)
+    connection = Connection(obp_config.MONGODB_SERVER,obp_config.MONGODB_SERVER_PORT)
     # db = connection.obp_imports
-    db = connection.OBP003
+    db = connection.obp_config.MONGODB_DATABASE
     collection = db.obptransactions
+
 
 
     file = open('/tmp/Postbank_Online-Banking_oct_18.html', 'r')
