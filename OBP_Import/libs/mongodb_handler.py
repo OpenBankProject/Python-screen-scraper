@@ -12,14 +12,14 @@ def connect_to_mongod(mongdod_host,mongod_host_port):
 
 
 def connect_to_mongod_db(connection,mongod_db):
-    mongodb = connection.mongod_db
+    mongodb = connection[mongod_db]
     # Looks like that he is not resolinv the incoming varriable in the right
     # way. They keep beeing unresolve and insert to the mongod_db.
     # Need a fix!
     return mongodb
 
 def mongodb_to_collection(mongodb,mongo_collection):
-    mongodb_collection = mongodb.mongo_collection
+    mongodb_collection = mongodb[mongo_collection]
     return mongodb_collection
 
 
