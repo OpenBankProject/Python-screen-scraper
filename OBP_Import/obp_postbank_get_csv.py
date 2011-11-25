@@ -21,6 +21,7 @@ from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.keys import Keys
 from sys import exit
+from libs.debugger import debug
 import os
 import time
 
@@ -58,7 +59,6 @@ if not os.path.exists(csv_save_path):
 # Setting up a Profile for Firefox.
 # There a the Proxy disabled (to make sure) and the 
 # that he is just download files with asking.
-'''
 fp = webdriver.FirefoxProfile()
 fp.set_preference("network.proxy.type", 0)
 fp.set_preference("browser.download.folderList",2)
@@ -69,14 +69,32 @@ fp.set_preference("browser.helperApps.neverAsk.saveToDisk","text/csv")
 
 
 browser = webdriver.Firefox(firefox_profile=fp) # Get local session of firefox
-'''
-browser = webdriver.Chrome('/usr/bin/chromium') # Get local session of chrome
+#browser = webdriver.Chrome('/usr/bin/chromium') # Get local session of chrome
 browser.get("https://banking.postbank.de/rai/login") # Load page
 assert "Postbank Online-Banking" in browser.title
 
 browser.get("https://banking.postbank.de/rai/login/wicket:interface/:0:login:demokontoLink::ILinkListener::")
+assert "Postbank Online-Banking" in browser.title
+time.sleep(20)
+
+
 browser.get("https://banking.postbank.de/rai/?wicket:bookmarkablePage=:de.postbank.ucp.application.rai.fs.UmsatzauskunftPage")
+time.sleep(20)
+error_message = browser.find_element_by_class_name("important")
+#debug()
+if error_message.is_displayed == True:
+    browser.get("https://banking.postbank.de/rai/login/wicket:interface/:0:login:demokontoLink::ILinkListener::")
+    time.sleep(20)
+    assert "Postbank Online-Banking" in browser.title
+    browser.get("https://banking.postbank.de/rai/login") # Load page
+    browser.get("https://banking.postbank.de/rai/login/wicket:interface/:0:login:demokontoLink::ILinkListener::")
+    browser.get("https://banking.postbank.de/rai/?wicket:bookmarkablePage=:de.postbank.ucp.application.rai.fs.UmsatzauskunftPage")
+    time.sleep(2)
+
+
+
 browser.get("https://banking.postbank.de/rai/?wicket:interface=:2:umsatzauskunftpanel:panel:umsatzanzeigeGiro:umsatzaktionen:csvHerunterladen::IResourceListener::&")
+time.sleep(2)
 browser.close()
 
 csv_files = os.listdir(csv_save_path)
