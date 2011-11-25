@@ -164,7 +164,6 @@ def do_scrape():
         print posting
         result = insert_into_mongodb(collection,posting)
 
-
 """
     We want to end up with the following data items
     Prefix with obp_ so we have consistent meaning
