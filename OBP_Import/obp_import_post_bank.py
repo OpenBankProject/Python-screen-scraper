@@ -32,6 +32,7 @@ from bson import json_util
 from obp_config import *
 from libs.mongodb_handler import *
 from libs.import_helper import *
+from libs.debugger import debug
 
 
 
@@ -47,8 +48,8 @@ def get_info_from_row(input_row):
                             ,u'obp_transaction_comment1': input_row[3].rstrip()
                             ,u'obp_transaction_comment2': input_row[4].rstrip()
                             ,u'obp_transaction_data_blob': input_row[5]
-                            ,u'obp_transaction_amount': amount.group()
-                            ,u'obp_transaction_new_balance': new_balance.group()
+                            ,u'obp_transaction_amount': float(amount.group())
+                            ,u'obp_transaction_new_balance':float(new_balance.group())
                             }
     return obp_transaction_dict
 
