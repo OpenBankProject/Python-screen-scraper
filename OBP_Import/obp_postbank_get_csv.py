@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 __author__ = [' Jan Alexander Slabiak (alex@tesobe.com)']
 __license__ = """
-  Copyright 2011 Music Pictures Ltd / TESOBE
+  Copyright 211 Music Pictures Ltd / TESOBE
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -75,16 +75,16 @@ assert "Postbank Online-Banking" in browser.title
 
 browser.get("https://banking.postbank.de/rai/login/wicket:interface/:0:login:demokontoLink::ILinkListener::")
 assert "Postbank Online-Banking" in browser.title
-time.sleep(20)
+time.sleep(2)
 
 
 browser.get("https://banking.postbank.de/rai/?wicket:bookmarkablePage=:de.postbank.ucp.application.rai.fs.UmsatzauskunftPage")
-time.sleep(20)
+time.sleep(2)
 error_message = browser.find_element_by_class_name("important")
 #debug()
 if error_message.is_displayed == True:
     browser.get("https://banking.postbank.de/rai/login/wicket:interface/:0:login:demokontoLink::ILinkListener::")
-    time.sleep(20)
+    time.sleep(2)
     assert "Postbank Online-Banking" in browser.title
     browser.get("https://banking.postbank.de/rai/login") # Load page
     browser.get("https://banking.postbank.de/rai/login/wicket:interface/:0:login:demokontoLink::ILinkListener::")
