@@ -26,6 +26,7 @@ import libs.to_utf8
 import unittest
 import obp_config
 import obp_import_post_bank
+import libs.transactions
 
 
 from bson import son
@@ -136,24 +137,22 @@ class TestImportCSV(unittest.TestCase):
           self.mongo_db = self.connection.test_obp_import_db
           self.delimiter = ';'
           self.quote_char = '"'
+    
+          
           self.here = os.getcwd()
+          self.csv_path = os.path.join(self.here, 'tests')
+          self.csv_file = 'test_example_latin1.csv'
+          self.file = os.path.join(self.csv_path, self.csv_file)
 
 
       def test_for_existing_csv(self):
-          csv_path = os.path.join(os.getcwd(),'tests')
-          csv_file = 'test_example_latin1.csv'
-          file = os.path.join(csv_path, csv_file)
-          self.assertTrue(os.path.isfile(file))
+          os.chdir('../')
+          self.assertTrue(os.path.isfile(self.file))
 
       
       def test_CSV_converter_to_UTF8(self):
-          csv_path = os.path.join(os.getcwd(),'tests')
-          csv_file = 'test_example_latin1.csv'
-          file = os.path.join(csv_path, csv_file)
-          self.assertTrue(os.path.isfile(file))
-          
-          os.chdir('tests')
-          result = libs.to_utf8.main(csv_file)
+          os.chdir(self.csv_path)
+          result = libs.to_utf8.main(self.csv_file)
           self.assertTrue(os.path.isfile(result))
 
           csv_reader = csv.reader(open(result, 'rb'),delimiter=';', quotechar='"')
@@ -165,7 +164,6 @@ class TestImportCSV(unittest.TestCase):
                 self.values_eq_unicode = 0
           self.assertEqual(self.values_eq_unicode,1)
 
-
           os.remove(result)
           self.assertFalse(os.path.isfile(result))
 
@@ -175,13 +173,8 @@ class TestImportCSV(unittest.TestCase):
 
 
       def test_Import_CSV(self):
-          csv_path = os.path.join(os.getcwd(),'tests')
-          csv_file = 'test_example_latin1.csv'
-          file = os.path.join(csv_path, csv_file)
-          self.assertTrue(os.path.isfile(file))
-          
-          os.chdir('tests')
-          result = libs.to_utf8.main(csv_file)
+          os.chdir(self.csv_path)
+          result = libs.to_utf8.main(self.csv_file)
           self.assertTrue(os.path.isfile(result))
 
           csv_reader = csv.reader(open(result, 'rb'),delimiter=';', quotechar='"')
@@ -213,15 +206,23 @@ class TestImportCSV(unittest.TestCase):
           # test and then comapre them like assertEqual
           # LINK:
           # http://docs.python.org/library/unittest.html#unittest.TestCase.assertItemsEqual
+
           self.assertItemsEqual(self.find_should,self.find_in_mongo)
 
           os.remove(result)
           self.assertFalse(os.path.isfile(result))
 
-          os.chdir('../')
-          result = os.getcwd()
-          self.assertEqual(result,self.here)
 
+      def test_CSV_imported_field_type(self):
+          pass
+          #result = type(self.find_in_mongo['obp_transaction_new_balance'])
+
+
+
+
+    
+
+#class TestTransationObject(unittest.TestCase)
 
              
          
