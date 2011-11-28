@@ -96,6 +96,7 @@ def parse_row_of_csv(csv_file_to_parse,collection):
 
 
 def main():
+    # TODO: Have to set a input for a CSV file 
 
     connection = connect_to_mongod(MONGODB_SERVER,MONGODB_SERVER_PORT)
     database = connect_to_mongod_db(connection,MONGODB_DATABASE)
