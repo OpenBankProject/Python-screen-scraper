@@ -8,6 +8,7 @@ MONGODB_SERVER_PORT=27017
 MONGODB_DATABASE='OBP006'
 MONGODB_COLLECTION='obptransactions'
 
+OBP_VERSION='0.0.1'
 
 # Files:
 # The Folder where the CSV file get saved
