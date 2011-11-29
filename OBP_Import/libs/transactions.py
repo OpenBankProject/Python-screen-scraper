@@ -44,7 +44,7 @@ class obp_transaction:
         # It will take an input and return it as a UTC.
         assert self.check_date_format(date_to_convert) is True
 
-        # The date only showing the detail of the day. Setting Sec,Min to 0
+        -# The date only showing the detail of the day. Setting Sec,Min to 0
         self.zero_time = datetime.time(0,0,0)
         # We now where here the date is: 
 
@@ -71,7 +71,8 @@ class obp_transaction:
         pass
 
 
-    def 
+    def account_info(self):
+        pass
 
 
 '''
