@@ -3,6 +3,7 @@
 import obp_config
 
 import datetime
+from libs.debugger import debug
 from socket import gethostname
 
 class obp_account:
@@ -24,7 +25,7 @@ class obp_transaction:
     new_balance = ''
     this_account  = ''
     source_bank = ''
-
+    transaction_currency  = ''
 
 
     def check_date_format(self,date_to_check):
@@ -37,21 +38,40 @@ class obp_transaction:
               print('Invalid date!')
               return False
 
+
     def convert_date_to_clean_date(self,date_to_convert):
         # This function will convert a Date to a UTC time. 
         # It will take an input and return it as a UTC.
-        assert check_date_format(date_to_convert)
+        assert self.check_date_format(date_to_convert) is True
 
         # The date only showing the detail of the day. Setting Sec,Min to 0
-        t = time(0, 0)
+        self.zero_time = datetime.time(0,0,0)
         # We now where here the date is: 
 
-        self.to_convert = datetime.date(date_to_convert[6:9],date_to_convert[3:4],
-                date_to_convert[0:1])
-        datetime.combin(self.to_convert, t)
-        datetime.datetime.strftime(self.to_convert, "%Y,%m,%d,%M,%S")
+        self.to_convert = datetime.date(
+                int(date_to_convert[6:10]),
+                int(date_to_convert[3:5]),
+                int(date_to_convert[0:2]))
+        datetime.datetime.combine(self.to_convert,self.zero_time)
+        result = datetime.datetime.strftime(self.to_convert, "%Y,%m,%d,%H,%M,%S")
 
-        # Untest!
+        print result
+        print type(result)
+
+
+    def set_currency(self):
+        pass
+
+
+    def set_balance(self):
+        pass
+
+
+    def handle_transaction_type(self):
+        pass
+
+
+    def 
 
 
 '''
