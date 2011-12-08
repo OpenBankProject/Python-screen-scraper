@@ -30,3 +30,10 @@ def pre_insert_data(data_to_prepere):
     #This function will convert the data to son.
     pass
 
+
+def check_index():
+    pass
+
+
+def make_uniq_index():
+    pass

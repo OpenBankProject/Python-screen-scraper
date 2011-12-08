@@ -142,11 +142,10 @@ class TestImportCSV(unittest.TestCase):
           self.here = os.getcwd()
           self.csv_path = os.path.join(self.here, 'tests')
           self.csv_file = 'test_example_latin1.csv'
-          self.file = os.path.join(self.csv_path, self.csv_file)
+          self.file = os.path.join(self.here, self.csv_file)
 
 
       def test_for_existing_csv(self):
-          os.chdir('../')
           self.assertTrue(os.path.isfile(self.file))
 
       

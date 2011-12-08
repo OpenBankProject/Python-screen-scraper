@@ -3,6 +3,7 @@
 import obp_config
 
 import datetime
+import re
 from libs.debugger import debug
 from socket import gethostname
 
@@ -44,7 +45,7 @@ class obp_transaction:
         # It will take an input and return it as a UTC.
         assert self.check_date_format(date_to_convert) is True
 
-        -# The date only showing the detail of the day. Setting Sec,Min to 0
+        # The date only showing the detail of the day. Setting Sec,Min to 0
         self.zero_time = datetime.time(0,0,0)
         # We now where here the date is: 
 
@@ -59,7 +60,21 @@ class obp_transaction:
         print type(result)
 
 
+    def get_currency(self,currency_input):
+        # Take a INPUT and search for currentcy like € or $ and
+        # return string return lile EUR,DOL YEN
+        
+        #Define Search String for EUR
+        search_euro = re.match("€|\xe2\x82\xac|\u20ac",currency_input)
+        if 
+
+
+
+        
+
+
     def set_currency(self):
+
         pass
 
 
@@ -76,8 +91,12 @@ class obp_transaction:
 
 
 '''
+Buchungstag;Wertstellung;Umsatzart;Buchungsdetails;Auftraggeber;Empfänger;Betrag
+(€);Saldo (€)
+
 u'obp_transaction_date_start': input_row[0]
 u'obp_transaction_date_complete':input_row[1]
+
 u'obp_transaction_transaction_type_de':input_row[2]
 u'obp_transaction_comment1': input_row[3].rstrip()
 u'obp_transaction_comment2': input_row[4].rstrip()
