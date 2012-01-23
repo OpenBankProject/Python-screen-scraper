@@ -34,7 +34,7 @@ from libs.debugger import debug
 def get_info_from_row(input_row):
     # This regual expression search for all kind of Numbers in a string.
     # Also covering + and - 
-    debug()
+    #debug()
     amount = re.match("[+-]?((\d+(\.\d*)?)|\.\d+)([eE][+-]?[0-9]+)?", input_row[6])
     new_balance = re.match("[+-]?((\d+(\.\d*)?)|\.\d+)([eE][+-]?[0-9]+)?",input_row[7])
     obp_transaction_dict = {

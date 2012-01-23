@@ -32,12 +32,15 @@ import os
 import time
 
 
-from selenium import webdriver
-from obp_config import TMP
 from sys import exit
+from obp_config import TMP
+from libs.import_helper import *
+from libs.debugger import debug
+from selenium import webdriver
 
 
 TMP_SUFFIX ='csv'
+here = show_here()
 
 
 def check_for_clean_tmp():
@@ -47,18 +50,23 @@ def check_for_clean_tmp():
     # Sanity Check #1: 
     # Do we have tmp/ and tmp/csv
 
-    if not os.path.exists(TMP):
+    if os.path.exists(TMP) !=  True:
         os.makedirs(TMP)
 
     csv_save_path = os.path.join(os.getcwd(),TMP,TMP_SUFFIX)
 
-    if not os.path.exists(csv_save_path):
+    if os.path.exists(csv_save_path) != True:
         os.makedirs(csv_save_path)
 
+    # Check for an empty folder. 
+    if len(os.listdir(csv_save_path)) != 0:
+        for item in os.listdir(csv_save_path):
+            os.remove(os.path.join(csv_save_path,item))
+
+    return csv_save_path
 
 
-
-def get_csv_with_selenium():
+def get_csv_with_selenium(csv_save_path):
     # This will a simple login to the Demo APP of PostBank
     # When we need to add some login infomation, we need to find the input fields.
     # LINK: http://seleniumhq.org/docs/03_webdriver.html#getting-started-with-selenium-webdriver
@@ -93,25 +101,16 @@ def get_csv_with_selenium():
     # Warning!
     # The Postbank uses a :page counter, when the URL doesn't have the right page counter it will return
     # a error message. 
-    browser.get("https://banking.postbank.de/rai/?wicket:interface=:3:umsatzauskunftpanel:panel:form:umsatzanzeigeGiro:umsatzaktionen:umsatzanzeigeUndFilterungDownloadlinksPanel:csvHerunterladen::IResourceListener::")
+    result = browser.get("https://banking.postbank.de/rai/?wicket:interface=:3:umsatzauskunftpanel:panel:form:umsatzanzeigeGiro:umsatzaktionen:umsatzanzeigeUndFilterungDownloadlinksPanel:csvHerunterladen::IResourceListener::")
     time.sleep(2)
     browser.close()
-
-    csv_files = os.listdir(csv_save_path)
-    file_count = len(csv_files) 
-
-    if file_count == 0:
-        print "We didn't got the CSV file."
-        exit(1)
-    elif file_count != 1:
-        print "We did got to much files..."
-        exit (10)
-
-    print csv_files[0]
+    return result
 
 
 def main():
-    print 'Hello World'
+    path_to_save = check_for_clean_tmp()
+    get_csv_with_selenium(path_to_save)
+    
 
 
 if __name__ == '__main__':

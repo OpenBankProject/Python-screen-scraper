@@ -1,7 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*
-
-__author__ = [' Jan Alexander Slabiak (alex@tesobe.com)']
+__author__ = ['Jan Alexander Slabiak (alex@tesobe.com)']
 __license__ = """
   Copyright 2011 Music Pictures Ltd / TESOBE
 
@@ -17,27 +15,6 @@ __license__ = """
    See the License for the specific language governing permissions and
    limitations under the License.
 """
-
-import os
-import libs.to_utf8
-import obp_import_post_bank
-import obp_config
-
-def import_from_postbank_testuser():
-    #import obp_postbank_get_csv
-    #csv_file = os.path.join(obp_postbank_get_csv.csv_save_path,obp_postbank_get_csv.csv_files[0])
-    return None
-
-    
-def main():
-    # We can't import in the moment any test CSV, have to call them by hand.
-    csv_file = obp_config.CSV_FILE_PATH
-    libs.to_utf8.main(csv_file)
-    obp_import_post_bank.main(csv_file)
-
-
-
-
-if __name__ == '__main__':
-    main()
-
+__doc__ = """
+This will contain a handler to insert JSON over a Scala Lift API to a database backend.
+"""

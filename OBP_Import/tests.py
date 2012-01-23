@@ -21,18 +21,19 @@ __license__ = """
 import os
 import csv
 import bson
-import json
-import libs.to_utf8
 import unittest
 import obp_config
 import obp_import_post_bank
+import libs.to_utf8
 import libs.transactions
+import libs.postbank_get_csv
 
 
 from bson import son
 from pymongo import Connection 
 from socket import gethostbyname
-from libs.debugger import *
+from libs.debugger import debug
+from libs.import_helper import *
 
 # This will start checking Database
 # Drop, Create, Insert, Tables Style ,Drop
@@ -86,6 +87,47 @@ class TestMongoDBBasic(unittest.TestCase):
         result = self.mongo_db.collection_names()
         # Should return a 0 in len
         self.assertEqual(len(result), 0)
+
+
+class TestSelenium(unittest.TestCase):
+     
+    def SetUp(self):
+        return None
+        
+
+    def test_check_for_clean_tmp(self):
+        # Check that we'll have the tmp/ and tmp/csv folder
+        self.check_test = obp_config.TMP
+        self.check_test_csv_folder = os.path.join(self.check_test,libs.postbank_get_csv.TMP_SUFFIX)
+
+        libs.postbank_get_csv.check_for_clean_tmp()
+        self.assertTrue(os.path.exists(self.check_test))
+        self.assertTrue(os.path.exists(self.check_test_csv_folder))
+
+        # Check for empty folder
+        # This function is not done yet. It have to delete the files
+        self.assertEqual(0,len(os.listdir(self.check_test_csv_folder)))
+
+
+    def test_get_csv_with_selenium(self):
+        # This will call the get_csv_with_selenium function and try to download
+        # a csv file.
+
+        # This will return the path where the file will be save too.
+        # Make also sure it's empty
+        self.path_for_save = libs.postbank_get_csv.check_for_clean_tmp()
+
+        # Downloading the CSV file with Firefox. 
+        libs.postbank_get_csv.get_csv_with_selenium(self.path_for_save)
+    
+        # This function belongs to the sanity checks. Is there a file?
+        # We tesing this twice! 
+        self.csv_file = preperar_csv_file(self.path_for_save)
+        self.assertTrue(os.path.exists(os.path.join(self.path_for_save,self.csv_file)))
+
+
+
+          
 
 
 
