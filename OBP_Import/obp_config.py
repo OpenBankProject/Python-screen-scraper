@@ -13,9 +13,9 @@ OBP_VERSION='0.0.1'
 # Files:
 # The Folder where the CSV file get saved
 SAVEDIR=''
-TMP='/tmp/'
+TMP='tmp/'
 
-CSV_FILE_PATH = '/home/akendo/PB_Umsatzauskunft_198_rows.csv'
+CSV_FILE_PATH = 'usr/PB_Umsatzauskunft_198_rows.csv'
 HTML_FILE_PATH = 'Postbank-Online-Banking_100_days_minus_javascript_cut_down.html'
 
 

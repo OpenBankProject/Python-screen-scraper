@@ -18,15 +18,10 @@ __license__ = """
 """
 
 import csv
-import codecs
-import bson
-import os
 import datetime
 import re
-import json
 
 from socket import gethostname
-from pymongo import Connection
 from bson import son
 from bson import json_util
 from obp_config import *
@@ -39,6 +34,7 @@ from libs.debugger import debug
 def get_info_from_row(input_row):
     # This regual expression search for all kind of Numbers in a string.
     # Also covering + and - 
+    debug()
     amount = re.match("[+-]?((\d+(\.\d*)?)|\.\d+)([eE][+-]?[0-9]+)?", input_row[6])
     new_balance = re.match("[+-]?((\d+(\.\d*)?)|\.\d+)([eE][+-]?[0-9]+)?",input_row[7])
     obp_transaction_dict = {
@@ -95,8 +91,11 @@ def parse_row_of_csv(csv_file_to_parse,collection):
             # plural name, no spaces -> singular no spaces model name in Lift mongo record
 
 
-def main():
-    # TODO: Have to set a input for a CSV file 
+def main(CSV_input):
+
+    check_for_existing_csv(CSV_input)
+    
+        
 
     connection = connect_to_mongod(MONGODB_SERVER,MONGODB_SERVER_PORT)
     database = connect_to_mongod_db(connection,MONGODB_DATABASE)
