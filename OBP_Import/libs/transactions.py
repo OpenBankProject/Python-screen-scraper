@@ -66,7 +66,7 @@ class obp_transaction:
         
         #Define Search String for EUR
         search_euro = re.match("€|\xe2\x82\xac|\u20ac",currency_input)
-        if 
+        #if 
 
 
 
