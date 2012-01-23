@@ -4,10 +4,7 @@ from libs.import_helper import show_here
 from os import path
 MONGODB_SERVER='obp_mongod'
 MONGODB_SERVER_PORT=27017
-<<<<<<< HEAD
-=======
 
->>>>>>> other_browser
 
 #MongoDB Setting
 MONGODB_DATABASE='OBP006'
