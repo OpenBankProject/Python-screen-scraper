@@ -18,45 +18,23 @@ __license__ = """
 """
 
 import csv
-import codecs
-import bson
-import os
 import datetime
 import re
-import json
 
 from socket import gethostname
-from pymongo import Connection
 from bson import son
 from bson import json_util
 from obp_config import *
+from libs.mongodb_handler import *
+from libs.import_helper import *
+from libs.debugger import debug
 
-def connect_to_mongod(mongdod_host,mongod_host_port):
-    mongod_connection = Connection(mongdod_host,mongod_host_port)
-    return mongod_connection
-
-
-def connect_to_mongod_db(connection,mongod_db):
-    mongodb = connection.mongod_db
-    return mongodb
-
-def mongodb_to_collection(mongodb,mongo_collection):
-    mongodb_collection = mongodb.mongo_collection
-    return mongodb_collection
-
-
-def insert_into_mongodb(mongodb,collection,data_to_insert):
-    object_id = mongodb.collection.insert(data_to_insert)
-    return object_id
-
-
-def get_bank_account():
-    return 123456
 
 
 def get_info_from_row(input_row):
     # This regual expression search for all kind of Numbers in a string.
     # Also covering + and - 
+    #debug()
     amount = re.match("[+-]?((\d+(\.\d*)?)|\.\d+)([eE][+-]?[0-9]+)?", input_row[6])
     new_balance = re.match("[+-]?((\d+(\.\d*)?)|\.\d+)([eE][+-]?[0-9]+)?",input_row[7])
     obp_transaction_dict = {
@@ -66,13 +44,13 @@ def get_info_from_row(input_row):
                             ,u'obp_transaction_comment1': input_row[3].rstrip()
                             ,u'obp_transaction_comment2': input_row[4].rstrip()
                             ,u'obp_transaction_data_blob': input_row[5]
-                            ,u'obp_transaction_amount': amount.group()
-                            ,u'obp_transaction_new_balance': new_balance.group()
+                            ,u'obp_transaction_amount': float(amount.group())
+                            ,u'obp_transaction_new_balance':float(new_balance.group())
                             }
     return obp_transaction_dict
 
 
-def parse_row_of_csv(csv_file_to_parse):
+def parse_row_of_csv(csv_file_to_parse,collection):
 
         delimiter = ';'
         quote_char = '"'
@@ -109,22 +87,20 @@ def parse_row_of_csv(csv_file_to_parse):
             # LINK: http://www.mongodb.org/display/DOCS/Indexes#Indexes-UniqueIndexes
             print "In the JSON is:\n%s" % posting 
             # Inserting the finisch JSON to the collection 
-            result = insert_into_mongodb(posting) 
+            result = insert_into_mongodb(collection,posting) 
             # plural name, no spaces -> singular no spaces model name in Lift mongo record
 
 
-def main():
+def main(CSV_input):
+
+    check_for_existing_csv(CSV_input)
+    
+        
+
     connection = connect_to_mongod(MONGODB_SERVER,MONGODB_SERVER_PORT)
-    connect_to_mongod_db(connection,MONGODB_DATABASE)
-    mongodb_to_collection(connect_to_mongod_db,MONGODB_COLLECTION)
-
-    # Alex Path
-    csv_path = '/home/akendo/PB_Umsatzauskunft_198_rows.csv'
-
-    # Simons Path
-    #csv_path = '/Volumes/not_on_your_nelly/Bank_statements/PB_Umsatzauskunft_KtoNr0580591101_04-10-2011_1624_saved.csv'
-
-    parse_row_of_csv(csv_path)
+    database = connect_to_mongod_db(connection,MONGODB_DATABASE)
+    collection = mongodb_to_collection(database,MONGODB_COLLECTION)
+    parse_row_of_csv(CSV_FILE_PATH,collection)
 
 
 if __name__ == '__main__':

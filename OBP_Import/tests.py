@@ -20,26 +20,25 @@ __license__ = """
 
 import os
 import csv
-import pdb
 import bson
-import json
-import to_utf8
 import unittest
 import obp_config
 import obp_import_post_bank
+import libs.to_utf8
+import libs.transactions
+import libs.postbank_get_csv
+
 
 from bson import son
 from pymongo import Connection 
 from socket import gethostbyname
+from libs.debugger import debug
+from libs.import_helper import *
 
 # This will start checking Database
 # Drop, Create, Insert, Tables Style ,Drop
 # Using on the testcase assertisNot instead of assertEqual,
 # http://docs.python.org/library/unittest.html#deprecated-aliases
-
-
-def debug():
-    pdb.set_trace()
 
 
 class TestMongoDBBasic(unittest.TestCase):
@@ -90,6 +89,47 @@ class TestMongoDBBasic(unittest.TestCase):
         self.assertEqual(len(result), 0)
 
 
+class TestSelenium(unittest.TestCase):
+     
+    def SetUp(self):
+        return None
+        
+
+    def test_check_for_clean_tmp(self):
+        # Check that we'll have the tmp/ and tmp/csv folder
+        self.check_test = obp_config.TMP
+        self.check_test_csv_folder = os.path.join(self.check_test,libs.postbank_get_csv.TMP_SUFFIX)
+
+        libs.postbank_get_csv.check_for_clean_tmp()
+        self.assertTrue(os.path.exists(self.check_test))
+        self.assertTrue(os.path.exists(self.check_test_csv_folder))
+
+        # Check for empty folder
+        # This function is not done yet. It have to delete the files
+        self.assertEqual(0,len(os.listdir(self.check_test_csv_folder)))
+
+
+    def test_get_csv_with_selenium(self):
+        # This will call the get_csv_with_selenium function and try to download
+        # a csv file.
+
+        # This will return the path where the file will be save too.
+        # Make also sure it's empty
+        self.path_for_save = libs.postbank_get_csv.check_for_clean_tmp()
+
+        # Downloading the CSV file with Firefox. 
+        libs.postbank_get_csv.get_csv_with_selenium(self.path_for_save)
+    
+        # This function belongs to the sanity checks. Is there a file?
+        # We tesing this twice! 
+        self.csv_file = preperar_csv_file(self.path_for_save)
+        self.assertTrue(os.path.exists(os.path.join(self.path_for_save,self.csv_file)))
+
+
+
+          
+
+
 
 class TestImporting(unittest.TestCase):
 
@@ -132,31 +172,30 @@ class TestImporting(unittest.TestCase):
 
 class TestImportCSV(unittest.TestCase):
       """
-          This Class will parse a CSV file. 
+          This Test will parse a CSV file. 
       """
       def setUp(self):
           self.connection = Connection('obp_mongod', 27017)
           self.mongo_db = self.connection.test_obp_import_db
           self.delimiter = ';'
           self.quote_char = '"'
+    
+          
           self.here = os.getcwd()
+          self.csv_path = os.path.join(self.here, 'usr/tests')
+          self.csv_file = 'test_example_latin1.csv'
+          self.file = os.path.join(self.csv_path, self.csv_file)
+          self.file_to_utf = os.path.join('usr/tests/',self.csv_file)
 
 
       def test_for_existing_csv(self):
-          csv_path = os.path.join(os.getcwd(),'tests')
-          csv_file = 'test_example_latin1.csv'
-          file = os.path.join(csv_path, csv_file)
-          self.assertTrue(os.path.isfile(file))
+          # Check first for the tests/test_example_latin1.csv file
+          self.assertTrue(os.path.isfile(self.file))
 
       
       def test_CSV_converter_to_UTF8(self):
-          csv_path = os.path.join(os.getcwd(),'tests')
-          csv_file = 'test_example_latin1.csv'
-          file = os.path.join(csv_path, csv_file)
-          self.assertTrue(os.path.isfile(file))
-          
-          os.chdir('tests')
-          result = to_utf8.main(csv_file)
+          #This call the to_utf8 function, and saves a file to tmp/
+          result = libs.to_utf8.main(self.file)
           self.assertTrue(os.path.isfile(result))
 
           csv_reader = csv.reader(open(result, 'rb'),delimiter=';', quotechar='"')
@@ -168,23 +207,15 @@ class TestImportCSV(unittest.TestCase):
                 self.values_eq_unicode = 0
           self.assertEqual(self.values_eq_unicode,1)
 
-
           os.remove(result)
           self.assertFalse(os.path.isfile(result))
 
-          os.chdir('../')
           result = os.getcwd()
           self.assertEqual(result,self.here)
 
 
       def test_Import_CSV(self):
-          csv_path = os.path.join(os.getcwd(),'tests')
-          csv_file = 'test_example_latin1.csv'
-          file = os.path.join(csv_path, csv_file)
-          self.assertTrue(os.path.isfile(file))
-          
-          os.chdir('tests')
-          result = to_utf8.main(csv_file)
+          result = libs.to_utf8.main(self.file)
           self.assertTrue(os.path.isfile(result))
 
           csv_reader = csv.reader(open(result, 'rb'),delimiter=';', quotechar='"')
@@ -216,15 +247,23 @@ class TestImportCSV(unittest.TestCase):
           # test and then comapre them like assertEqual
           # LINK:
           # http://docs.python.org/library/unittest.html#unittest.TestCase.assertItemsEqual
+
           self.assertItemsEqual(self.find_should,self.find_in_mongo)
 
           os.remove(result)
           self.assertFalse(os.path.isfile(result))
 
-          os.chdir('../')
-          result = os.getcwd()
-          self.assertEqual(result,self.here)
 
+      def test_CSV_imported_field_type(self):
+          pass
+          #result = type(self.find_in_mongo['obp_transaction_new_balance'])
+
+
+
+
+    
+
+#class TestTransationObject(unittest.TestCase)
 
              
          
