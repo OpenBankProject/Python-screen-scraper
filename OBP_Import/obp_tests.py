@@ -130,7 +130,7 @@ class TestImporting(unittest.TestCase):
 
 class TestImportCSV(unittest.TestCase):
       """
-          This Class will parse a CSV file. 
+          This Test will parse a CSV file. 
       """
       def setUp(self):
           self.connection = Connection('obp_mongod', 27017)
@@ -140,18 +140,20 @@ class TestImportCSV(unittest.TestCase):
     
           
           self.here = os.getcwd()
-          self.csv_path = os.path.join(self.here, 'tests')
+          self.csv_path = os.path.join(self.here, 'usr/tests')
           self.csv_file = 'test_example_latin1.csv'
-          self.file = os.path.join(self.here, self.csv_file)
+          self.file = os.path.join(self.csv_path, self.csv_file)
+          self.file_to_utf = os.path.join('usr/tests/',self.csv_file)
 
 
       def test_for_existing_csv(self):
+          # Check first for the tests/test_example_latin1.csv file
           self.assertTrue(os.path.isfile(self.file))
 
       
       def test_CSV_converter_to_UTF8(self):
-          os.chdir(self.csv_path)
-          result = libs.to_utf8.main(self.csv_file)
+          #This call the to_utf8 function, and saves a file to tmp/
+          result = libs.to_utf8.main(self.file)
           self.assertTrue(os.path.isfile(result))
 
           csv_reader = csv.reader(open(result, 'rb'),delimiter=';', quotechar='"')
@@ -166,14 +168,12 @@ class TestImportCSV(unittest.TestCase):
           os.remove(result)
           self.assertFalse(os.path.isfile(result))
 
-          os.chdir('../')
           result = os.getcwd()
           self.assertEqual(result,self.here)
 
 
       def test_Import_CSV(self):
-          os.chdir(self.csv_path)
-          result = libs.to_utf8.main(self.csv_file)
+          result = libs.to_utf8.main(self.file)
           self.assertTrue(os.path.isfile(result))
 
           csv_reader = csv.reader(open(result, 'rb'),delimiter=';', quotechar='"')
