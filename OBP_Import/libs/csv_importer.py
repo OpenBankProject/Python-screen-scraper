@@ -30,6 +30,7 @@ from bson import json_util
 from mongodb_handler import *
 from import_helper import *
 from debugger import debug
+from scala_api_handler import insert_into_scala
 
 
 sys.path.append("/home/akendo/Work/Tesobe/Pro/Git/try_out/OBP_Import")
@@ -48,6 +49,7 @@ def get_info_from_row(input_row):
 
     obp_transaction_data = json.dumps([
     {
+    "obp_transaction":{ 
         "this_account": {
             "holder": holder_name,
             "number": get_bank_account(),
@@ -78,7 +80,7 @@ def get_info_from_row(input_row):
                 "amount": float(amount.group())
             },
             "other_data": input_row[5]
-     }
+    }}
     }],sort_keys=False)
 
     print obp_transaction_data
@@ -140,15 +142,11 @@ def parse_row_of_csv(csv_file_to_parse,collection):
             # LINK: http://www.mongodb.org/display/DOCS/Indexes#Indexes-UniqueIndexes
             
             print "In the JSON is:\n%s" % json_out_correter(obp_transaction_dict)
+            insert_into_scala(json_out_correter(obp_transaction_dict))
             # Inserting the finisch JSON to the collection 
             #result = insert_into_mongodb(collection,posting) 
             # plural name, no spaces -> singular no spaces model name in Lift mongo record
 
-
-
-def json_out_correter(JSON_to_print):
-    # This will remove the first [ and the last ].
-    return re.sub(r'^\[|\]$', ' ', JSON_to_print)
 
 
 
