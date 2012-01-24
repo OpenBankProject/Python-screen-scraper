@@ -5,6 +5,7 @@ Software Requierments:
  =>mongodb1.8
  =>git-1.7.3.4
  =>selenium-2.0
+ =>tablib-0.9
 
 A addional Host Entry that points out for obp_mongodb
 
