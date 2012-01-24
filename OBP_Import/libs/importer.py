@@ -116,7 +116,7 @@ def parse_row_of_csv(csv_file_to_parse,collection):
             # The first vaild entry has always a date, checking for it
             if data_expression.match(row[0]) == None:
                 csv_header_info.append(row[0]) 
-                debug()
+                #debug()
                 continue
             else:
                 obp_transaction_dict = get_info_from_row(row)
@@ -138,11 +138,18 @@ def parse_row_of_csv(csv_file_to_parse,collection):
             # TODO: Need to create Uniq Indexes.
             # To ensure that a Transaction is always uniq
             # LINK: http://www.mongodb.org/display/DOCS/Indexes#Indexes-UniqueIndexes
-
-            print "In the JSON is:\n%s" % obp_transaction_dict
+            
+            print "In the JSON is:\n%s" % json_out_correter(obp_transaction_dict)
             # Inserting the finisch JSON to the collection 
             #result = insert_into_mongodb(collection,posting) 
             # plural name, no spaces -> singular no spaces model name in Lift mongo record
+
+
+
+def json_out_correter(JSON_to_print):
+    # This will remove the first [ and the last ].
+    return re.sub(r'^\[|\]$', ' ', JSON_to_print)
+
 
 
 def main(CSV_input):
