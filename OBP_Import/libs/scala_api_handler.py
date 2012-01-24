@@ -18,3 +18,32 @@ __license__ = """
 __doc__ = """
 This will contain a handler to insert JSON over a Scala Lift API to a database backend.
 """
+
+
+import sys
+import os
+import requests
+
+
+
+from debugger import debug
+from import_helper import *
+sys.path.append(
+    os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
+
+import obp_config
+
+
+
+def insert_into_scala(JSON_to_insert):
+    r = requests.post("http://192.168.1.57:55888/api/transactions", data=JSON_to_insert)
+    return r
+
+
+def main():
+    pass
+
+
+
+if __name__ == '__main__':
+    main()

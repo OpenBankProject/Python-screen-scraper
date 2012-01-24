@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*
 import os
 import sys
+import re
 #from debugger import debug
 
 def get_bank_account():
@@ -17,6 +18,12 @@ def check_for_existing_csv(input_file):
         print "ERROR!"
         print "NO CSV FILE!"
         sys.exit(255)
+
+
+def json_out_correter(JSON_to_print):
+    # This will remove the first [ and the last ].
+    return re.sub(r'^\[|\]$', ' ', JSON_to_print)
+
 
 
 def preperar_csv_file(path_to_saved_csv):

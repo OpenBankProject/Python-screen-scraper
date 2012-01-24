@@ -30,8 +30,8 @@ def import_from_postbank_testuser():
 
     
 def main():
-    # We can't import in the moment any test CSV, have to call them by hand.
-    csv_file = obp_config.CSV_FILE_PATH
+
+    #csv_file = obp_config.CSV_FILE_PATH
     libs.to_utf8.main(csv_file)
     obp_import_post_bank.main(csv_file)
 

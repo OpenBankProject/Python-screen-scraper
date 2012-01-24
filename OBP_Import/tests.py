@@ -126,11 +126,6 @@ class TestSelenium(unittest.TestCase):
         self.assertTrue(os.path.exists(os.path.join(self.path_for_save,self.csv_file)))
 
 
-
-          
-
-
-
 class TestImporting(unittest.TestCase):
 
       def setUp(self):
