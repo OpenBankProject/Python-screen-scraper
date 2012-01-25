@@ -20,14 +20,9 @@ __license__ = """
 import simplejson as json
 
 import csv
-import datetime
 import re
 import sys
 
-from socket import gethostname
-from bson import son
-from bson import json_util
-from mongodb_handler import *
 from import_helper import *
 from debugger import debug
 from scala_api_handler import insert_into_scala
@@ -35,6 +30,7 @@ from scala_api_handler import insert_into_scala
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 from obp_config import *
 
+csv_header_info = []
 
 
 def get_info_from_row(input_row):
@@ -44,23 +40,32 @@ def get_info_from_row(input_row):
     new_balance = re.match("[+-]?((\d+(\.\d*)?)|\.\d+)([eE][+-]?[0-9]+)?",input_row[7])
                             
 
-    holder_name = "Music Pictures Limited"
+    this_account_name = csv_header_info[1]
+    this_account_IBAN = csv_header_info[4]
+    this_account_number = csv_header_info[3]
+    # There is still some Value inside, we need to remove
+    this_account_unclean_currency = csv_header_info[5]
+    this_account_currency = re.search('\xe2\x82\xac',this_account_unclean_currency[1])
+    this_account_kind = 'current'
+    this_account_ni = "" # ni = national_identifier
+    this_account_bank_name = 'Postbank'
+    #debug()
 
     obp_transaction_data = json.dumps([
     {
     "obp_transaction":{ 
         "this_account": {
-            "holder": holder_name,
-            "number": get_bank_account(),
-            "kind": "",
+            "holder": this_account_name[1],
+            "number": this_account_number[1],
+            "kind": this_account_kind,
          "bank": {
-                "IBAN": "",
-                "national_identifier": "",
-                "name": ""
+                "IBAN": this_account_IBAN[1],
+                "national_identifier": this_account_ni,
+                "name": this_account_bank_name
             }
         },
         "other_account": {
-            "holder": input_row[4].rstrip(),
+            "holder": input_row[4].rstrip(), 
             "number": input_row[3].rstrip(),
             "kind": "",
             "bank": {
@@ -74,15 +79,16 @@ def get_info_from_row(input_row):
             "type_de": input_row[2],
             "posted": input_row[0],
             "completed": input_row[1],
+            "new_balance": float(new_balance.group()),
             "value": {
-                "currency": "",
+                "currency": currency_sign_to_text(this_account_currency.group()),
                 "amount": float(amount.group())
             },
             "other_data": input_row[5]
-    }}
+            }
+    }
     }],sort_keys=False)
 
-    #print obp_transaction_data
     return obp_transaction_data
 
 
@@ -100,11 +106,11 @@ def parse_row_of_csv(csv_file_to_parse):
         transactionReader = csv.reader(open(csv_file_to_parse, 'rb'), delimiter=delimiter, quotechar=quote_char)
     
         for row in transactionReader:
-            csv_header_info = []
+
             # The first vaild entry has always a date, checking for it
             if data_expression.match(row[0]) == None:
-                csv_header_info.append(row[0]) 
-                #debug()
+                csv_header_info.append(row) 
+
                 continue
             else:
                 obp_transaction_dict = get_info_from_row(row)
@@ -123,4 +129,4 @@ def main(CSV_input):
 
 
 if __name__ == '__main__':
-    print 'Hallo'
+    print 

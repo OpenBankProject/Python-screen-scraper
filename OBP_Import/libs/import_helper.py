@@ -57,6 +57,11 @@ def preperar_csv_file(path_to_saved_csv):
 
     return csv_folder[0]
 
+def currency_sign_to_text(currency_sign):
+    # This will return the text currney.
+    currency_sing_text_dic = { '\xe2\x82\xac':'EUR'}
+    return currency_sing_text_dic[currency_sign]
+
 
 def show_here():
     return os.getcwd()
