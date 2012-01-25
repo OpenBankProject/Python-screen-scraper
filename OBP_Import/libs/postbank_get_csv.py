@@ -71,11 +71,10 @@ def check_for_clean_tmp():
 
 def set_bankaccount_login():
     # THis will return the Usernmae,Password`
-    for line in sys.stdin:
-        print line
-        if len(line)
-        line = Username
-        
+    #for line in sys.stdin:
+     #   print line
+      #  if len(line)
+       # line = Username
      Pasword = getpass.getpass()
      # We know from the Webpage that we need at least 5 charater,
      # reutrn error when password doesn't contain 5 chararters
@@ -111,7 +110,7 @@ def get_csv_with_selenium(csv_save_path):
 
     # Here we will inserting Username and Password:
     # find the element that's name attribute is nutzername  and kennword
-    debug()
+    #debug()
     inputElement_username = browser.find_element_by_name("nutzername")
     inputElement_password = browser.find_element_by_name("kennwort")
     inputElement_username.send_keys(login_data[0])
