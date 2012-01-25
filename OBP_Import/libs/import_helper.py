@@ -2,6 +2,7 @@
 import os
 import sys
 import re
+import fileinput
 #from debugger import debug
 
 def get_bank_account():
@@ -25,6 +26,18 @@ def json_out_correter(JSON_to_print):
     return re.sub(r'^\[|\]$', ' ', JSON_to_print)
 
 
+def remove_empty_lines(INPUT):
+    # There is a problem reading the CSV File with a empty
+    # newline, so this will remove it. 
+    # This example, found on:
+    # http://ubuntuforums.org/showthread.php?t=302914
+    for lines in fileinput.FileInput(INPUT, inplace=1):    
+        lines = lines.strip()
+        if lines == '': 
+            continue
+        print lines
+
+
 
 def preperar_csv_file(path_to_saved_csv):
     # This will prepare the download file from postbank.
@@ -44,8 +57,16 @@ def preperar_csv_file(path_to_saved_csv):
 
     return csv_folder[0]
 
+def currency_sign_to_text(currency_sign):
+    # This will return the text currney.
+    currency_sing_text_dic = { '\xe2\x82\xac':'EUR'}
+    return currency_sing_text_dic[currency_sign]
+
 
 def show_here():
     return os.getcwd()
 
+def clean_up():
+    # This function will clean up in the end all files from tmp/
+    pass
 
