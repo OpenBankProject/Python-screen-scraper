@@ -79,10 +79,13 @@ def get_info_from_row(input_row):
             "type_de": input_row[2],
             "posted": input_row[0],
             "completed": input_row[1],
-            "new_balance": float(new_balance.group()),
+            "new_balance":{
+                "currency": currency_sign_to_text(this_account_currency.group()),
+                "amount": new_balance.group()
+                },
             "value": {
                 "currency": currency_sign_to_text(this_account_currency.group()),
-                "amount": float(amount.group())
+                "amount": amount.group()
             },
             "other_data": input_row[5]
             }
@@ -117,7 +120,7 @@ def parse_row_of_csv(csv_file_to_parse):
             
             #print "In the JSON is:\n%s" % json_out_correter(obp_transaction_dict)
             result = insert_into_scala(SCALA_HOST,SCALA_PORT,json_out_correter(obp_transaction_dict))
-            #print result
+            #print result.text
 
 
 
