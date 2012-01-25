@@ -49,11 +49,19 @@ def import_from_postbank_realuser():
 def main():
     # Getting the raw CSV file from PB.
     unconverted_file = import_from_postbank_testuser()
+    # We need to convert it to UTF-8, else Python can't work with it.
     csv_file = libs.to_utf8.main(unconverted_file)
+    # Before we can read the CSV, we remove all empty newlines, else the
+    # CSV Parser stops working.
     libs.import_helper.remove_empty_lines(csv_file)
+    # Now reading the file and push it to the Scala API
+    # TODO: It would be better, when we just getting the JSON back and 
+    # then we can descide how to insert. 
     libs.csv_importer.main(csv_file)
 
-
+    # TODO:
+    # Need a clean up of the tmp/ folder
+    #libs.import_helper.clean_up()
 
 
 
