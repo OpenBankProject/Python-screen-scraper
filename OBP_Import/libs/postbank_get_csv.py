@@ -30,6 +30,7 @@ to win32 systems)
 
 import os
 import time
+import getpass
 
 
 from sys import exit
@@ -67,8 +68,12 @@ def check_for_clean_tmp():
     return csv_save_path
 
 
-def set_selenium_login(Username,Password):
-    pass
+def set_bankaccount_login():
+    # THis will return the Usernmae,Password`
+     Username =  getpass.getuser()
+     Pasword = getpass.getpass()
+     return Username,Pasword
+    
 
 
 
@@ -94,7 +99,6 @@ def get_csv_with_selenium(csv_save_path):
     browser.get("https://banking.postbank.de/rai/login") # Load page
     assert "Postbank Online-Banking" in browser.title
 
-    """
     # Here we will inserting Username and Password:
     # find the element that's name attribute is nutzername  and kennword
     inputElement_username = driver.find_element_by_name("nutzername")
@@ -106,7 +110,6 @@ def get_csv_with_selenium(csv_save_path):
     inputElement_password.submit()
 
     # This may change the Login or/and the page count number. So may have to change the URL
-    """
 
     # This open the Main Page for Accounts, check for the Name and wait 2 secounds.
     browser.get("https://banking.postbank.de/rai/login/wicket:interface/:0:login:demokontoLink::ILinkListener::")
