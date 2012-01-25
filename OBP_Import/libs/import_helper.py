@@ -2,6 +2,7 @@
 import os
 import sys
 import re
+import fileinput
 #from debugger import debug
 
 def get_bank_account():
@@ -23,6 +24,18 @@ def check_for_existing_csv(input_file):
 def json_out_correter(JSON_to_print):
     # This will remove the first [ and the last ].
     return re.sub(r'^\[|\]$', ' ', JSON_to_print)
+
+
+def remove_empty_lines(INPUT):
+    # There is a problem reading the CSV File with a empty
+    # newline, so this will remove it. 
+    # This example, found on:
+    # http://ubuntuforums.org/showthread.php?t=302914
+    for lines in fileinput.FileInput(INPUT, inplace=1):    
+        lines = lines.strip()
+        if lines == '': 
+            continue
+        print lines
 
 
 
@@ -48,4 +61,7 @@ def preperar_csv_file(path_to_saved_csv):
 def show_here():
     return os.getcwd()
 
+def clean_up():
+    # This function will clean up in the end all files from tmp/
+    pass
 

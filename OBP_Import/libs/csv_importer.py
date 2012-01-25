@@ -82,25 +82,12 @@ def get_info_from_row(input_row):
     }}
     }],sort_keys=False)
 
-    print obp_transaction_data
-    '''
-    obp_transaction_dict = {
-                            u'obp_transaction_date_start': 
-                            ,u'obp_transaction_date_complete':
-                            ,u'obp_transaction_transaction_type_de':
-                            ,u'obp_transaction_comment1': 
-                            ,u'obp_transaction_comment2': 
-                            ,u'obp_transaction_data_blob': 
-                            ,u'obp_transaction_amount': 
-                            ,u'obp_transaction_new_balance':float(new_balance.group())
-                            }
-    #print obp_transaction_dict
-    '''
+    #print obp_transaction_data
     return obp_transaction_data
 
 
 
-def parse_row_of_csv(csv_file_to_parse,collection):
+def parse_row_of_csv(csv_file_to_parse):
 
         delimiter = ';'
         quote_char = '"'
@@ -121,43 +108,19 @@ def parse_row_of_csv(csv_file_to_parse,collection):
                 continue
             else:
                 obp_transaction_dict = get_info_from_row(row)
-                # Will now formating obp_string to json
-                # We reading a Unicode File. That makes the € to a /xasd, 
-                # Will call a dic which get decode from the BSON, so we can insert
-                # the single elements not as unicode string. 
-                # We inserting also some Information like time(even with tz)
-                # and hostname, this should change later to Public IP etc...
-                '''
-                posting = son.SON({
-                         'bank_account':
-                        ,'uploader_host': gethostname()
-                        ,'insert_date': datetime.datetime.utcnow()
-                        ,'obp_transaction': obp_transaction_dict
-                        })
-                '''
-            # This will print the no binary JSON, that get insert to mongodb
-            # TODO: Need to create Uniq Indexes.
-            # To ensure that a Transaction is always uniq
-            # LINK: http://www.mongodb.org/display/DOCS/Indexes#Indexes-UniqueIndexes
             
-            #print "In the JSON is:\n%s" % json_out_correter(obp_transaction_dict)
+            print "In the JSON is:\n%s" % json_out_correter(obp_transaction_dict)
             result = insert_into_scala(SCALA_HOST,SCALA_PORT,json_out_correter(obp_transaction_dict))
-            # Inserting the finisch JSON to the collection 
-            #result = insert_into_mongodb(collection,posting) 
-            # plural name, no spaces -> singular no spaces model name in Lift mongo record
+            print result
 
 
 
 
 def main(CSV_input):
-
+    # Will first check for file. 
     check_for_existing_csv(CSV_input)
-
-    connection = connect_to_mongod(MONGODB_SERVER,MONGODB_SERVER_PORT)
-    database = connect_to_mongod_db(connection,MONGODB_DATABASE)
-    collection = mongodb_to_collection(database,MONGODB_COLLECTION)
-    parse_row_of_csv(CSV_input,collection)
+    parse_row_of_csv(CSV_input)
 
 
 if __name__ == '__main__':
-    main('/home/akendo/Work/Tesobe/Pro/Git/try_out/OBP_Import/tmp/PB_Umsatzauskunft_KtoNr9999999999_24-01-2012_1612.csv')
+    print 'Hallo'
