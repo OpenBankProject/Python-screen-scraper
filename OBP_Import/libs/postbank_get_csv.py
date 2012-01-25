@@ -49,6 +49,7 @@ def check_for_clean_tmp():
 
     # Sanity Check #1: 
     # Do we have tmp/ and tmp/csv
+    # TODO: Move this to import_helper
 
     if os.path.exists(TMP) !=  True:
         os.makedirs(TMP)
@@ -64,6 +65,11 @@ def check_for_clean_tmp():
             os.remove(os.path.join(csv_save_path,item))
 
     return csv_save_path
+
+
+def set_selenium_login(Username,Password):
+    pass
+
 
 
 def get_csv_with_selenium(csv_save_path):
@@ -88,21 +94,32 @@ def get_csv_with_selenium(csv_save_path):
     browser.get("https://banking.postbank.de/rai/login") # Load page
     assert "Postbank Online-Banking" in browser.title
 
+    """
+    # Here we will inserting Username and Password:
+    # find the element that's name attribute is nutzername  and kennword
+    inputElement_username = driver.find_element_by_name("nutzername")
+    inputElement_password = driver.find_element_by_name("kennwort")
+    inputElement_username.send_keys(Username)
+    inputElement_password.send_keys(Password)
+
+    # submit the form (although google automatically searches now without submitting)
+    inputElement_password.submit()
+
+    # This may change the Login or/and the page count number. So may have to change the URL
+    """
+
     # This open the Main Page for Accounts, check for the Name and wait 2 secounds.
     browser.get("https://banking.postbank.de/rai/login/wicket:interface/:0:login:demokontoLink::ILinkListener::")
     assert "Postbank Online-Banking" in browser.title 
-    time.sleep(2)
 
     # Call the Transaction Page
     browser.get("https://banking.postbank.de/rai/?wicket:bookmarkablePage=:de.postbank.ucp.application.rai.fs.umsatzauskunft.UmsatzauskunftPage")
-    time.sleep(2)
     
     # Call the CSV Link.
     # Warning!
     # The Postbank uses a :page counter, when the URL doesn't have the right page counter it will return
     # a error message. 
     result = browser.get("https://banking.postbank.de/rai/?wicket:interface=:3:umsatzauskunftpanel:panel:form:umsatzanzeigeGiro:umsatzaktionen:umsatzanzeigeUndFilterungDownloadlinksPanel:csvHerunterladen::IResourceListener::")
-    time.sleep(2)
     browser.close()
     return result
 
