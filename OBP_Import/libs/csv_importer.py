@@ -32,8 +32,7 @@ from import_helper import *
 from debugger import debug
 from scala_api_handler import insert_into_scala
 
-
-sys.path.append("/home/akendo/Work/Tesobe/Pro/Git/try_out/OBP_Import")
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 from obp_config import *
 
 
@@ -141,8 +140,8 @@ def parse_row_of_csv(csv_file_to_parse,collection):
             # To ensure that a Transaction is always uniq
             # LINK: http://www.mongodb.org/display/DOCS/Indexes#Indexes-UniqueIndexes
             
-            print "In the JSON is:\n%s" % json_out_correter(obp_transaction_dict)
-            insert_into_scala(json_out_correter(obp_transaction_dict))
+            #print "In the JSON is:\n%s" % json_out_correter(obp_transaction_dict)
+            result = insert_into_scala(SCALA_HOST,SCALA_PORT,json_out_correter(obp_transaction_dict))
             # Inserting the finisch JSON to the collection 
             #result = insert_into_mongodb(collection,posting) 
             # plural name, no spaces -> singular no spaces model name in Lift mongo record

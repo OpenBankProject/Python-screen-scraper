@@ -24,20 +24,22 @@ import sys
 import os
 import requests
 
-
-
 from debugger import debug
 from import_helper import *
-sys.path.append(
-    os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
+#sys.path.append(
+    #os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 
-import obp_config
+#import obp_config
 
+#def check_scala_host( ):
+#TODO Need a Connecition checker
 
-
-def insert_into_scala(JSON_to_insert):
-    r = requests.post("http://192.168.1.57:55888/api/transactions", data=JSON_to_insert)
-    return r
+def insert_into_scala(scala_api_host,scala_api_port,JSON_to_insert):
+    # This 
+    headers = {'content-type': 'application/json'}
+    post_request = requests.post("http://"+scala_api_host+":"+scala_api_port+"/api/transactions", 
+                        data=JSON_to_insert,headers=headers)
+    return post_request
 
 
 def main():
