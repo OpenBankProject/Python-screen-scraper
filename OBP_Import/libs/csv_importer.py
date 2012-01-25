@@ -115,9 +115,9 @@ def parse_row_of_csv(csv_file_to_parse):
             else:
                 obp_transaction_dict = get_info_from_row(row)
             
-            print "In the JSON is:\n%s" % json_out_correter(obp_transaction_dict)
+            #print "In the JSON is:\n%s" % json_out_correter(obp_transaction_dict)
             result = insert_into_scala(SCALA_HOST,SCALA_PORT,json_out_correter(obp_transaction_dict))
-            print result
+            #print result
 
 
 
