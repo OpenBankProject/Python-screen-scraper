@@ -29,13 +29,14 @@ to win32 systems)
 
 
 import os
-import time
+import sys
 import getpass
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 
-from sys import exit
+
 from obp_config import TMP
-from libs.import_helper import *
+from libs.import_helper import show_here
 from libs.debugger import debug
 from selenium import webdriver
 
@@ -70,8 +71,14 @@ def check_for_clean_tmp():
 
 def set_bankaccount_login():
     # THis will return the Usernmae,Password`
-     Username =  getpass.getuser()
+    for line in sys.stdin:
+        print line
+        if len(line)
+        line = Username
+        
      Pasword = getpass.getpass()
+     # We know from the Webpage that we need at least 5 charater,
+     # reutrn error when password doesn't contain 5 chararters
      return Username,Pasword
     
 
@@ -95,16 +102,20 @@ def get_csv_with_selenium(csv_save_path):
     fp.set_preference("browser.helperApps.neverAsk.saveToDisk","text/csv")
 
 
+    login_data = set_bankaccount_login() 
+
+
     browser = webdriver.Firefox(firefox_profile=fp) # Get local session of firefox
     browser.get("https://banking.postbank.de/rai/login") # Load page
     assert "Postbank Online-Banking" in browser.title
 
     # Here we will inserting Username and Password:
     # find the element that's name attribute is nutzername  and kennword
-    inputElement_username = driver.find_element_by_name("nutzername")
-    inputElement_password = driver.find_element_by_name("kennwort")
-    inputElement_username.send_keys(Username)
-    inputElement_password.send_keys(Password)
+    debug()
+    inputElement_username = browser.find_element_by_name("nutzername")
+    inputElement_password = browser.find_element_by_name("kennwort")
+    inputElement_username.send_keys(login_data[0])
+    inputElement_password.send_keys(login_data[1])
 
     # submit the form (although google automatically searches now without submitting)
     inputElement_password.submit()
@@ -112,8 +123,8 @@ def get_csv_with_selenium(csv_save_path):
     # This may change the Login or/and the page count number. So may have to change the URL
 
     # This open the Main Page for Accounts, check for the Name and wait 2 secounds.
-    browser.get("https://banking.postbank.de/rai/login/wicket:interface/:0:login:demokontoLink::ILinkListener::")
-    assert "Postbank Online-Banking" in browser.title 
+    #browser.get("https://banking.postbank.de/rai/login/wicket:interface/:0:login:demokontoLink::ILinkListener::")
+    #assert "Postbank Online-Banking" in browser.title 
 
     # Call the Transaction Page
     browser.get("https://banking.postbank.de/rai/?wicket:bookmarkablePage=:de.postbank.ucp.application.rai.fs.umsatzauskunft.UmsatzauskunftPage")
