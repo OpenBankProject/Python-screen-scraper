@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*
+    
 __author__ = ['Jan Alexander Slabiak (alex@tesobe.com)']
 __license__ = """
   Copyright 2011/2012 Music Pictures Ltd / TESOBE
@@ -26,6 +27,11 @@ import hashlib
 
 #from postbank_get_csv import check_for_clean_tmp
 #from debugger import debug
+
+def output_with_date():
+    return datetime.date.today().strftime('[%d, %h %Y,%H:%M:%S]')
+    
+    
 
 def get_bank_account():
     #TODO: This have to get the Bank Account Number

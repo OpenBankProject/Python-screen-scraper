@@ -66,8 +66,10 @@ def main():
     while True:
         try:
             postbank_to_obp(logindata[0],logindata[1])
+        except KeyboardInterrupt:
+                raise
         except:        
-            print "Something went wrong"
+            print  "%s:Something went wrong" % libs.import_helper.output_with_date()
 
 
 
