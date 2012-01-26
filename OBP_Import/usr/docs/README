@@ -8,11 +8,11 @@ Software Requierments:
  =>simple_json-1.1
  =>requests-0.10
 
-A addional Host Entry that points out for obp_mongodb
 
 
-Example:
-ping obp_mongo
+Importen Note!
+We need UTF-8 in the bash envoirment!
+
 
 
 
