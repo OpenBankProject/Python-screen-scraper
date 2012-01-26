@@ -18,12 +18,7 @@ __license__ = """
    limitations under the License.
 """
 
-#import obp_config
-#import getpass
 import os
-import sys
-
-
 import obp_config
 import libs.to_utf8
 import libs.postbank_get_csv
@@ -31,7 +26,6 @@ import libs.import_helper
 import libs.csv_importer
 
 from time import sleep
-from libs.debugger import debug
 
 
 def import_from_postbank(Username,Password):
@@ -43,34 +37,39 @@ def import_from_postbank(Username,Password):
     return csv_path_to
 
 
-def main():
+def postbank_to_obp(Username,Password):
+    # Getting the raw CSV file from PB.
+    unconverted_file = import_from_postbank(Username,Password)
+    # We need to convert it to UTF-8, else Python can't work with it.
+    csv_file = libs.to_utf8.main(unconverted_file)
+    # Before we can read the CSV, we remove all empty newlines, else the
+    # CSV Parser stops working.
+    libs.import_helper.remove_empty_lines(csv_file)
+    # Now reading the file and push it to the Scala API
+    # TODO: It would be better, when we just getting the JSON back and 
+    # then we can descide how to insert. 
+    libs.csv_importer.main(csv_file)
 
+    libs.postbank_get_csv.check_for_clean_tmp()
+    libs.import_helper.clean_up(obp_config.TMP)
+    # After that wait 10 minutes
+    sleep((10*60))
+
+
+def main():
     # This will make sure that the passwor has the 5 let
     logindata = libs.import_helper.set_bankaccount_login()
     while len(logindata[1]) != 5 :
         print "Password hast to contain 5 letters"
         logindata = libs.import_helper.set_bankaccount_login()
-
+    
     while True:
-        # Getting the raw CSV file from PB.
-        unconverted_file = import_from_postbank(logindata[0],logindata[1])
-        # We need to convert it to UTF-8, else Python can't work with it.
-        csv_file = libs.to_utf8.main(unconverted_file)
-        # Before we can read the CSV, we remove all empty newlines, else the
-        # CSV Parser stops working.
-        libs.import_helper.remove_empty_lines(csv_file)
-        # Now reading the file and push it to the Scala API
-        # TODO: It would be better, when we just getting the JSON back and 
-        # then we can descide how to insert. 
-        libs.csv_importer.main(csv_file)
-
-        # TODO:
-        # Need a clean up of the tmp/ folder
-        #libs.import_helper.clean_up()
-        libs.postbank_get_csv.check_for_clean_tmp()
-        # After that wait 10 minutes
-        
-        sleep((10*60))
+        try:
+            postbank_to_obp(logindata[0],logindata[1])
+        except KeyboardInterrupt:
+                raise
+        except:        
+            print  "%s:Something went wrong" % libs.import_helper.output_with_date()
 
 
 

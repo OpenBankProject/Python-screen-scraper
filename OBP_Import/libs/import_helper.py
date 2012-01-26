@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*
+    
 __author__ = ['Jan Alexander Slabiak (alex@tesobe.com)']
 __license__ = """
   Copyright 2011/2012 Music Pictures Ltd / TESOBE
@@ -21,10 +22,16 @@ import re
 import fileinput
 import getpass
 import datetime
+import hashlib
 
 
 #from postbank_get_csv import check_for_clean_tmp
 #from debugger import debug
+
+def output_with_date():
+    return datetime.date.today().strftime('[%d, %h %Y,%H:%M:%S]')
+    
+    
 
 def get_bank_account():
     #TODO: This have to get the Bank Account Number
@@ -101,6 +108,40 @@ def convert_date(date_to_convert):
     datetime.datetime.combine(to_convert,zero_time)
     return datetime.datetime.strftime(to_convert, "%Y-%m-%dT%H:%M:%S.001Z")
 
+
+def check_hash(HASH_CHECK):
+    if len(HASH_CHECK) != 128:
+        print "No hash"
+        raise
+    else:
+        return HASH_CHECK
+
+
+def create_hash(VALUE_TO_HASH):
+    # This will create a hash and return it
+    data_hash = hashlib.sha512(VALUE_TO_HASH).hexdigest()
+    return check_hash(data_hash)
+
+
+def check_existing_hash(HASH_TO_CHECK,FILE):
+    valid_hash = check_hash(HASH_TO_CHECK)
+    with open(FILE,'r') as file_where_hash_is:
+        for saved_hashes in file_where_hash_is.readlines():
+            if valid_hash == saved_hashes.strip():
+                return True
+
+
+
+
+def inserting_hash(HASH_TO_INSERT,FILE):
+    valid_hash = check_hash(HASH_TO_INSERT)
+    if check_existing_hash(valid_hash,FILE) != True:
+        file_to_write = open(FILE,'a')
+        file_to_write.write(valid_hash + '\n')
+        file_to_write.close()
+        return True
+    else:
+        return False
     
 
 
@@ -120,8 +161,12 @@ def show_here():
 def clean_up(INPUT):
     # This function will clean up in the end all files from tmp/
     #check_for_clean_tmp()
+    here = show_here ()
+    os.chdir(INPUT)
     for item in os.listdir(INPUT):
-        os.remove(item)
-    
+        if os.path.isdir(item) == False:
+            os.remove(item)
+
+    os.chdir(here) 
 
 

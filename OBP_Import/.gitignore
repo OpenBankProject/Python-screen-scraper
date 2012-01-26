@@ -40,3 +40,5 @@ Thumbs.db
 *.svn
 *.swp
 *.ropeproject/
+
+var/cache
