@@ -47,7 +47,7 @@ def get_info_from_row(input_row):
     new_balance = re.match("[+-]?((\d+(\.\d*)?)|\.\d+)([eE][+-]?[0-9]+)?",comma_to_dot_new_balance)
                             
 
-    this_account_name = csv_header_info[1]
+    this_account_holder = csv_header_info[1]
     this_account_IBAN = csv_header_info[4]
     this_account_number = csv_header_info[3]
     # There is still some Value inside, we need to remove
@@ -57,13 +57,18 @@ def get_info_from_row(input_row):
     this_account_ni = "" # ni = national_identifier
     this_account_bank_name = 'Postbank'
 
-    #debug()
+    if input_row[5].rstrip() != this_account_holder[1]:
+        other_account_holder = input_row[5].rstrip()
+    else:
+        other_account_holder = input_row[4].rstrip()
+
+
 
     obp_transaction_data = json.dumps([
     {
     "obp_transaction":{ 
         "this_account": {
-            "holder": this_account_name[1],
+            "holder": this_account_holder[1],
             "number": this_account_number[1],
             "kind": this_account_kind,
          "bank": {
@@ -73,7 +78,7 @@ def get_info_from_row(input_row):
             }
         },
         "other_account": {
-            "holder": input_row[5].rstrip(), 
+            "holder": other_account_holder, 
             "number": input_row[3].rstrip(),
             "kind": "",
             "bank": {
