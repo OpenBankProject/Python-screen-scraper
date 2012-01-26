@@ -102,23 +102,47 @@ def convert_date(date_to_convert):
     datetime.datetime.combine(to_convert,zero_time)
     return datetime.datetime.strftime(to_convert, "%Y-%m-%dT%H:%M:%S.001Z")
 
-   
+
+def check_hash(HASH_CHECK):
+    if len(HASH_CHECK) != 128:
+        print "No hash"
+        raise
+    else:
+        return HASH_CHECK
+
+
+
 def create_hash(VALUE_TO_HASH):
     # This will create a hash and return it
     data_hash = hashlib.sha512(VALUE_TO_HASH).hexdigest()
-    return data_hash
+    return check_hash(data_hash)
 
 
-def inserting_hash(HASH__ FILE)
-    pass
+def check_existing_hash(HASH_TO_CHECK,FILE):
+    valid_hash = check_hash(HASH_TO_CHECK)
+    file_where_hash_is = open(FILE,'r')
+    for saved_hashes in file_where_hash_is:
+        if valid_hash == saved_hashes:
+            return True
+            break
+        elif None == saved_hashes:
+            return False
+        else: 
+            continue
+
+
+
+def inserting_hash(HASH_TO_INSERT,FILE):
+    valid_hash = check_hash(HASH_TO_INSERT)
+    check_existing_hash(valid_hash,FILE)
+    file_to_write = open(FILE,'a')
+    file_to_write.write(valid_hash)
+    file_to_write.close()
+    
 
     
 
-
-def check_hash_for_already_existing(HASH_TO_CHECK,FILE)
-    if len(VALUE_TO_HASH) != 128:
-        print "No hash values!"
-        return None
+        
     
 
 
