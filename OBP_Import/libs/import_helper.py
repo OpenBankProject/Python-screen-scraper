@@ -21,10 +21,11 @@ import re
 import fileinput
 import getpass
 import datetime
+import hashlib
 
 
 #from postbank_get_csv import check_for_clean_tmp
-#from debugger import debug
+from debugger import debug
 
 def get_bank_account():
     #TODO: This have to get the Bank Account Number
@@ -101,6 +102,50 @@ def convert_date(date_to_convert):
     datetime.datetime.combine(to_convert,zero_time)
     return datetime.datetime.strftime(to_convert, "%Y-%m-%dT%H:%M:%S.001Z")
 
+
+def check_hash(HASH_CHECK):
+    if len(HASH_CHECK) != 128:
+        print "No hash"
+        raise
+    else:
+        return HASH_CHECK
+
+
+def create_hash(VALUE_TO_HASH):
+    # This will create a hash and return it
+    data_hash = hashlib.sha512(VALUE_TO_HASH).hexdigest()
+    return check_hash(data_hash)
+
+
+def check_existing_hash(HASH_TO_CHECK,FILE):
+    valid_hash = check_hash(HASH_TO_CHECK)
+    print 'check_existing_hash: valid_hash is:',valid_hash
+    with open(FILE,'r') as file_where_hash_is:
+        for saved_hashes in file_where_hash_is.readlines():
+            print saved_hashes
+            if valid_hash == saved_hashes.strip():
+
+                print valid_hash
+                print saved_hashes
+                return True
+
+
+
+
+def inserting_hash(HASH_TO_INSERT,FILE):
+    print "validing Hash"
+    valid_hash = check_hash(HASH_TO_INSERT)
+    print "Hash is",valid_hash
+    if check_existing_hash(valid_hash,FILE) != True:
+        file_to_write = open(FILE,'a')
+        print "Opening file"
+        file_to_write.write(valid_hash + '\n')
+        print "Wirting to file with",valid_hash
+        file_to_write.close()
+        print "Close file"
+        return True
+    else:
+        return False
     
 
 
