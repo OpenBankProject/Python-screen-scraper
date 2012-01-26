@@ -4,7 +4,9 @@
 from __future__ import with_statement
 
 import os
+import sys
 import codecs
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 from obp_config import TMP
 
 __author__ = [' Jan Alexander Slabiak (alex@tesobe.com)']
