@@ -21,6 +21,7 @@ import re
 import fileinput
 import getpass
 import datetime
+import hashlib
 
 
 #from postbank_get_csv import check_for_clean_tmp
@@ -101,6 +102,23 @@ def convert_date(date_to_convert):
     datetime.datetime.combine(to_convert,zero_time)
     return datetime.datetime.strftime(to_convert, "%Y-%m-%dT%H:%M:%S.001Z")
 
+   
+def create_hash(VALUE_TO_HASH):
+    # This will create a hash and return it
+    data_hash = hashlib.sha512(VALUE_TO_HASH).hexdigest()
+    return data_hash
+
+
+def inserting_hash(HASH__ FILE)
+    pass
+
+    
+
+
+def check_hash_for_already_existing(HASH_TO_CHECK,FILE)
+    if len(VALUE_TO_HASH) != 128:
+        print "No hash values!"
+        return None
     
 
 
