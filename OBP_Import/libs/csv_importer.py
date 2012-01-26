@@ -57,7 +57,7 @@ def get_info_from_row(input_row):
     this_account_ni = "" # ni = national_identifier
     this_account_bank_name = 'Postbank'
 
-    debug()
+    #debug()
 
     obp_transaction_data = json.dumps([
     {
