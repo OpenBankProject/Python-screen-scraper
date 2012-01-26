@@ -18,12 +18,7 @@ __license__ = """
    limitations under the License.
 """
 
-#import obp_config
-#import getpass
 import os
-#import sys
-
-
 import obp_config
 import libs.to_utf8
 import libs.postbank_get_csv
@@ -31,7 +26,6 @@ import libs.import_helper
 import libs.csv_importer
 
 from time import sleep
-#from libs.debugger import debug
 
 
 def import_from_postbank(Username,Password):
@@ -61,8 +55,8 @@ def postbank_to_obp(Username,Password):
     # After that wait 10 minutes
     sleep((10*60))
 
-def main():
 
+def main():
     # This will make sure that the passwor has the 5 let
     logindata = libs.import_helper.set_bankaccount_login()
     while len(logindata[1]) != 5 :
@@ -74,6 +68,7 @@ def main():
             postbank_to_obp(logindata[0],logindata[1])
         except:        
             print "Something went wrong"
+
 
 
 if __name__ == '__main__':
