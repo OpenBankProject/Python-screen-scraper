@@ -37,7 +37,7 @@ CSV_FILE_PATH = 'usr/PB_Umsatzauskunft_198_rows.csv'
 HTML_FILE_PATH = 'Postbank-Online-Banking_100_days_minus_javascript_cut_down.html'
 
 
-SCALA_HOST='192.168.1.83'
-SCALA_PORT='5588'
+SCALA_HOST='localhost'
+SCALA_PORT='8080'
 
 HASH_FILE = 'var/cache'
