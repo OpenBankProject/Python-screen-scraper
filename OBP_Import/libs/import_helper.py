@@ -25,7 +25,7 @@ import hashlib
 
 
 #from postbank_get_csv import check_for_clean_tmp
-#from debugger import debug
+from debugger import debug
 
 def get_bank_account():
     #TODO: This have to get the Bank Account Number
@@ -120,29 +120,29 @@ def create_hash(VALUE_TO_HASH):
 
 def check_existing_hash(HASH_TO_CHECK,FILE):
     valid_hash = check_hash(HASH_TO_CHECK)
-    file_where_hash_is = open(FILE,'r')
-    for saved_hashes in file_where_hash_is:
-        if valid_hash == saved_hashes:
-            return True
-            break
-        elif None == saved_hashes:
-            return False
-        else: 
-            continue
+    print 'check_existing_hash: valid_hash is:',valid_hash
+    with open(FILE,'r') as file_where_hash_is:
+        for saved_hashes in file_where_hash_is.readline():
+            if valid_hash == saved_hashes.strip():
+                debug()
+                print valid_hash
+                print saved_hashes
+                return True
+
 
 
 
 def inserting_hash(HASH_TO_INSERT,FILE):
+    print "validing Hash"
     valid_hash = check_hash(HASH_TO_INSERT)
-    check_existing_hash(valid_hash,FILE)
-    file_to_write = open(FILE,'a')
-    file_to_write.write(valid_hash)
-    file_to_write.close()
-    
-
-    
-
-        
+    print "Hash is",valid_hash
+    if check_existing_hash(valid_hash,FILE) != True:
+        file_to_write = open(FILE,'a')
+        print "Opening file"
+        file_to_write.write(valid_hash + '\n')
+        print "Wirting to file with",valid_hash
+        file_to_write.close()
+        print "Close file"
     
 
 
