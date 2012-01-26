@@ -39,3 +39,5 @@ HTML_FILE_PATH = 'Postbank-Online-Banking_100_days_minus_javascript_cut_down.htm
 
 SCALA_HOST='192.168.1.83'
 SCALA_PORT='5588'
+
+HASH_FILE = 'var/cache'

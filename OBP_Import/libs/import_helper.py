@@ -143,6 +143,9 @@ def inserting_hash(HASH_TO_INSERT,FILE):
         print "Wirting to file with",valid_hash
         file_to_write.close()
         print "Close file"
+        return True
+    else:
+        return False
     
 
 
