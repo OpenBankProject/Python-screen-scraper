@@ -3,7 +3,7 @@
 
 __author__ = [' Jan Alexander Slabiak (alex@tesobe.com)']
 __license__ = """
-  Copyright 2011 Music Pictures Ltd / TESOBE
+  Copyright 2011/2012 Music Pictures Ltd / TESOBE
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
