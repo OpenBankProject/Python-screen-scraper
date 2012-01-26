@@ -111,7 +111,6 @@ def check_hash(HASH_CHECK):
         return HASH_CHECK
 
 
-
 def create_hash(VALUE_TO_HASH):
     # This will create a hash and return it
     data_hash = hashlib.sha512(VALUE_TO_HASH).hexdigest()
@@ -122,9 +121,10 @@ def check_existing_hash(HASH_TO_CHECK,FILE):
     valid_hash = check_hash(HASH_TO_CHECK)
     print 'check_existing_hash: valid_hash is:',valid_hash
     with open(FILE,'r') as file_where_hash_is:
-        for saved_hashes in file_where_hash_is.readline():
+        for saved_hashes in file_where_hash_is.readlines():
+            print saved_hashes
             if valid_hash == saved_hashes.strip():
-                debug()
+
                 print valid_hash
                 print saved_hashes
                 return True
