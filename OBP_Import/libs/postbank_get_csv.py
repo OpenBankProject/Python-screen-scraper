@@ -30,10 +30,6 @@ to win32 systems)
 
 import os
 import sys
-import getpass
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
-
 
 from obp_config import TMP
 from libs.import_helper import show_here
@@ -69,21 +65,11 @@ def check_for_clean_tmp():
     return csv_save_path
 
 
-def set_bankaccount_login():
-    # THis will return the Usernmae,Password`
-    #for line in sys.stdin:
-     #   print line
-      #  if len(line)
-       # line = Username
-     Pasword = getpass.getpass()
-     # We know from the Webpage that we need at least 5 charater,
-     # reutrn error when password doesn't contain 5 chararters
-     return Username,Pasword
-    
+   
 
 
 
-def get_csv_with_selenium(csv_save_path):
+def get_csv_with_selenium(csv_save_path,Username,Password):
     # This will a simple login to the Demo APP of PostBank
     # When we need to add some login infomation, we need to find the input fields.
     # LINK: http://seleniumhq.org/docs/03_webdriver.html#getting-started-with-selenium-webdriver
@@ -100,9 +86,7 @@ def get_csv_with_selenium(csv_save_path):
     # Need to set CSV to saveToDisk, else it's unknown for FF and he will ask.
     fp.set_preference("browser.helperApps.neverAsk.saveToDisk","text/csv")
 
-
-    login_data = set_bankaccount_login() 
-
+    #debug()
 
     browser = webdriver.Firefox(firefox_profile=fp) # Get local session of firefox
     browser.get("https://banking.postbank.de/rai/login") # Load page
@@ -113,8 +97,8 @@ def get_csv_with_selenium(csv_save_path):
     #debug()
     inputElement_username = browser.find_element_by_name("nutzername")
     inputElement_password = browser.find_element_by_name("kennwort")
-    inputElement_username.send_keys(login_data[0])
-    inputElement_password.send_keys(login_data[1])
+    inputElement_username.send_keys(Username)
+    inputElement_password.send_keys(Password)
 
     # submit the form (although google automatically searches now without submitting)
     inputElement_password.submit()

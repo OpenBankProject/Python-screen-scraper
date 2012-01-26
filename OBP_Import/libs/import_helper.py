@@ -3,6 +3,9 @@ import os
 import sys
 import re
 import fileinput
+import getpass
+
+#from postbank_get_csv import check_for_clean_tmp
 #from debugger import debug
 
 def get_bank_account():
@@ -63,10 +66,23 @@ def currency_sign_to_text(currency_sign):
     return currency_sing_text_dic[currency_sign]
 
 
+def set_bankaccount_login():
+    # THis will return the Username,Password
+    Username  = raw_input("Username: ")
+    Pasword = getpass.getpass()
+    # We know from the Webpage that we need at least 5 charater,
+    # reutrn error when password doesn't contain 5 chararters
+    return Username,Pasword
+ 
+
 def show_here():
     return os.getcwd()
 
-def clean_up():
+def clean_up(INPUT):
     # This function will clean up in the end all files from tmp/
-    pass
+    #check_for_clean_tmp()
+    for item in os.listdir(obp_config.TMP):
+        os.remove(item)
+    
+
 
