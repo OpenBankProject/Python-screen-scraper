@@ -25,7 +25,7 @@ import hashlib
 
 
 #from postbank_get_csv import check_for_clean_tmp
-from debugger import debug
+#from debugger import debug
 
 def get_bank_account():
     #TODO: This have to get the Bank Account Number
@@ -155,8 +155,12 @@ def show_here():
 def clean_up(INPUT):
     # This function will clean up in the end all files from tmp/
     #check_for_clean_tmp()
+    here = show_here ()
+    os.chdir(INPUT)
     for item in os.listdir(INPUT):
-        os.remove(item)
-    
+        if os.path.isdir(item) == False:
+            os.remove(item)
+
+    os.chdir(here) 
 
 
