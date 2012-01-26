@@ -29,12 +29,10 @@ to win32 systems)
 
 
 import os
-import time
+import sys
 
-
-from sys import exit
 from obp_config import TMP
-from libs.import_helper import *
+from libs.import_helper import show_here
 from libs.debugger import debug
 from selenium import webdriver
 
@@ -67,12 +65,11 @@ def check_for_clean_tmp():
     return csv_save_path
 
 
-def set_selenium_login(Username,Password):
-    pass
+   
 
 
 
-def get_csv_with_selenium(csv_save_path):
+def get_csv_with_selenium(csv_save_path,Username,Password):
     # This will a simple login to the Demo APP of PostBank
     # When we need to add some login infomation, we need to find the input fields.
     # LINK: http://seleniumhq.org/docs/03_webdriver.html#getting-started-with-selenium-webdriver
@@ -89,16 +86,17 @@ def get_csv_with_selenium(csv_save_path):
     # Need to set CSV to saveToDisk, else it's unknown for FF and he will ask.
     fp.set_preference("browser.helperApps.neverAsk.saveToDisk","text/csv")
 
+    #debug()
 
     browser = webdriver.Firefox(firefox_profile=fp) # Get local session of firefox
     browser.get("https://banking.postbank.de/rai/login") # Load page
     assert "Postbank Online-Banking" in browser.title
 
-    """
     # Here we will inserting Username and Password:
     # find the element that's name attribute is nutzername  and kennword
-    inputElement_username = driver.find_element_by_name("nutzername")
-    inputElement_password = driver.find_element_by_name("kennwort")
+    #debug()
+    inputElement_username = browser.find_element_by_name("nutzername")
+    inputElement_password = browser.find_element_by_name("kennwort")
     inputElement_username.send_keys(Username)
     inputElement_password.send_keys(Password)
 
@@ -106,11 +104,10 @@ def get_csv_with_selenium(csv_save_path):
     inputElement_password.submit()
 
     # This may change the Login or/and the page count number. So may have to change the URL
-    """
 
     # This open the Main Page for Accounts, check for the Name and wait 2 secounds.
-    browser.get("https://banking.postbank.de/rai/login/wicket:interface/:0:login:demokontoLink::ILinkListener::")
-    assert "Postbank Online-Banking" in browser.title 
+    #browser.get("https://banking.postbank.de/rai/login/wicket:interface/:0:login:demokontoLink::ILinkListener::")
+    #assert "Postbank Online-Banking" in browser.title 
 
     # Call the Transaction Page
     browser.get("https://banking.postbank.de/rai/?wicket:bookmarkablePage=:de.postbank.ucp.application.rai.fs.umsatzauskunft.UmsatzauskunftPage")

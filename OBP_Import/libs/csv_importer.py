@@ -36,8 +36,15 @@ csv_header_info = []
 def get_info_from_row(input_row):
     # This regual expression search for all kind of Numbers in a string.
     # Also covering + and - 
-    amount = re.match("[+-]?((\d+(\.\d*)?)|\.\d+)([eE][+-]?[0-9]+)?", input_row[6])
-    new_balance = re.match("[+-]?((\d+(\.\d*)?)|\.\d+)([eE][+-]?[0-9]+)?",input_row[7])
+    # Before we have to remove any dot
+    dotless_amount = re.sub('\.','',input_row[6])
+    dotless_new_balance = re.sub('\.','',input_row[7])
+
+    comma_to_dot_amount = re.sub(',','.',dotless_amount)
+    comma_to_dot_new_balance= re.sub(',','.',dotless_new_balance)
+        
+    amount = re.match("[+-]?((\d+(\.\d*)?)|\.\d+)([eE][+-]?[0-9]+)?", comma_to_dot_amount)
+    new_balance = re.match("[+-]?((\d+(\.\d*)?)|\.\d+)([eE][+-]?[0-9]+)?",comma_to_dot_new_balance)
                             
 
     this_account_name = csv_header_info[1]
@@ -49,6 +56,7 @@ def get_info_from_row(input_row):
     this_account_kind = 'current'
     this_account_ni = "" # ni = national_identifier
     this_account_bank_name = 'Postbank'
+
     #debug()
 
     obp_transaction_data = json.dumps([
@@ -65,7 +73,7 @@ def get_info_from_row(input_row):
             }
         },
         "other_account": {
-            "holder": input_row[4].rstrip(), 
+            "holder": input_row[5].rstrip(), 
             "number": input_row[3].rstrip(),
             "kind": "",
             "bank": {
@@ -77,8 +85,12 @@ def get_info_from_row(input_row):
         "details": {
             "type_en": "",
             "type_de": input_row[2],
-            "posted": input_row[0],
-            "completed": input_row[1],
+            "posted": {
+                "$dt": convert_date(input_row[0])
+                },
+            "completed": {
+                "$dt": convert_date(input_row[1])
+                },
             "new_balance":{
                 "currency": currency_sign_to_text(this_account_currency.group()),
                 "amount": new_balance.group()
@@ -118,9 +130,10 @@ def parse_row_of_csv(csv_file_to_parse):
             else:
                 obp_transaction_dict = get_info_from_row(row)
             
-            #print "In the JSON is:\n%s" % json_out_correter(obp_transaction_dict)
+            print "In the JSON is:\n%s" % json_out_correter(obp_transaction_dict)
             result = insert_into_scala(SCALA_HOST,SCALA_PORT,json_out_correter(obp_transaction_dict))
-            #print result.text
+            print result
+            print result.text
 
 
 

@@ -1,8 +1,29 @@
 # -*- coding: utf-8 -*
+__author__ = ['Jan Alexander Slabiak (alex@tesobe.com)']
+__license__ = """
+  Copyright 2011 Music Pictures Ltd / TESOBE
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+"""
 import os
 import sys
 import re
 import fileinput
+import getpass
+import datetime
+
+
+#from postbank_get_csv import check_for_clean_tmp
 #from debugger import debug
 
 def get_bank_account():
@@ -63,10 +84,44 @@ def currency_sign_to_text(currency_sign):
     return currency_sing_text_dic[currency_sign]
 
 
+def convert_date(date_to_convert):
+    # Input date from german: "17.01.2011"
+    new_form = re.sub('\.',' ',date_to_convert)
+    date_parts = new_form.split()
+
+    day = date_parts[0]
+    mounth = date_parts[1]
+    year = date_parts[2]
+
+    zero_time = datetime.time(0,0,0)
+    to_convert = datetime.date(
+        int(year),
+        int(mounth),
+        int(day))
+    datetime.datetime.combine(to_convert,zero_time)
+    return datetime.datetime.strftime(to_convert, "%Y-%m-%dT%H:%M:%S.001Z")
+
+    
+
+
+def set_bankaccount_login():
+    # THis will return the Username,Password
+    Username  = raw_input("Username: ")
+    Pasword = getpass.getpass()
+    # We know from the Webpage that we need at least 5 charater,
+    # reutrn error when password doesn't contain 5 chararters
+    return Username,Pasword
+ 
+
 def show_here():
     return os.getcwd()
 
-def clean_up():
+
+def clean_up(INPUT):
     # This function will clean up in the end all files from tmp/
-    pass
+    #check_for_clean_tmp()
+    for item in os.listdir(INPUT):
+        os.remove(item)
+    
+
 
