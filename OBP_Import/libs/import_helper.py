@@ -25,7 +25,7 @@ import hashlib
 
 
 #from postbank_get_csv import check_for_clean_tmp
-from debugger import debug
+#from debugger import debug
 
 def get_bank_account():
     #TODO: This have to get the Bank Account Number
@@ -119,30 +119,20 @@ def create_hash(VALUE_TO_HASH):
 
 def check_existing_hash(HASH_TO_CHECK,FILE):
     valid_hash = check_hash(HASH_TO_CHECK)
-    print 'check_existing_hash: valid_hash is:',valid_hash
     with open(FILE,'r') as file_where_hash_is:
         for saved_hashes in file_where_hash_is.readlines():
-            print saved_hashes
             if valid_hash == saved_hashes.strip():
-
-                print valid_hash
-                print saved_hashes
                 return True
 
 
 
 
 def inserting_hash(HASH_TO_INSERT,FILE):
-    print "validing Hash"
     valid_hash = check_hash(HASH_TO_INSERT)
-    print "Hash is",valid_hash
     if check_existing_hash(valid_hash,FILE) != True:
         file_to_write = open(FILE,'a')
-        print "Opening file"
         file_to_write.write(valid_hash + '\n')
-        print "Wirting to file with",valid_hash
         file_to_write.close()
-        print "Close file"
         return True
     else:
         return False
@@ -165,8 +155,12 @@ def show_here():
 def clean_up(INPUT):
     # This function will clean up in the end all files from tmp/
     #check_for_clean_tmp()
+    here = show_here ()
+    os.chdir(INPUT)
     for item in os.listdir(INPUT):
-        os.remove(item)
-    
+        if os.path.isdir(item) == False:
+            os.remove(item)
+
+    os.chdir(here) 
 
 

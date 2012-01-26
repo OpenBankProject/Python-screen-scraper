@@ -68,6 +68,7 @@ def main():
         # Need a clean up of the tmp/ folder
         #libs.import_helper.clean_up()
         libs.postbank_get_csv.check_for_clean_tmp()
+        libs.import_helper.clean_up(obp_config.TMP)
         # After that wait 10 minutes
         
         sleep((10*60))
