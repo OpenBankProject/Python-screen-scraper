@@ -15,6 +15,12 @@ __license__ = """
    See the License for the specific language governing permissions and
    limitations under the License.
 """
+___doc___"""
+TODO: Using this Object!
+I'm no developer and have no much use to Python Object. This here is a approve of
+adapting a object to this Project. It hasn't use jet. Becourse we use a simple concept,
+what have to work first. 
+"""
 
 import obp_config
 
@@ -85,10 +91,6 @@ class obp_transaction:
         #if 
 
 
-
-        
-
-
     def set_currency(self):
 
         pass
@@ -104,19 +106,3 @@ class obp_transaction:
 
     def account_info(self):
         pass
-
-
-'''
-Buchungstag;Wertstellung;Umsatzart;Buchungsdetails;Auftraggeber;Empfänger;Betrag
-(€);Saldo (€)
-
-u'obp_transaction_date_start': input_row[0]
-u'obp_transaction_date_complete':input_row[1]
-
-u'obp_transaction_transaction_type_de':input_row[2]
-u'obp_transaction_comment1': input_row[3].rstrip()
-u'obp_transaction_comment2': input_row[4].rstrip()
-u'obp_transaction_data_blob': input_row[5]
-u'obp_transaction_amount': amount.group()
-u'obp_transaction_new_balance': new_balance.group()
-'''

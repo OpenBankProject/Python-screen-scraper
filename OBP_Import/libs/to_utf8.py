@@ -29,20 +29,21 @@ __license__ = """
 __doc__ = """
 This program will convert a latin1 file to UTF-8.
 
+That code comes from stackoverflow. 
+LINK: http://stackoverflow.com/questions/191359/how-to-convert-a-file-to-utf-8-in-python
 """
 
 
-
+# We assume this is default for the CSV FILE.
+# TODO: Move to obp_config
 sourceFormats = ['windows-1252']
-#sourceFormats = ['iso-8859-15']
 targetFormat = 'utf-8'
-#outputDir = '/tmp'
 outputDir = TMP
-#INPUT_FILE = 'test_example_latin1.csv'
 
 
 
 def convertFile(fileName):
+    """Will convert a file to UTF-8"""
     for format in sourceFormats:
         try:
             with codecs.open(fileName, 'rU', format) as sourceFile:
@@ -61,7 +62,7 @@ def writeConversion(file):
 
 
 def spilt_path(unclean_input):
-    # First check for a real path, else return None,filename
+    """First check for a real path, else return None,filename"""
     if os.path.exists(unclean_input) ==  True:
         return os.path.split(unclean_input)
     else:
@@ -70,9 +71,12 @@ def spilt_path(unclean_input):
 
 
 def main(input_file):
+    """Will convert a file to UTF-8 and return the Path + File"""
     # Get pwd
     here = os.getcwd()
+    #Need the filename as Globle so other function can access to it.
     global fileName
+    # Spilte the Input into Filepath and Fle Name
     filePath = spilt_path(input_file)[0]
     fileName = spilt_path(input_file)[1]
     
@@ -81,8 +85,9 @@ def main(input_file):
         os.chdir(filePath)
     except: IOError
 
-
+    # Now convert it
     convertFile(fileName)
+    # going back to orgin folder 
     os.chdir(here)
     return os.path.join(TMP,fileName)
 
