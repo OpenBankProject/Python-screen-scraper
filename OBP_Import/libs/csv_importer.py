@@ -179,5 +179,5 @@ def main(CSV_input):
     parse_row_of_csv(CSV_input)
 
 
-if __name__ == '__main__'
+if __name__ == '__main__':
     main(obp_config.CSV_FILE_PATH)
