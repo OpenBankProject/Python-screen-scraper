@@ -21,11 +21,15 @@ This will contain a handler to insert JSON over a Scala Lift API to a database b
 
 
 import requests
+# liburl2 for Human:
+# LINK: http://kennethreitz.com/requests-python-http-module.html
 from urllib2 import HTTPError
 
 
-
 def check_scala_host_reachable(scala_api_host,scala_api_port):
+    """Try to check for a reachable System"""
+    # Try to call the URL:PORT/
+    # Excpet an HTTP Error, else raise! 
     try:
         requests.get('http://'+scala_api_host+':'+scala_api_port+'/',timeout=5)
     except HTTPError:
@@ -36,15 +40,20 @@ def check_scala_host_reachable(scala_api_host,scala_api_port):
     
 
 def insert_into_scala(scala_api_host,scala_api_port,JSON_to_insert):
-    # This wil
+    """Inserting Data via POST into a URL"""
+    # This will insert the JSON Data into the API. 
     check_scala_host_reachable(scala_api_host,scala_api_port)
+    # Need to set content-type to JSON, else expection text as content.
     headers = {'content-type': 'application/json'}
     post_request = requests.post("http://"+scala_api_host+":"+scala_api_port+"/api/transactions", 
                         data=JSON_to_insert,headers=headers)
+    # Return the http status code. 
     return post_request
 
 
 def main():
+    # TODO:
+    # Should be check for JSON input.
     pass
 
 

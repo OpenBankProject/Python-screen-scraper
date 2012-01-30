@@ -1,5 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*
+__doc__ = """
+This is the main program, it will call all need function
+to get a CSV file from Postband then inserting it via
+Scala Lift API to the Database backend. 
+
+Currently you need a Scala API to insert data.
+LINK: https://github.com/OpenBankProject/OpenBankProject-Server
+"""
 
 __author__ = [' Jan Alexander Slabiak (alex@tesobe.com)']
 __license__ = """
@@ -29,7 +37,9 @@ from time import sleep
 
 
 def import_from_postbank(Username,Password):
-
+    # This function will call the postbank_get_csv file and starting the Selenium 
+    # Browser (Firefox) to access to Postbank. IT need a Username and a Password to run.
+    # TODO: When no Username and Password is set, use the demo login.
     csv_save_path = libs.postbank_get_csv.check_for_clean_tmp()    
     libs.postbank_get_csv.get_csv_with_selenium(csv_save_path,Username,Password)
     csv_file = libs.import_helper.preperar_csv_file(csv_save_path)
@@ -50,6 +60,7 @@ def postbank_to_obp(Username,Password):
     # then we can descide how to insert. 
     libs.csv_importer.main(csv_file)
 
+    # This will do a clean up and remove all files. 
     libs.postbank_get_csv.check_for_clean_tmp()
     libs.import_helper.clean_up(obp_config.TMP)
     # After that wait 10 minutes
@@ -62,13 +73,17 @@ def main():
     while len(logindata[1]) != 5 :
         print "Password hast to contain 5 letters"
         logindata = libs.import_helper.set_bankaccount_login()
-    
+   
+    # This is a forever loop. It will login so long till a Ctrl-C will be found. 
+    # TODO: Need handling of System singls to run this as a daemon.
     while True:
         try:
             postbank_to_obp(logindata[0],logindata[1])
+            # TODO: Need another exeption for not getting the CSV File.
         except KeyboardInterrupt:
                 raise 
-        except Exception, e:        
+        except Exception, e:       
+            # TODO: need a cleanup as well, just to be sure not sesible data left on the devies. 
             print "%s:Something went wrong" % libs.import_helper.output_with_date()
             print "Error is %s" % e 
             sleep(5)

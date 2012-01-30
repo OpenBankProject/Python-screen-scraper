@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-
+__doc__ = """
+This a esay debugger that call a pdb.
+"""
 __author__ = ['Jan Alexander Slabiak (alex@tesobe.com)']
 __license__ = """
   Copyright 2011/2012 Music Pictures Ltd / TESOBE
