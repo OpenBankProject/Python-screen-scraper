@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*
-    
+__doc__ = """
+This is a bundle of function that will help during the import process.
+"""
 __author__ = ['Jan Alexander Slabiak (alex@tesobe.com)']
 __license__ = """
   Copyright 2011/2012 Music Pictures Ltd / TESOBE
@@ -29,6 +31,7 @@ import hashlib
 #from debugger import debug
 
 def output_with_date():
+    # This will return a nice formated Date, for log like date output
     return datetime.date.today().strftime('[%d, %h %Y,%H:%M:%S]')
     
     
@@ -43,6 +46,7 @@ def check_for_existing_csv(input_file):
     # This function will check first for a real csv file.
     # Else expect an external input. This will get check too.
     # Start with the config file 
+    # TODO: Check for a real CSV FIle in more Detail
     if os.path.exists(input_file) ==  False:
         print "ERROR!"
         print "NO CSV FILE!"
@@ -50,6 +54,7 @@ def check_for_existing_csv(input_file):
 
 
 def json_out_correter(JSON_to_print):
+    # This is need for the API!
     # This will remove the first [ and the last ].
     return re.sub(r'^\[|\]$', ' ', JSON_to_print)
 
@@ -58,7 +63,7 @@ def remove_empty_lines(INPUT):
     # There is a problem reading the CSV File with a empty
     # newline, so this will remove it. 
     # This example, found on:
-    # http://ubuntuforums.org/showthread.php?t=302914
+    # LINK: http://ubuntuforums.org/showthread.php?t=302914
     for lines in fileinput.FileInput(INPUT, inplace=1):    
         lines = lines.strip()
         if lines == '': 
@@ -68,9 +73,11 @@ def remove_empty_lines(INPUT):
 
 
 def preperar_csv_file(path_to_saved_csv):
-    # This will prepare the download file from postbank.
-    # it will move it to the tmp folder. Then it will be 
-    # converted to a UTF-8 csv file. 
+    # This will return the path + filename to the CSV_file
+    # TODO: Rename iT!
+    # This function is a little bit misleading.
+    # Else add the right function to it.
+    # it will move it to the tmp folder.
 
     #We expect that in the folder is only one file:
     csv_folder = os.listdir(path_to_saved_csv)
@@ -87,6 +94,7 @@ def preperar_csv_file(path_to_saved_csv):
 
 def currency_sign_to_text(currency_sign):
     # This will return the text currney.
+    # TODO Add more currencys to it. 
     currency_sing_text_dic = { '\xe2\x82\xac':'EUR'}
     return currency_sing_text_dic[currency_sign]
 
@@ -110,20 +118,24 @@ def convert_date(date_to_convert):
 
 
 def check_hash(HASH_CHECK):
+    """Ceck for a leng of a Hash"""
     if len(HASH_CHECK) != 128:
-        print "No hash"
+        print "Value has not enough charar for a Hash!"
         raise
     else:
         return HASH_CHECK
 
 
 def create_hash(VALUE_TO_HASH):
-    # This will create a hash and return it
+    """This will create a hash and return it"""
     data_hash = hashlib.sha512(VALUE_TO_HASH).hexdigest()
     return check_hash(data_hash)
 
 
 def check_existing_hash(HASH_TO_CHECK,FILE):
+    """Will open a file and read it. 
+    line by line it will compre it with the Input hash
+    Return true when it hit something"""
     valid_hash = check_hash(HASH_TO_CHECK)
     with open(FILE,'r') as file_where_hash_is:
         for saved_hashes in file_where_hash_is.readlines():
@@ -134,6 +146,7 @@ def check_existing_hash(HASH_TO_CHECK,FILE):
 
 
 def inserting_hash(HASH_TO_INSERT,FILE):
+    """WIll try to insert the Hash_input into the file, if not exist"""
     valid_hash = check_hash(HASH_TO_INSERT)
     if check_existing_hash(valid_hash,FILE) != True:
         file_to_write = open(FILE,'a')
@@ -146,7 +159,9 @@ def inserting_hash(HASH_TO_INSERT,FILE):
 
 
 def set_bankaccount_login():
-    # THis will return the Username,Password
+    """THis will ask for a Username and Password.
+    Password will get via getpass lib.
+    return the Username,Password"""
     Username  = raw_input("Username: ")
     Pasword = getpass.getpass()
     # We know from the Webpage that we need at least 5 charater,
@@ -155,11 +170,12 @@ def set_bankaccount_login():
  
 
 def show_here():
+    """Showing curreny working dir"""
     return os.getcwd()
 
 
 def clean_up(INPUT):
-    # This function will clean up in the end all files from tmp/
+    """This function will clean up in the end all files from tmp/"""
     #check_for_clean_tmp()
     here = show_here ()
     os.chdir(INPUT)

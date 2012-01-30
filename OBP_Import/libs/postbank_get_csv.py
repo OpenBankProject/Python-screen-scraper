@@ -20,7 +20,7 @@ __doc__= """
 Using Selenium RC2, install it with "pip install selenium"
 need also =>selenium-2.0
 
-This tool will take controll of a local firefox and downlaod the CSV File from PB
+This tool will take controll of a local firefox and downlaod the CSV File from PB.
 
 TMP is in the obp_config, this is importen. No every System have a /tmp (Also related
 to win32 systems) 
@@ -36,12 +36,13 @@ from libs.import_helper import show_here
 from libs.debugger import debug
 from selenium import webdriver
 
-
+# The csv will download the to tmp/csv/
 TMP_SUFFIX ='csv'
 here = show_here()
 
 
 def check_for_clean_tmp():
+    """Check for an empty tmp/csv """
     # This function will check that the tmp/csv folder is
     # empty. Else we'll have problem woring with the file.
 
@@ -70,10 +71,8 @@ def check_for_clean_tmp():
 
 
 def get_csv_with_selenium(csv_save_path,Username,Password):
-    # This will a simple login to the Demo APP of PostBank
-    # When we need to add some login infomation, we need to find the input fields.
+    """Getting CSV file via Firefox, controled by Selenium webdriver"""
     # LINK: http://seleniumhq.org/docs/03_webdriver.html#getting-started-with-selenium-webdriver
-    # J.A.S
 
     # Setting up a Profile for Firefox.
     # There a the Proxy disabled (to make sure) and the 
@@ -86,39 +85,35 @@ def get_csv_with_selenium(csv_save_path,Username,Password):
     # Need to set CSV to saveToDisk, else it's unknown for FF and he will ask.
     fp.set_preference("browser.helperApps.neverAsk.saveToDisk","text/csv")
 
-    #debug()
-
     browser = webdriver.Firefox(firefox_profile=fp) # Get local session of firefox
     browser.get("https://banking.postbank.de/rai/login") # Load page
     assert "Postbank Online-Banking" in browser.title
 
     # Here we will inserting Username and Password:
-    # find the element that's name attribute is nutzername  and kennword
-    #debug()
+    # find the element that's name attribute is nutzername and kennwort
     inputElement_username = browser.find_element_by_name("nutzername")
     inputElement_password = browser.find_element_by_name("kennwort")
+
+
+    # send Username and Password
     inputElement_username.send_keys(Username)
     inputElement_password.send_keys(Password)
-
-    # submit the form (although google automatically searches now without submitting)
+    # submit the Username and Password to Postbank.
     inputElement_password.submit()
 
-    # This may change the Login or/and the page count number. So may have to change the URL
 
-    # This open the Main Page for Accounts, check for the Name and wait 2 secounds.
-    #browser.get("https://banking.postbank.de/rai/login/wicket:interface/:0:login:demokontoLink::ILinkListener::")
-    #assert "Postbank Online-Banking" in browser.title 
-
+    # This open the Main Page for Accounts, check for the Name.
     # Call the Transaction Page
     browser.get("https://banking.postbank.de/rai/?wicket:bookmarkablePage=:de.postbank.ucp.application.rai.fs.umsatzauskunft.UmsatzauskunftPage")
-    
+    assert "Postbank Online-Banking" in browser.title 
+
+
     # Call the CSV Link.
     # Warning!
     # The Postbank uses a :page counter, when the URL doesn't have the right page counter it will return
     # a error message. 
     result = browser.get("https://banking.postbank.de/rai/?wicket:interface=:3:umsatzauskunftpanel:panel:form:umsatzanzeigeGiro:umsatzaktionen:umsatzanzeigeUndFilterungDownloadlinksPanel:csvHerunterladen::IResourceListener::")
     browser.close()
-    return result
 
 
 def main():
