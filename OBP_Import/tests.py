@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*
+__doc__ = """
+This is a basic tester of all function. It will test for 
+right configuration and options. Test the DB backend and API.
+"""
 __author__ = ['simonredfern (simon@tesobe.com)',' Jan Alexander Slabiak (alex@tesobe.com)']
 __license__ = """
   Copyright 2011/2012 Music Pictures Ltd / TESOBE
@@ -34,6 +38,10 @@ from pymongo import Connection
 from socket import gethostbyname
 from libs.debugger import debug
 from libs.import_helper import *
+
+# TODO:
+# This test are not updated. Need to wirte new test for
+# the API and for the new functions. 
 
 # This will start checking Database
 # Drop, Create, Insert, Tables Style ,Drop

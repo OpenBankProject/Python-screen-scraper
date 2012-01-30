@@ -1,4 +1,11 @@
 # -*- coding: utf-8 -*-
+__doc__ ="""
+This is a first try of getting transaction data of the Postbank.
+The program take a HTML File (without JavaScript) as an input. 
+
+NOTE: This is deprecated, we perfer the use of a CSV File. 
+This is keeped, if something will went wrong on the Postbank login.
+"""
 __author__ = ['simonredfern (simon@tesobe.com)',
              'Jan Alexander Slabiak (alex@tesobe.com)']
 
