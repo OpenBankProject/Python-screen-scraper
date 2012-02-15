@@ -156,13 +156,13 @@ def parse_row_of_csv(csv_file_to_parse):
             # This will create a hash and return it. 
             json_hash = create_hash(json_out_correter(obp_transaction_dict))
             # Some debug output. So we may can see the content of the JSON and the Hash.
-            print "In the JSON is:\n%s" % json_out_correter(obp_transaction_dict)
+            print "In the JSON is:\n%s" % json_formatter(obp_transaction_dict)
             print "The hash of the JSON is: %s" % json_hash
             # Try to inserting the Hash, return inserting it when hash not already exist. Return then True,else False
             # and this Hash was already in var/cache
             result = inserting_hash(json_hash,HASH_FILE)
             if result == True:
-                result = insert_into_scala(SCALA_HOST,SCALA_PORT,json_out_correter(obp_transaction_dict))
+                result = insert_into_scala(SCALA_HOST,SCALA_PORT,json_formatter(obp_transaction_dict))
                 print output_with_date(),result
                 print output_with_date(), result.text
             else:
@@ -171,12 +171,12 @@ def parse_row_of_csv(csv_file_to_parse):
 
 
 
-def main(CSV_input):
+def main(csv_file_path):
     """Will check for a vaild CSV and importing it to the Scala API"""
     # Will first check for file. Need if the program get called 
     # from the shell dircetly
-    check_for_existing_csv(CSV_input)
-    parse_row_of_csv(CSV_input)
+    check_for_existing_csv(csv_file_path)
+    parse_row_of_csv(csv_file_path)
 
 
 if __name__ == '__main__':

@@ -129,8 +129,8 @@ class TestSelenium(unittest.TestCase):
         libs.postbank_get_csv.get_csv_with_selenium(self.path_for_save)
     
         # This function belongs to the sanity checks. Is there a file?
-        # We tesing this twice! 
-        self.csv_file = preperar_csv_file(self.path_for_save)
+        # We test this twice! 
+        self.csv_file = check_and_return_csv_file_name(self.path_for_save)
         self.assertTrue(os.path.exists(os.path.join(self.path_for_save,self.csv_file)))
 
 

@@ -42,61 +42,62 @@ def get_bank_account():
     return 123456
 
 
-def check_for_existing_csv(input_file):
+def check_for_existing_csv(csv_file_path):
     # This function will check first for a real csv file.
     # Else expect an external input. This will get check too.
     # Start with the config file 
     # TODO: Check for a real CSV FIle in more Detail
-    if os.path.exists(input_file) ==  False:
+    if os.path.exists(csv_file_path) ==  False:
         print "ERROR!"
         print "NO CSV FILE!"
         sys.exit(255)
 
 
-def json_out_correter(JSON_to_print):
-    # This is need for the API!
+def json_formatter(json):
+    # This is needed for the API!
     # This will remove the first [ and the last ].
-    return re.sub(r'^\[|\]$', ' ', JSON_to_print)
+    return re.sub(r'^\[|\]$', ' ', json)
 
 
-def remove_empty_lines(INPUT):
+def remove_empty_lines(file):
     # There is a problem reading the CSV File with a empty
     # newline, so this will remove it. 
     # This example, found on:
     # LINK: http://ubuntuforums.org/showthread.php?t=302914
-    for lines in fileinput.FileInput(INPUT, inplace=1):    
+    # This edits the file in place and does not save.
+    for lines in fileinput.FileInput(file, inplace=1):    
         lines = lines.strip()
         if lines == '': 
             continue
-        print lines
 
 
 
-def preperar_csv_file(path_to_saved_csv):
+def check_and_return_csv_file_name(path_to_saved_csv):
     # This will return the path + filename to the CSV_file
-    # TODO: Rename iT!
     # This function is a little bit misleading.
     # Else add the right function to it.
     # it will move it to the tmp folder.
 
     #We expect that in the folder is only one file:
     csv_folder = os.listdir(path_to_saved_csv)
+    # We expect only one file in this folder
     file_count = len(csv_folder) 
 
     if file_count == 0:
-        print "We didn't got the CSV file."
+        # TODO Add logging.
+        print "ERROR - We didn't get the CSV file."
         exit(1)
     elif file_count != 1:
-        print "We did got to much files..."
+        print "ERROR - We found too many files."
         exit (10)
 
     return csv_folder[0]
 
 def currency_sign_to_text(currency_sign):
-    # This will return the text currney.
-    # TODO Add more currencys to it. 
-    currency_sing_text_dic = { '\xe2\x82\xac':'EUR'}
-    return currency_sing_text_dic[currency_sign]
+    # This will return the text currency.
+    # TODO Add more currencies to it. 
+    currency_sign_text_dic = { '\xe2\x82\xac':'EUR'}
+    return currency_sign_text_dic[currency_sign]
 
 
 def convert_date(date_to_convert):
@@ -158,7 +159,7 @@ def inserting_hash(HASH_TO_INSERT,FILE):
     
 
 
-def set_bankaccount_login():
+def set_bank_account_login():
     """THis will ask for a Username and Password.
     Password will get via getpass lib.
     return the Username,Password"""

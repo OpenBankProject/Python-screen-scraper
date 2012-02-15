@@ -36,38 +36,43 @@ import libs.csv_importer
 from time import sleep
 
 
-def import_from_postbank(username, password):
+def get_transactions_from_bank_as_csv(username, password):
     """
     Imports a csv from postbank. calls the postbank_get_csv file and
     starts the Selenium Browser (Firefox) to access Postbank.
+    Returns the full path to the csv file
     """
     # TODO: When no username and password is set, use the demo login.
-    csv_save_path = libs.postbank_get_csv.check_for_clean_tmp()
-    libs.postbank_get_csv.get_csv_with_selenium(csv_save_path, username, password)
-    csv_file = libs.import_helper.preperar_csv_file(csv_save_path)
-    csv_path_to = os.path.join(obp_config.TMP, 'csv/', csv_file)
-    return csv_path_to
+    # Clean up the OBP temp folder (delete all csv files there). 
+    csv_folder = libs.postbank_get_csv.check_for_clean_tmp()
+    # Get a new csv file using selenium
+    libs.postbank_get_csv.get_csv_with_selenium(csv_folder, username, password)
+    # Now check that one file exists in the folder and return its name
+    csv_file = libs.import_helper.check_and_return_csv_file_name(csv_folder)
+    # Now return the full path of the file.
+    csv_path = os.path.join(obp_config.TMP, 'csv/', csv_file)
+    return csv_path
 
 
-def postbank_to_obp(username, password):
+def transactions_to_obp(username, password):
     """
     Retrieves the csv from postbank and posts it into the OpenBankProject server
     """
     # TODO: Some of this functionality should probably move inside the csv parser/importer.
     #       This function should in theory only call two functions:
-    #       1. get_csv_from_postbank()
+    #       1. get_transactions_from_bank_as_csv()
     #       2. push_csv_to_obp(csv)
     #
     #       Any complexities should then be handled by those functions
     # (y.a.)
     # Getting the raw CSV file from PostBank.
-    unconverted_file = import_from_postbank(username, password)
+    unconverted_file = get_transactions_from_bank_as_csv(username, password)
     # We need to convert it to UTF-8. Otherwise Python can't work with it.
     csv_file = libs.to_utf8.main(unconverted_file)
     # Before we can read the CSV, we remove all empty newlines.
     # Otherwise the CSV Parser stops working.
     libs.import_helper.remove_empty_lines(csv_file)
-    # Now reading the file and pushing it to the Scala API
+    # Now read the file and push it to the Scala API
     # TODO: It would be better, when we just getting the JSON back and
     # then we can descide how to insert.
     libs.csv_importer.main(csv_file)
@@ -86,16 +91,16 @@ def main():
     # (Checks like this should probably move inside the function,
     #  althought they might not be at all necessary.
     #  Use error handling for incorrect auth instead. y.a.)
-    logindata = libs.import_helper.set_bankaccount_login()
-    while len(logindata[1]) != 5:
-        print "Password hast to contain 5 letters"
-        logindata = libs.import_helper.set_bankaccount_login()
+    login_data = libs.import_helper.set_bank_account_login()
+    while len(login_data[1]) != 5:
+        print "Password has to contain 5 letters"
+        login_data = libs.import_helper.set_bank_account_login()
 
-    # TODO: Need handling of System singls to run this as a daemon.
+    # TODO: Need handling of System signals to run this as a daemon.
     while True:
         try:
-            postbank_to_obp(logindata[0], logindata[1])
-            # TODO: Need another exeption for not getting the CSV File.
+            transactions_to_obp(login_data[0], login_data[1])
+            # TODO: Need another exception for not getting the CSV File.
         except KeyboardInterrupt:
                 raise
         except Exception, e:
