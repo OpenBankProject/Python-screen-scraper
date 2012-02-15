@@ -30,9 +30,12 @@ import hashlib
 #from postbank_get_csv import check_for_clean_tmp
 #from debugger import debug
 
-def output_with_date():
-    # This will return a nice formated Date, for log like date output
-    return datetime.date.today().strftime('[%d, %h %Y,%H:%M:%S]')
+def date_now_formatted():
+    """
+    Print out nice formatted dates. 
+    In following order:  Day, Month Year, Hour:Minute:Second
+    """
+    return datetime.datetime.now().strftime('[%d, %h %Y,%H:%M:%S]')
     
 
 def check_for_existing_csv(csv_file_path):

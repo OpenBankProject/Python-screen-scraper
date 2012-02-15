@@ -105,7 +105,7 @@ def main():
                 raise
         except Exception, e:
             # TODO: need a cleanup as well, just to be sure no sensitive data left on the filesystem.
-            print "%s:Something went wrong" % libs.import_helper.output_with_date()
+            print "%s:Something went wrong" % libs.import_helper.date_now_formatted()
             print "Error is %s" % e
             sleep(5)
 

@@ -163,10 +163,10 @@ def parse_row_of_csv(csv_file_to_parse):
             result = inserting_hash(json_hash,HASH_FILE)
             if result == True:
                 result = insert_into_scala(SCALA_HOST,SCALA_PORT,json_formatter(obp_transaction_dict))
-                print output_with_date(),result
-                print output_with_date(), result.text
+                print date_now_formatted(),result
+                print date_now_formatted(), result.text
             else:
-                print "%s:Transaction is already in hash file, will no inserting" % output_with_date()
+                print "%s:Transaction is already in hash file, will no inserting" % date_now_formatted()
 
 
 
