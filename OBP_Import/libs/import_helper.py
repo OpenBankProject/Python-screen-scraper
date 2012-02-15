@@ -34,13 +34,6 @@ def output_with_date():
     # This will return a nice formated Date, for log like date output
     return datetime.date.today().strftime('[%d, %h %Y,%H:%M:%S]')
     
-    
-
-def get_bank_account():
-    #TODO: This have to get the Bank Account Number
-    # This should may place somewhere else.. 
-    return 123456
-
 
 def check_for_existing_csv(csv_file_path):
     # This function will check first for a real csv file.
@@ -69,6 +62,7 @@ def remove_empty_lines(file):
         lines = lines.strip()
         if lines == '': 
             continue
+        print lines
 
 
 
@@ -86,7 +80,6 @@ def check_and_return_csv_file_name(path_to_saved_csv):
     if file_count == 0:
         # TODO Add logging.
         print "ERROR - We didn't get the CSV file."
-        exit(1)
     elif file_count != 1:
         print "ERROR - We found too many files."
         exit (10)
