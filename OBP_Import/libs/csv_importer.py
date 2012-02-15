@@ -30,9 +30,9 @@ import simplejson as json
 import csv
 import re
 import sys
+import os
 
 from import_helper import *
-from debugger import debug
 from scala_api_handler import insert_into_scala
 
 
@@ -154,7 +154,7 @@ def parse_row_of_csv(csv_file_to_parse):
                 obp_transaction_dict = get_info_from_row(row)
             
             # This will create a hash and return it. 
-            json_hash = create_hash(json_out_correter(obp_transaction_dict))
+            json_hash = create_hash(json_formatter(obp_transaction_dict))
             # Some debug output. So we may can see the content of the JSON and the Hash.
             print "In the JSON is:\n%s" % json_formatter(obp_transaction_dict)
             print "The hash of the JSON is: %s" % json_hash
@@ -172,6 +172,7 @@ def parse_row_of_csv(csv_file_to_parse):
 
 
 def main(csv_file_path):
+
     """Will check for a vaild CSV and importing it to the Scala API"""
     # Will first check for file. Need if the program get called 
     # from the shell dircetly
