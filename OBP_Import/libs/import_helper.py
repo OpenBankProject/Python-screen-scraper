@@ -43,7 +43,7 @@ def check_for_existing_csv(csv_file_path):
     """
     This function will check that the csv file exist.
     TODO:
-        Increas the detail of this check, to vaild for
+        Increase the detail of this check, to ensure for
         a true CSV file.
     """
 
@@ -188,7 +188,7 @@ def set_bank_account_login():
     # Now getting the password via getpass lib.
     logger.info("Getting Password")
     password = getpass.getpass()
-    logger.debug("Password is: %s" % password)
+    logger.debug("A Password has set")
 
     # We know from the Web Page that we need at least 5 characters.
     # This will check for the right length of the password.
@@ -197,9 +197,9 @@ def set_bank_account_login():
         logger.error("Password was not 5 character long")
         print "Password has to contain 5 letters"
         password = getpass.getpass()
-        logger.debug("Password is: %s" % password)
+        logger.debug("Password has set")
 
-    logger.debug("Will return username: %s and password: %s" % (username, password))
+    logger.debug("Will return username: %s and password is set" % username)
     # Return Username and Passsword.
     return username, password
 

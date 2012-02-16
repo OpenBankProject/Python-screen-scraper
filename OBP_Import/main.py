@@ -97,6 +97,8 @@ def main():
     """
     logger.info("Starting OpenBankProject-Importer")
     logger.debug("Version: %s " % obp_config.OBP_VERSION)
+    logger.debug("SCALA_HOST: %s " % obp_config.SCALA_HOST)
+    logger.debug("SCALA_PORT: %s " % obp_config.SCALA_PORT)
 
     logger.info("Getting login information")
     login_data = libs.import_helper.set_bank_account_login()
@@ -108,8 +110,6 @@ def main():
     while True:
         try:
             transactions_to_obp(login_data[0], login_data[1])
-            logger.critical("Will call sys.exit! Have to be remove later!")
-            sys.exit(255)
             # TODO: Need another exception for not getting the CSV File.
         except KeyboardInterrupt:
                 raise

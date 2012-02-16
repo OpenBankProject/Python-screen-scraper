@@ -34,7 +34,7 @@ logging.basicConfig(
                     format='%(asctime)s %(levelname)s %(filename)s:%(funcName)s(%(lineno)d) : %(message)s',
                     filename=LOG_FILE_NAME,
                     filemode='a',
-                    datefmt='%m-%d %H:%M')
+                    datefmt='[%d %h %Y - %H:%M:%S]')
 
 
 #print "Logging messages to %s" % LOG_FILE_NAME
