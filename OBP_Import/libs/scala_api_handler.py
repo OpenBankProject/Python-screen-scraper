@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 __author__ = ['Jan Alexander Slabiak (alex@tesobe.com)']
 __license__ = """
   Copyright 2011/2012 Music Pictures Ltd / TESOBE
@@ -15,48 +16,41 @@ __license__ = """
    See the License for the specific language governing permissions and
    limitations under the License.
 """
+
 __doc__ = """
-This will contain a handler to insert JSON over a Scala Lift API to a database backend.
+This will contain a handler to insert JSON over a Scala Lift API to a database back-end.
+Using liburl2 for Human, requests:
+# LINK: http://kennethreitz.com/requests-python-http-module.html
 """
 
 
 import requests
-# liburl2 for Human:
-# LINK: http://kennethreitz.com/requests-python-http-module.html
 from urllib2 import HTTPError
 
 
-def check_scala_host_reachable(scala_api_host,scala_api_port):
-    """Try to check for a reachable System"""
-    # Try to call the URL:PORT/
-    # Excpet an HTTP Error, else raise! 
+def check_scala_host_reachable(scala_api_host, scala_api_port):
+    """
+    Check for a reachable System of the Scala API Host.
+    """
+
+    # Try to call the web root of the  scala_api_host
     try:
-        requests.get('http://'+scala_api_host+':'+scala_api_port+'/',timeout=5)
-    except HTTPError:
-        return None
+        requests.get('http://' + scala_api_host + ':' + scala_api_port + '/', timeout=5)
     except:
-        print "Can't connecte to Scala API! Check for Host, and Info!"
+        print "ERROR! -  Can't connect to Scala API!"
+        print "Check the API Host!"
         raise
-    
 
-def insert_into_scala(scala_api_host,scala_api_port,JSON_to_insert):
-    """Inserting Data via POST into a URL"""
-    # This will insert the JSON Data into the API. 
-    check_scala_host_reachable(scala_api_host,scala_api_port)
-    # Need to set content-type to JSON, else expection text as content.
+
+def insert_into_scala(scala_api_host, scala_api_port, JSON_to_insert):
+    """
+    Inserting JSON via HTTP POST into the API.
+    """
+
+    check_scala_host_reachable(scala_api_host, scala_api_port)
+    # Set content-type to JSON in the HTTP Header
     headers = {'content-type': 'application/json'}
-    post_request = requests.post("http://"+scala_api_host+":"+scala_api_port+"/api/transactions", 
-                        data=JSON_to_insert,headers=headers)
-    # Return the http status code. 
+    post_request = requests.post("http://" + scala_api_host + ":" + scala_api_port + "/api/transactions",
+                        data=JSON_to_insert, headers=headers)
+    # Return the http status code.
     return post_request
-
-
-def main():
-    # TODO:
-    # Should be check for JSON input.
-    pass
-
-
-
-if __name__ == '__main__':
-    main()

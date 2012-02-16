@@ -43,7 +43,7 @@ def get_transactions_from_bank_as_csv(username, password):
     Returns the full path to the csv file
     """
     # TODO: When no username and password is set, use the demo login.
-    # Clean up the OBP temp folder (delete all csv files there). 
+    # Clean up the OBP temp folder (delete all csv files there).
     csv_folder = libs.postbank_get_csv.check_for_clean_tmp()
     # Get a new csv file using selenium
     libs.postbank_get_csv.get_csv_with_selenium(csv_folder, username, password)
@@ -74,7 +74,7 @@ def transactions_to_obp(username, password):
     libs.import_helper.remove_empty_lines(csv_file)
     # Now read the file and push it to the Scala API
     # TODO: It would be better, when we just getting the JSON back and
-    # then we can descide how to insert.
+    # then we can decide how to insert.
     libs.csv_importer.main(csv_file)
 
     # Clean up and remove all files.
@@ -87,10 +87,12 @@ def transactions_to_obp(username, password):
 
 
 def main():
-    # This will make sure that the password has at least 5 charachters
-    # (Checks like this should probably move inside the function,
-    #  althought they might not be at all necessary.
-    #  Use error handling for incorrect auth instead. y.a.)
+    """
+    This will make sure that the password has at least 5 characters.
+    (Checks like this should probably move inside the function,
+    although they might not be at all necessary.
+    Use error handling for incorrect auth instead. y.a.)
+    """
     login_data = libs.import_helper.set_bank_account_login()
     while len(login_data[1]) != 5:
         print "Password has to contain 5 letters"
@@ -104,12 +106,12 @@ def main():
         except KeyboardInterrupt:
                 raise
         except Exception, e:
-            # TODO: need a cleanup as well, just to be sure no sensitive data left on the filesystem.
+            # TODO: need a cleanup as well, just to be sure no sensitive data left on the disk.
             print "%s:Something went wrong" % libs.import_helper.date_now_formatted()
-            print "Error is %s" % e
-            sleep(5)
+            print "%s:Error is %s" % (libs.import_helper.date_now_formatted(), e)
+            # When something went wrong wait 1 minute.
+            sleep(60)
 
 
 if __name__ == '__main__':
     main()
-
