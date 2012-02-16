@@ -27,6 +27,7 @@ import fileinput
 import getpass
 import datetime
 import hashlib
+from debugger import logger
 
 
 def date_now_formatted():
@@ -176,11 +177,30 @@ def set_bank_account_login():
     """
     This will ask for a username and Password.
     The  password will get via getpass lib.
+    It will check for the length of the Password, till it's correct.
     """
 
+    # Getting the login name from a raw input.
+    logger.info("Getting Username")
     username = raw_input("Username: ")
+    logger.debug("Username is %s" % username)
+
+    # Now getting the password via getpass lib.
+    logger.info("Getting Password")
     password = getpass.getpass()
-    # We know from the Web Page that we need at least 5 character.
+    logger.debug("Password is: %s" % password)
+
+    # We know from the Web Page that we need at least 5 characters.
+    # This will check for the right length of the password.
+    logger.debug("start while  loop, so long len of password has at least 5 character")
+    while len(password) < 5:
+        logger.error("Password was not 5 character long")
+        print "Password has to contain 5 letters"
+        password = getpass.getpass()
+        logger.debug("Password is: %s" % password)
+
+    logger.debug("Will return username: %s and password: %s" % (username, password))
+    # Return Username and Passsword.
     return username, password
 
 

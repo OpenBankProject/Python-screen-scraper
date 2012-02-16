@@ -18,7 +18,34 @@ __license__ = """
    See the License for the specific language governing permissions and
    limitations under the License.
 """
+
+
+import os
 import pdb
+import logging
+
+
+LOGGER_PATH = os.path.join(os.getcwd() + '/log/')
+print LOGGER_PATH
+LOG_FILE_NAME = './var/log/file.log'
+
+logging.basicConfig(
+                    level=logging.DEBUG,
+                    format='%(asctime)s %(levelname)s %(filename)s:%(funcName)s(%(lineno)d) : %(message)s',
+                    filename=LOG_FILE_NAME,
+                    filemode='a',
+                    datefmt='%m-%d %H:%M')
+
+
+#print "Logging messages to %s" % LOG_FILE_NAME
+
+logger = logging.getLogger(LOGGER_PATH)
+logger.setLevel(logging.DEBUG)
+
+logger.info("Initialization logger")
+logger.debug("logger settings:")
+logger.debug("logger path: %s" % LOGGER_PATH)
+logger.debug("logger file: %s" % LOG_FILE_NAME)
 
 
 def debug():

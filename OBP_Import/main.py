@@ -27,20 +27,22 @@ __license__ = """
 """
 
 import os
+import sys
 import obp_config
 import libs.to_utf8
 import libs.postbank_get_csv
 import libs.import_helper
 import libs.csv_importer
 
+from libs.debugger import logger
 from time import sleep
 
 
 def get_transactions_from_bank_as_csv(username, password):
     """
-    Imports a csv from postbank. calls the postbank_get_csv file and
+    Imports a csv from Postbank. calls the postbank_get_csv file and
     starts the Selenium Browser (Firefox) to access Postbank.
-    Returns the full path to the csv file
+    Returns the full path to the csv file.
     """
     # TODO: When no username and password is set, use the demo login.
     # Clean up the OBP temp folder (delete all csv files there).
@@ -93,15 +95,21 @@ def main():
     although they might not be at all necessary.
     Use error handling for incorrect auth instead. y.a.)
     """
-    login_data = libs.import_helper.set_bank_account_login()
-    while len(login_data[1]) != 5:
-        print "Password has to contain 5 letters"
-        login_data = libs.import_helper.set_bank_account_login()
+    logger.info("Starting OpenBankProject-Importer")
+    logger.debug("Version: %s " % obp_config.OBP_VERSION)
 
+    logger.info("Getting login information")
+    login_data = libs.import_helper.set_bank_account_login()
+
+    logger.info("Start endless while loop")
+    # Will start a endless while loop. This will  start Firefox, controlled byX
+    # Selenium to fetch the CSV from Postbank.
     # TODO: Need handling of System signals to run this as a daemon.
     while True:
         try:
             transactions_to_obp(login_data[0], login_data[1])
+            logger.critical("Will call sys.exit! Have to be remove later!")
+            sys.exit(255)
             # TODO: Need another exception for not getting the CSV File.
         except KeyboardInterrupt:
                 raise
