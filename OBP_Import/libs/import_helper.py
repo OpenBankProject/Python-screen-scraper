@@ -146,30 +146,46 @@ def create_hash(value_to_hash):
     return check_hash(data_hash)
 
 
-def check_existing_hash(hash_to_check, file):
+def check_existing_hashs(hash_to_check, file):
     """
     Will open a file and read it.
     line by line it will compare it with the Input hash
     Return true when it hit something
     """
 
+    logger.debug("check for existing hash")
     valid_hash = check_hash(hash_to_check)
+    logger.debug("check for valid hash, hash is: %s" % valid_hash)
+
+    logger.debug("open cache file readonly: %s" % file)
     with open(file, 'r') as file_where_hash_is:
+        logger.debug("loop trough the cache file")
         for saved_hashes in file_where_hash_is.readlines():
+            logger.debug("line is: %s" % saved_hashes.strip())
+            logger.debug("Compare valid_hash with line from cache file")
             if valid_hash == saved_hashes.strip():
+                logger.debug("return True")
                 return True
 
 
-def inserting_hash(hash_to_insert, file):
+def insert_hash_to_cache(hash_to_insert, file):
     """Will try to insert the Hash_input into the file, if not exist"""
 
+    logger.debug("start insert_hash")
+    logger.debug("check for valid_hash")
     valid_hash = check_hash(hash_to_insert)
-    if check_existing_hash(valid_hash, file) != True:
+    logger.debug("read cache file for existing hash")
+    if check_existing_hashs(valid_hash, file) != True:
+        logger("Open cache file, appending")
         file_to_write = open(file, 'a')
+        logger("wirte hash to file, hash is: %s" % valid_hash)
         file_to_write.write(valid_hash + '\n')
+        logger.debug("close cache file")
         file_to_write.close()
+        logger.debug("return True")
         return True
     else:
+        logger.debug("Hash already inserted")
         return False
 
 
