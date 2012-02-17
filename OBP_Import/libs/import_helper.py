@@ -109,7 +109,8 @@ def currency_sign_to_text(currency_sign):
 def convert_date(date_to_convert):
     """This will convert a German formatted date(17.0.1.2012) to UTC Time."""
 
-    # Will replace the dots of the date with a space. Then split it into 3 parts.
+    # Will replace the dots of the date with a space.
+    # Then split it into 3 parts.
     new_form = re.sub('\.', ' ', date_to_convert)
     date_parts = new_form.split()
 
@@ -129,20 +130,25 @@ def convert_date(date_to_convert):
     return datetime.datetime.strftime(to_convert, "%Y-%m-%dT%H:%M:%S.001Z")
 
 
-def check_hash(hash_check):
-    """Check for a that Hash has the right size."""
+def check_hash(hash_to_check):
+    """Check right size of the Hash"""
 
-    if len(hash_check) != 128:
+    logger.debug("Check for length of hash")
+    if len(hash_to_check) != 128:
+        logger.critiacl("Value has not enough character for a Hash")
         print "Value has not enough character for a Hash!"
         raise
     else:
-        return hash_check
+        logger.debug("Hash length is fine, return hash_to_check")
+        return hash_to_check
 
 
 def create_hash(value_to_hash):
     """This will create a hash and return it"""
 
+    logger.info("Create hash with sha512")
     data_hash = hashlib.sha512(value_to_hash).hexdigest()
+    logger.debug("created hash is in hexdigest: %s" % data_hash)
     return check_hash(data_hash)
 
 
@@ -164,7 +170,7 @@ def check_existing_hashs(hash_to_check, file):
             logger.debug("line is: %s" % saved_hashes.strip())
             logger.debug("Compare valid_hash with line from cache file")
             if valid_hash == saved_hashes.strip():
-                logger.debug("return True")
+                logger.debug("Found valid_hash, return True")
                 return True
 
 
@@ -185,7 +191,7 @@ def insert_hash_to_cache(hash_to_insert, file):
         logger.debug("return True")
         return True
     else:
-        logger.debug("Hash already inserted")
+        logger.info("Hash already inserted")
         return False
 
 
@@ -208,7 +214,7 @@ def set_bank_account_login():
 
     # We know from the Web Page that we need at least 5 characters.
     # This will check for the right length of the password.
-    logger.debug("start while  loop, so long len of password has at least 5 character")
+    logger.debug("start while loop")
     while len(password) < 5:
         logger.error("Password was not 5 character long")
         print "Password has to contain 5 letters"

@@ -123,7 +123,7 @@ def main():
     login_data = libs.import_helper.set_bank_account_login()
 
     logger.info("Start endless while loop")
-    # Will start a endless while loop. This will  start Firefox, controlled byX
+    # Will start a endless while loop. This will  start Firefox, controlled by
     # Selenium to fetch the CSV from Postbank.
     # TODO: Need handling of System signals to run this as a daemon.
     while True:

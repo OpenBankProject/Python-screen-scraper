@@ -49,15 +49,23 @@ csv_header_info = []
 def get_info_from_row(input_row):
     """Read rows and get the transaction data, print as JSON"""
 
-    # Before we have to remove any dot
+    logger.info("Start get_info_from_row")
+
+    # The Germans formating they Money 1.200,12 Eur. We
+    # Need a English format 1200.12 Eur
+    # So have to remove the dot and replace the , with a dot.
+    # This will turn . to " "
+    logger.debug("replace . with space")
     dotless_amount = re.sub('\.', '', input_row[6])
     dotless_new_balance = re.sub('\.', '', input_row[7])
 
+    logger.debug("replace , with .")
     comma_to_dot_amount = re.sub(',', '.', dotless_amount)
     comma_to_dot_new_balance = re.sub(',', '.', dotless_new_balance)
 
     # This regular expression search for all kind of Numbers in a string.
     # Also covering + and -
+    #logger.debug("")
     amount = re.match(
         "[+-]?((\d+(\.\d*)?)|\.\d+)([eE][+-]?[0-9]+)?",
         comma_to_dot_amount)
@@ -66,17 +74,30 @@ def get_info_from_row(input_row):
         "[+-]?((\d+(\.\d*)?)|\.\d+)([eE][+-]?[0-9]+)?",
         comma_to_dot_new_balance)
 
+    logger.debug("set this_account_holder")
     this_account_holder = csv_header_info[1]
+
+    logger.debug("set this_account_IBAN")
     this_account_IBAN = csv_header_info[4]
+
+    logger.debug("set this_account_number")
     this_account_number = csv_header_info[3]
+
     # There is still some Value inside, we need to remove
     this_account_unclean_currency = csv_header_info[5]
     this_account_currency = re.search(
         '\xe2\x82\xac',
         this_account_unclean_currency[1])
 
+    logger.debug("set this_account_currency")
+
+    logger.debug("set this_account_kind")
     this_account_kind = 'current'
+
+    logger.debug("set this_account_ni")
     this_account_ni = ""  # ni = national_identifier
+
+    logger.debug("set this_account_bank_name")
     this_account_bank_name = 'Postbank'
 
     if input_row[5].rstrip() != this_account_holder[1]:
@@ -129,6 +150,7 @@ def get_info_from_row(input_row):
     }
     }], sort_keys=False)
 
+    logger.debug("Done filling json, return obp_transaction_data")
     return obp_transaction_data
 
 
@@ -145,17 +167,22 @@ def parse_row_of_csv(csv_file_to_parse):
 
         # re : \d\d\.\d\d\.\d\d\d\d
         # This will check if date formatted like this: 23.01.2001
+        logger.debug("Set regular expression to: \d\d\.\d\d\.\d\d")
         data_expression = re.compile('\d\d\.\d\d\.\d\d\d\d')
-        transactionReader = csv.reader(
+        logger.debug("start csv reader")
+        transaction_reader = csv.reader(
             open(csv_file_to_parse, 'rb'),
             delimiter=delimiter,
             quotechar=quote_char)
 
-        for row in transactionReader:
+        logger.debug("Start for loop of transaction_reader")
+        for row in transaction_reader:
 
             # The first valid entry has always a date, checking for it.
             # When not, add this row to the csv_header_info and then continue.
+            logger.debug("check for date in first row from csv")
             if data_expression.match(row[0]) == None:
+                logger.debug("append row to csv_header_info, row is: %s" % row)
                 csv_header_info.append(row)
 
                 continue
@@ -167,6 +194,7 @@ def parse_row_of_csv(csv_file_to_parse):
             json_hash = create_hash(json_formatter(obp_transaction_dict))
             # Some debug output. So we may can see the content of the JSON
             # and the Hash.
+            logger.info("The hash of the JSON is: %s" % json_hash)
             print "%s:The hash of the JSON is: %s" % (date_now_formatted(), json_hash)
 
             # Try to insert the hash, check for existing has first.
