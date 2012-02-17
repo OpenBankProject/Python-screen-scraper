@@ -75,7 +75,7 @@ def get_csv_with_selenium(csv_save_path, username, password):
 
     logger.info("Start Selenium")
     logger.debug("csv_save_path: %s" % csv_save_path)
-    logger.debug("username: %s" % username)
+    logger.debug("username is set")
     logger.debug("password is set")
 
     # Setting up a Profile for Firefox.

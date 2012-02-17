@@ -100,11 +100,17 @@ def get_info_from_row(input_row):
     logger.debug("set this_account_bank_name")
     this_account_bank_name = 'Postbank'
 
+    # Need to switch row 4 with 5 when we're the one getting money.
+    logger.debug("check that this_account_holder is not other_account_holder")
     if input_row[5].rstrip() != this_account_holder[1]:
         other_account_holder = input_row[5].rstrip()
+        logger.debug("set other_account_holder")
     else:
         other_account_holder = input_row[4].rstrip()
+        logger.debug("set other_account_holder")
 
+    # I'll not print out the JSON, to ensure no sensible data get displayed.
+    logger.debug("create json dump")
     obp_transaction_data = json.dumps([
     {
     "obp_transaction": {
@@ -182,16 +188,17 @@ def parse_row_of_csv(csv_file_to_parse):
             # When not, add this row to the csv_header_info and then continue.
             logger.debug("check for date in first row from csv")
             if data_expression.match(row[0]) == None:
-                logger.debug("append row to csv_header_info, row is: %s" % row)
                 csv_header_info.append(row)
-
+                logger.debug("append row to csv_header_info, row is: %s" % row)
                 continue
             else:
                 # When we have a valid date, call get_info_from_row.
                 obp_transaction_dict = get_info_from_row(row)
+                logger.debug("call get_info_from_row")
 
             # This will create a hash and return it.
             json_hash = create_hash(json_formatter(obp_transaction_dict))
+            logger.debug("create json_hash from obp_transaction_dict")
             # Some debug output. So we may can see the content of the JSON
             # and the Hash.
             logger.info("The hash of the JSON is: %s" % json_hash)
@@ -208,7 +215,7 @@ def parse_row_of_csv(csv_file_to_parse):
                     json_formatter(obp_transaction_dict))
 
                 logger.debug("HTTP POST result is: %s" % result)
-                logger.debug("HTTP POST text from result is: %s" % result.text)
+                #logger.debug("HTTP POST text from result is: %s" % result.text)
             else:
                 logger.info("Transaction is already in hash file, will no inserting")
                 print "%s:Transaction is already in hash file, will no inserting" % date_now_formatted()
