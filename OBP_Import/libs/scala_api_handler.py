@@ -25,6 +25,7 @@ Using liburl2 for Human, requests:
 
 
 import requests
+from debugger import logger
 from urllib2 import HTTPError
 
 
@@ -33,10 +34,14 @@ def check_scala_host_reachable(scala_api_host, scala_api_port):
     Check for a reachable System of the Scala API Host.
     """
 
+    logger.debug("try to connect to api host")
     # Try to call the web root of the  scala_api_host
     try:
         requests.get('http://' + scala_api_host + ':' + scala_api_port + '/', timeout=5)
+        logger.debug("requested http://%s:%s/" % (scala_api_host, scala_api_port))
     except:
+        logger.critical("ERROR! -  Can't connect to Scala API")
+        logger.critical("Check the API Host!")
         print "ERROR! -  Can't connect to Scala API!"
         print "Check the API Host!"
         raise
@@ -47,10 +52,15 @@ def insert_into_scala(scala_api_host, scala_api_port, JSON_to_insert):
     Inserting JSON via HTTP POST into the API.
     """
 
+    logger.info("Insert JSON to Scala API")
+    logger.debug("test connection to Scala API Host")
     check_scala_host_reachable(scala_api_host, scala_api_port)
+
     # Set content-type to JSON in the HTTP Header
     headers = {'content-type': 'application/json'}
+    logger.debug("Set HTTP headers to: %s" % headers)
     post_request = requests.post("http://" + scala_api_host + ":" + scala_api_port + "/api/transactions",
                         data=JSON_to_insert, headers=headers)
     # Return the http status code.
+    logger.debug("Inserted to SCALA API")
     return post_request

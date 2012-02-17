@@ -20,8 +20,8 @@ __doc__ = """
 Using Selenium RC2, install it with "pip install selenium"
 need also =>selenium-2.0
 
-This tool will take controll of a local firefox and downlaod the CSV File from PB.
-TMP is in the obp_config, this is importen. No every System have a /tmp (Also related
+This tool will take control of a local Firefox and download the CSV File from PB.
+TMP is in the obp_config, this is important. Not every System have a /tmp (Also related
 to win32 systems)
 """
 
@@ -33,10 +33,15 @@ from obp_config import TMP
 from libs.import_helper import show_here
 from libs.debugger import debug
 from selenium import webdriver
+from debugger import logger
 
 # The csv will download the to tmp/csv/
 TMP_SUFFIX = 'csv'
 here = show_here()
+
+postbank_main_url_login_page = " https://banking.postbank.de/rai/login"
+postbank_main_url_value_page = "https://banking.postbank.de/rai/?wicket:bookmarkablePage=:de.postbank.ucp.application.rai.fs.umsatzauskunft.UmsatzauskunftPage"
+postbank_main_url_value_download = "https://banking.postbank.de/rai/?wicket:interface=:3:umsatzauskunftpanel:panel:form:umsatzanzeigeGiro:umsatzaktionen:umsatzanzeigeUndFilterungDownloadlinksPanel:csvHerunterladen::IResourceListener::"
 
 
 def check_for_clean_tmp():
@@ -65,50 +70,76 @@ def check_for_clean_tmp():
 
 
 def get_csv_with_selenium(csv_save_path, username, password):
-    """Getting CSV file via Firefox, controled by Selenium webdriver"""
+    """Getting CSV file via Firefox, controlled by Selenium webdriver"""
     # LINK: http://seleniumhq.org/docs/03_webdriver.html#getting-started-with-selenium-webdriver
+
+    logger.info("Start Selenium")
+    logger.debug("csv_save_path: %s" % csv_save_path)
+    logger.debug("username is set")
+    logger.debug("password is set")
 
     # Setting up a Profile for Firefox.
     # Proxy is disabled and download files without asking.
+    logger.info("Setup Firefox Profile")
     fp = webdriver.FirefoxProfile()
+    logger.debug("webdriver firefox")
     fp.set_preference("network.proxy.type", 0)
+    logger.debug("network.proxy.type 0")
     fp.set_preference("browser.download.folderList", 2)
+    logger.debug("rowser.download.fold 2")
     fp.set_preference("browser.download.manager.showWhenStarting", False)
+    logger.debug("rowser.download.manager.showWhenStarting False ")
     fp.set_preference("browser.download.dir", csv_save_path)
+    logger.debug("browser.download.dir %s" % csv_save_path)
     # Need to set CSV to saveToDisk, else it's unknown for FF and he will ask.
     fp.set_preference("browser.helperApps.neverAsk.saveToDisk", "text/csv")
+    logger.debug("browser.helperApps.neverAsk.saveToDisk text/csv")
 
+    logger.info("Start Firefox")
     browser = webdriver.Firefox(firefox_profile=fp)  # Get local session of firefox
-    browser.get("https://banking.postbank.de/rai/login")  # Load page
+
+    logger.debug("Open URL: %s" % postbank_main_url_login_page)
+    browser.get(postbank_main_url_login_page)  # Load page
     assert "Postbank Online-Banking" in browser.title
 
     # Here we will inserting Username and Password:
     # find the element that's name attribute is nutzername and kennwort
+    logger.info("Inserting Username and Password to Login")
+    logger.debug("search for login box")
     inputElement_username = browser.find_element_by_name("nutzername")
+    logger.debug("search for password box")
     inputElement_password = browser.find_element_by_name("kennwort")
 
     # send Username and Password
+    logger.debug("Inserting usernamen into login box %s " % username)
     inputElement_username.send_keys(username)
+    logger.debug("Inserting password into login box")
     inputElement_password.send_keys(password)
     # submit the Username and Password to Postbank.
+    logger.info("submit login_data to login")
     inputElement_password.submit()
 
     # This open the Main Page for Accounts, check for the Name.
     # Call the Transaction Page
-    browser.get("https://banking.postbank.de/rai/?wicket:bookmarkablePage=:de.postbank.ucp.application.rai.fs.umsatzauskunft.UmsatzauskunftPage")
+    logger.debug("Open URL: %s" % postbank_main_url_value_page)
+    browser.get(postbank_main_url_value_page)
     assert "Postbank Online-Banking" in browser.title
 
     # Call the CSV Link.
     # Warning!
     # The Postbank uses a :page counter, when the URL doesn't have the right page counter it will return
     # a error message.
-    result = browser.get("https://banking.postbank.de/rai/?wicket:interface=:3:umsatzauskunftpanel:panel:form:umsatzanzeigeGiro:umsatzaktionen:umsatzanzeigeUndFilterungDownloadlinksPanel:csvHerunterladen::IResourceListener::")
+    logger.debug("Open URL: %s" % postbank_main_url_value_download)
+    result = browser.get(postbank_main_url_value_download)
+    logger.info("closing Firefox")
     browser.close()
 
 
 def main():
+    logger.info("Start main")
     path_to_save = check_for_clean_tmp()
     get_csv_with_selenium(path_to_save)
+    logger.info("Done main")
 
 
 if __name__ == '__main__':

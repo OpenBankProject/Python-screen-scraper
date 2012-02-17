@@ -24,8 +24,10 @@ your Database or API.
 """
 
 
-from libs.import_helper import show_here
+#from libs.import_helper import show_here
+from libs.debugger import logger
 from os import path
+from os import getcwd
 # Currently unused but approved.
 MONGODB_SERVER = 'obp_mongod'
 MONGODB_SERVER_PORT = 27017
@@ -44,12 +46,12 @@ OBP_VERSION = '0.0.1'
 # Files:
 # The Folder where the CSV file get saved
 SAVEDIR = ''
-TMP = path.join(show_here(), 'tmp/')
+TMP = path.join(getcwd(), 'tmp/')
 
 # This can be used, to special a local file.
 # TODO: When this file is define. Don't run the postbank_importer
 CSV_FILE_PATH = 'usr/PB_Umsatzauskunft_198_rows.csv'
-# There is also the alterntiv of using a HTML file. This
+# There is also the alternative of using a HTML file. This
 # would get parsed with BeautifulSoup and insert to the MongoDB
 
 HTML_FILE_PATH = ''
@@ -59,5 +61,9 @@ SCALA_HOST = 'localhost'
 SCALA_PORT = '8080'
 
 # Here you can define a file, where the sha512 hashes get saved for the JSON.
-# This will tracke the Transaction. This tryes to ensure, that we don't have double entrys.
+# This will track the Transaction. It tries to ensure, that we don't get double entry's.
 HASH_FILE = 'var/cache'
+
+
+# Logger Settings
+# Define Path and Debug level.
