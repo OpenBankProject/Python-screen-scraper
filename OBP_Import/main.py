@@ -40,15 +40,16 @@ from time import sleep
 
 def get_transactions_from_bank_as_csv(username, password):
     """
-    Imports a csv from Postbank. calls the postbank_get_csv file and
+    Imports a csv from Postbank, calls the postbank_get_csv file and
     starts the Selenium Browser (Firefox) to access Postbank.
     Returns the full path to the csv file.
     """
 
     # TODO: When no username and password is set, use the demo login.
     # Clean up the OBP temp folder (delete all csv files there).
-    logger.info("Set csv_folder")
-    csv_folder = libs.postbank_get_csv.check_for_clean_tmp()
+    logger.info("Setting csv_folder...") #E.S. Can't this call be moved to 
+	#E.S. within postbank_get_csv.get_csv_with_selenium, and avoid having to pass it back to the same lib?
+    csv_folder = libs.postbank_get_csv.check_for_clean_tmp() 
     logger.debug("csv_folder is: %s" % csv_folder)
 
     # Get a new csv file using selenium
@@ -56,20 +57,21 @@ def get_transactions_from_bank_as_csv(username, password):
     libs.postbank_get_csv.get_csv_with_selenium(csv_folder, username, password)
 
     # Now check that one file exists in the folder and return its name
-    logger.info("getting now csv_file")
+    logger.info("Getting the csv_file...")
     csv_file = libs.import_helper.check_and_return_csv_file_name(csv_folder)
     logger.debug("csv_file is: %s " % csv_file)
 
     # Now return the full path of the file.
+    #E.S. 'csv/'? <- "magic number". Should this be csv_folder?
     csv_path = os.path.join(obp_config.TMP, 'csv/', csv_file)
-    logger.debug("joining csv_file and TMP to: %s" % csv_path)
-    logger.debug("return csv_path")
+    logger.debug("joining csv_file and TMP to: %s" % csv_path) #E.S. again, the ref to TMP
+    logger.debug("returning csv_path: %s" % csv_path)
     return csv_path
 
 
 def transactions_to_obp(username, password):
     """
-    Retrieves the csv from postbank and posts it into the OpenBankProject server
+    Retrieves the csv from postbank and posts it to the OpenBankProject server
     """
 
     # TODO: Some of this functionality should probably move inside the csv parser/importer.
@@ -96,7 +98,7 @@ def transactions_to_obp(username, password):
 
     # Now read the file and push it to the Scala API
     # TODO: It would be better, when we just getting the JSON back and
-    # then we can decide how to insert.
+    # then we can decide how to insert. #E.S. eh?
     logger.info("Converting to JSON, inserting to Scala API")
     libs.csv_importer.main(csv_file)
 
@@ -135,7 +137,7 @@ def main():
 
         except KeyboardInterrupt:
                 logger.critical("KeyboardInterrupt!")
-                logger.critical("Catch Ctrl-C from user")
+                logger.critical("Caught Ctrl-C from user")
                 raise
         except Exception, e:
             # TODO: need a cleanup as well, just to be sure no sensitive data left on the disk.

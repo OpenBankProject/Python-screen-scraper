@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*
 __doc__ = """
-This is a basic tester of all function. It will test for 
-right configuration and options. Test the DB backend and API.
+Basic tests of all functionality. It will test for the
+right configuration and options, the DB backend and the API.
 """
 __author__ = ['simonredfern (simon@tesobe.com)',' Jan Alexander Slabiak (alex@tesobe.com)']
 __license__ = """
@@ -40,12 +40,12 @@ from libs.debugger import debug
 from libs.import_helper import *
 
 # TODO:
-# This test are not updated. Need to wirte new test for
+# This test are not updated. Need to write new tests for
 # the API and for the new functions. 
 
 # This will start checking Database
 # Drop, Create, Insert, Tables Style ,Drop
-# Using on the testcase assertisNot instead of assertEqual,
+# Using the testcase assertisNot instead of assertEqual,
 # http://docs.python.org/library/unittest.html#deprecated-aliases
 
 
@@ -53,8 +53,8 @@ class TestMongoDBBasic(unittest.TestCase):
 
     def setUp(self):
         pass
-        # TODO: It would be better to have a configuration file.
-        # That would be loaded at this place. J.A.S
+        # TODO: It would be better to have a configuration file
+        # that would be loaded here. J.A.S
 
     def test_config_settings(self):
         self.assertEqual(obp_config.MONGODB_SERVER,'obp_mongod')

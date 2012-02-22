@@ -20,8 +20,8 @@ __doc__ = """
 Using Selenium RC2, install it with "pip install selenium"
 need also =>selenium-2.0
 
-This tool will take control of a local Firefox and download the CSV File from PB.
-TMP is in the obp_config, this is important. Not every System have a /tmp (Also related
+This tool will take control of a local Firefox and download the CSV file from PB.
+TMP is in the obp_config, this is important. Not every system has a /tmp (also related
 to win32 systems)
 """
 
@@ -47,7 +47,7 @@ postbank_main_url_value_download = "https://banking.postbank.de/rai/?wicket:inte
 def check_for_clean_tmp():
     """Check for an empty tmp/csv """
     # This function will check that the tmp/csv folder is
-    # empty. Else we'll have problem woring with the file.
+    # empty. Else we'll have problems working with the file.
 
     # Sanity Check #1:
     # Do we have tmp/ and tmp/csv
@@ -68,7 +68,7 @@ def check_for_clean_tmp():
 
     return csv_save_path
 
-
+#E.S. Can't csv_save_path be gotten from check_for_clean_tmp()?
 def get_csv_with_selenium(csv_save_path, username, password):
     """Getting CSV file via Firefox, controlled by Selenium webdriver"""
     # LINK: http://seleniumhq.org/docs/03_webdriver.html#getting-started-with-selenium-webdriver
@@ -91,7 +91,7 @@ def get_csv_with_selenium(csv_save_path, username, password):
     logger.debug("rowser.download.manager.showWhenStarting False ")
     fp.set_preference("browser.download.dir", csv_save_path)
     logger.debug("browser.download.dir %s" % csv_save_path)
-    # Need to set CSV to saveToDisk, else it's unknown for FF and he will ask.
+    # Need to set CSV to saveToDisk, else it's unknown to FF and it will ask for it
     fp.set_preference("browser.helperApps.neverAsk.saveToDisk", "text/csv")
     logger.debug("browser.helperApps.neverAsk.saveToDisk text/csv")
 
@@ -102,24 +102,24 @@ def get_csv_with_selenium(csv_save_path, username, password):
     browser.get(postbank_main_url_login_page)  # Load page
     assert "Postbank Online-Banking" in browser.title
 
-    # Here we will inserting Username and Password:
+    # Here we will insert the username and password:
     # find the element that's name attribute is nutzername and kennwort
     logger.info("Inserting Username and Password to Login")
-    logger.debug("search for login box")
+    logger.debug("searching for login box")
     inputElement_username = browser.find_element_by_name("nutzername")
-    logger.debug("search for password box")
+    logger.debug("searching for password box")
     inputElement_password = browser.find_element_by_name("kennwort")
 
     # send Username and Password
-    logger.debug("Inserting usernamen into login box %s " % username)
+    logger.debug("Inserting username into login box: %s " % username)
     inputElement_username.send_keys(username)
     logger.debug("Inserting password into login box")
     inputElement_password.send_keys(password)
     # submit the Username and Password to Postbank.
-    logger.info("submit login_data to login")
+    logger.info("submitting login_data to login")
     inputElement_password.submit()
 
-    # This open the Main Page for Accounts, check for the Name.
+    # This opens the main page for accounts, and checks the name.
     # Call the Transaction Page
     logger.debug("Open URL: %s" % postbank_main_url_value_page)
     browser.get(postbank_main_url_value_page)
@@ -127,8 +127,8 @@ def get_csv_with_selenium(csv_save_path, username, password):
 
     # Call the CSV Link.
     # Warning!
-    # The Postbank uses a :page counter, when the URL doesn't have the right page counter it will return
-    # a error message.
+    # The Postbank uses a :page counter, and when the URL doesn't have the right page counter it will return
+    # an error message.
     logger.debug("Open URL: %s" % postbank_main_url_value_download)
     result = browser.get(postbank_main_url_value_download)
     logger.info("closing Firefox")
