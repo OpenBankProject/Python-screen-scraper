@@ -47,7 +47,7 @@ def get_transactions_from_bank_as_csv(username, password):
 
     # TODO: When no username and password is set, use the demo login.
     # Clean up the OBP temp folder (delete all csv files there).
-    logger.info("Setting csv_folder...") #E.S. Can't this call be moved to 
+    logger.info("Setting csv_folder...")  #E.S. Can't this call be moved to 
 	#E.S. within postbank_get_csv.get_csv_with_selenium, and avoid having to pass it back to the same lib?
     csv_folder = libs.postbank_get_csv.check_for_clean_tmp() 
     logger.debug("csv_folder is: %s" % csv_folder)
@@ -97,8 +97,8 @@ def transactions_to_obp(username, password):
     libs.import_helper.remove_empty_lines(csv_file)
 
     # Now read the file and push it to the Scala API
-    # TODO: It would be better, when we just getting the JSON back and
-    # then we can decide how to insert. #E.S. eh?
+    # TODO: 
+    #       Need to return the JSON and then call the desired Insert function
     logger.info("Converting to JSON, inserting to Scala API")
     libs.csv_importer.main(csv_file)
 

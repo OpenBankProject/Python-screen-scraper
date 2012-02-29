@@ -47,6 +47,7 @@ OBP_VERSION = '0.0.1'
 # The folder where the CSV file gets saved
 SAVEDIR = ''
 TMP = path.join(getcwd(), 'tmp/')
+TMP_CSV_SUFFIX= "csv"  # TODO: Adapt to files. 
 
 # This can be used to specify a local CSV file.
 # TODO: When this file is define. Don't run the postbank_importer

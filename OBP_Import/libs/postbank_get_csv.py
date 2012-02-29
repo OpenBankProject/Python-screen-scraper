@@ -23,6 +23,11 @@ need also =>selenium-2.0
 This tool will take control of a local Firefox and download the CSV file from PB.
 TMP is in the obp_config, this is important. Not every system has a /tmp (also related
 to win32 systems)
+
+I disabled the logger, because the webdriver of selenium used it as well and printed
+out sensible data. I wasn't able to control this behavior of selenium.
+Have to find a fix for this! 
+J.A.S
 """
 
 
@@ -33,7 +38,8 @@ from obp_config import TMP
 from libs.import_helper import show_here
 from libs.debugger import debug
 from selenium import webdriver
-from debugger import logger
+#from selenium import selenium
+#from debugger import logger
 
 # The csv will download the to tmp/csv/
 TMP_SUFFIX = 'csv'
@@ -73,55 +79,57 @@ def get_csv_with_selenium(csv_save_path, username, password):
     """Getting CSV file via Firefox, controlled by Selenium webdriver"""
     # LINK: http://seleniumhq.org/docs/03_webdriver.html#getting-started-with-selenium-webdriver
 
-    logger.info("Start Selenium")
-    logger.debug("csv_save_path: %s" % csv_save_path)
-    logger.debug("username is set")
-    logger.debug("password is set")
+    #logger.info("Start Selenium")
+    #logger.debug("csv_save_path: %s" % csv_save_path)
+    #logger.debug("username is set")
+    #logger.debug("password is set")
 
     # Setting up a Profile for Firefox.
     # Proxy is disabled and download files without asking.
-    logger.info("Setup Firefox Profile")
+    #logger.info("Setup Firefox Profile")
     fp = webdriver.FirefoxProfile()
-    logger.debug("webdriver firefox")
+    #logger.debug("webdriver firefox")
     fp.set_preference("network.proxy.type", 0)
-    logger.debug("network.proxy.type 0")
+    #logger.debug("network.proxy.type 0")
     fp.set_preference("browser.download.folderList", 2)
-    logger.debug("rowser.download.fold 2")
+    #logger.debug("rowser.download.fold 2")
     fp.set_preference("browser.download.manager.showWhenStarting", False)
-    logger.debug("rowser.download.manager.showWhenStarting False ")
+    #logger.debug("rowser.download.manager.showWhenStarting False ")
     fp.set_preference("browser.download.dir", csv_save_path)
-    logger.debug("browser.download.dir %s" % csv_save_path)
+    #logger.debug("browser.download.dir %s" % csv_save_path)
     # Need to set CSV to saveToDisk, else it's unknown to FF and it will ask for it
     fp.set_preference("browser.helperApps.neverAsk.saveToDisk", "text/csv")
-    logger.debug("browser.helperApps.neverAsk.saveToDisk text/csv")
+    #logger.debug("browser.helperApps.neverAsk.saveToDisk text/csv")
 
-    logger.info("Start Firefox")
+    #logger.info("Start Firefox")
     browser = webdriver.Firefox(firefox_profile=fp)  # Get local session of firefox
 
-    logger.debug("Open URL: %s" % postbank_main_url_login_page)
+    #logger.debug("Open URL: %s" % postbank_main_url_login_page)
     browser.get(postbank_main_url_login_page)  # Load page
     assert "Postbank Online-Banking" in browser.title
 
+    #selenium.set_browser_log_level("error")
+
     # Here we will insert the username and password:
     # find the element that's name attribute is nutzername and kennwort
-    logger.info("Inserting Username and Password to Login")
-    logger.debug("searching for login box")
+    #logger.info("Inserting Username and Password to Login")
+    #logger.debug("searching for login box")
     inputElement_username = browser.find_element_by_name("nutzername")
-    logger.debug("searching for password box")
+    #logger.debug("searching for password box")
     inputElement_password = browser.find_element_by_name("kennwort")
 
     # send Username and Password
-    logger.debug("Inserting username into login box: %s " % username)
+    #logger.debug("Inserting username into login box: %s " % username)
     inputElement_username.send_keys(username)
-    logger.debug("Inserting password into login box")
+    #logger.debug("Inserting password into login box")
     inputElement_password.send_keys(password)
     # submit the Username and Password to Postbank.
-    logger.info("submitting login_data to login")
+    #logger.info("submitting login_data to login")
     inputElement_password.submit()
 
     # This opens the main page for accounts, and checks the name.
     # Call the Transaction Page
-    logger.debug("Open URL: %s" % postbank_main_url_value_page)
+    #logger.debug("Open URL: %s" % postbank_main_url_value_page)
     browser.get(postbank_main_url_value_page)
     assert "Postbank Online-Banking" in browser.title
 
@@ -129,17 +137,17 @@ def get_csv_with_selenium(csv_save_path, username, password):
     # Warning!
     # The Postbank uses a :page counter, and when the URL doesn't have the right page counter it will return
     # an error message.
-    logger.debug("Open URL: %s" % postbank_main_url_value_download)
+    #logger.debug("Open URL: %s" % postbank_main_url_value_download)
     result = browser.get(postbank_main_url_value_download)
-    logger.info("closing Firefox")
+    #logger.info("closing Firefox")
     browser.close()
 
 
 def main():
-    logger.info("Start main")
+    #logger.info("Start main")
     path_to_save = check_for_clean_tmp()
     get_csv_with_selenium(path_to_save)
-    logger.info("Done main")
+    #logger.info("Done main")
 
 
 if __name__ == '__main__':

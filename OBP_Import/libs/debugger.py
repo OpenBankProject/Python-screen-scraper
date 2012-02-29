@@ -24,6 +24,9 @@ import os
 import pdb
 import logging
 
+def debug():
+    pdb.set_trace()
+
 
 LOGGER_PATH = os.path.join(os.getcwd() + '/log/')
 print LOGGER_PATH
@@ -36,11 +39,18 @@ logging.basicConfig(
                     filemode='a',
                     datefmt='[%d %h %Y - %H:%M:%S]')
 
-
 #print "Logging messages to %s" % LOG_FILE_NAME
+
+
+class NoParsingFilter(logging.Filter):
+    def filter(self, record):
+        #debug()
+        return not record.getMessage().startswith('POST')
+
 
 logger = logging.getLogger(LOGGER_PATH)
 logger.setLevel(logging.DEBUG)
+logger.addFilter(NoParsingFilter())
 
 logger.info("Initialization logger")
 logger.debug("logger settings:")
@@ -48,5 +58,3 @@ logger.debug("logger path: %s" % LOGGER_PATH)
 logger.debug("logger file: %s" % LOG_FILE_NAME)
 
 
-def debug():
-    pdb.set_trace()
