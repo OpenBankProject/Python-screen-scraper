@@ -29,7 +29,6 @@ def debug():
 
 
 LOGGER_PATH = os.path.join(os.getcwd() + '/log/')
-print LOGGER_PATH
 LOG_FILE_NAME = './var/log/file.log'
 
 logging.basicConfig(
@@ -44,17 +43,17 @@ logging.basicConfig(
 
 class NoParsingFilter(logging.Filter):
     def filter(self, record):
-        #debug()
+        # debug()
         return not record.getMessage().startswith('POST')
 
 
-logger = logging.getLogger(LOGGER_PATH)
-logger.setLevel(logging.DEBUG)
-logger.addFilter(NoParsingFilter())
+obp_logger = logging.getLogger(LOGGER_PATH)
+obp_logger.setLevel(logging.DEBUG)
+obp_logger.addFilter(NoParsingFilter())
 
-logger.info("Initialization logger")
-logger.debug("logger settings:")
-logger.debug("logger path: %s" % LOGGER_PATH)
-logger.debug("logger file: %s" % LOG_FILE_NAME)
+obp_logger.info("Initialization obp_logger")
+obp_logger.debug("obp_logger settings:")
+obp_logger.debug("obp_logger path: %s" % LOGGER_PATH)
+obp_logger.debug("obp_logger file: %s" % LOG_FILE_NAME)
 
 

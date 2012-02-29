@@ -18,14 +18,14 @@ __license__ = """
 """
 
 __doc__ = """
-This file sets some importer options:
+This file sets some importer options:X
 Here you are able to set the Host and Port configuration of
 your Database or API.
 """
 
 
 #from libs.import_helper import show_here
-from libs.debugger import logger
+from libs.debugger import obp_logger
 from os import path
 from os import getcwd
 # Currently unused but approved.
@@ -47,7 +47,7 @@ OBP_VERSION = '0.0.1'
 # The folder where the CSV file gets saved
 SAVEDIR = ''
 TMP = path.join(getcwd(), 'tmp/')
-TMP_CSV_SUFFIX= "csv"  # TODO: Adapt to files. 
+TMP_CSV_SUFFIX = "csv"
 
 # This can be used to specify a local CSV file.
 # TODO: When this file is define. Don't run the postbank_importer
@@ -58,8 +58,8 @@ CSV_FILE_PATH = 'usr/PB_Umsatzauskunft_198_rows.csv'
 HTML_FILE_PATH = ''
 
 # This sets the hostname and port of the Scala API.
-SCALA_HOST = 'localhost' #E.S : better to call this API_HOST?
-SCALA_PORT = '8080' #E.S : better to call this API_PORT?
+SCALA_HOST = 'localhost'  # xE.S : better to call this API_HOST?
+SCALA_PORT = '8080'  # E.S : better to call this API_PORT?
 
 # Defines a file where the sha512 hashes of transactions get saved. The hash
 # values are used to detect transactions that have already been imported.
