@@ -92,7 +92,7 @@ def get_csv_with_selenium(path_to_save_csv, username, password):
     assert "Postbank Online-Banking" in browser.title
 
     #selenium.set_browser_log_level("error")
-    
+
     # Here we will insert the username and password:
     # find the element that's name attribute is nutzername and kennwort
     obp_logger.info("Inserting Username and Password to Login")

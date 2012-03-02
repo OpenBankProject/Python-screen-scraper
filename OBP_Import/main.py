@@ -97,7 +97,7 @@ def transactions_to_obp(username, password):
     # Clean up and remove all files.
     # TODO: using the tempfile library might be much more efficient/clean.
     #       (y.a.)
-    libs.postbank_get_csv.check_for_clean_dir()
+    libs.import_helper.check_for_clean_folder(obp_config.TMP)
     libs.import_helper.clean_up(obp_config.TMP)
 
 
