@@ -32,6 +32,7 @@ import libs.to_utf8
 #import libs.postbank_get_csv
 import SimpleHTTPServer
 import SocketServer
+import threading
 
 
 #from bson import son
@@ -46,6 +47,15 @@ from libs.scala_api_handler import *
 # Drop, Create, Insert, Tables Style ,Drop
 # Using the testcase assertisNot instead of assertEqual,
 # http://docs.python.org/library/unittest.html#deprecated-aliases
+
+class ThreadClass(threading.Thread):
+    """
+        Will start a single thread of the SimpleHTTPServer.
+    """
+    def run(self):
+        Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
+        httpd = SocketServer.TCPServer(("", 8888), Handler)
+        httpd.handle_request()
 
 
 # class TestSelenium(unittest.TestCase):
@@ -88,13 +98,16 @@ from libs.scala_api_handler import *
 class TestBasicScalaAPI(unittest.TestCase):
     """
     This will check for basic function of the Scala API.
+    It's only check that the function will send some date.
     """
 
     def setUp(self):
-        pass
+        #pass
         # Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
         # httpd = SocketServer.TCPServer(("", 8888), Handler)
         # httpd.server_()
+        local_simple_http_server = ThreadClass()
+        local_simple_http_server.start()
 
     def test_basic_connection(self):
         """
@@ -102,9 +115,14 @@ class TestBasicScalaAPI(unittest.TestCase):
         module.
         """
 
-        result = check_scala_host_reachable("localhost", "8080")
+        result = check_scala_host_reachable("localhost", "8888")
         #print result.status_code
-        self.assertEqual(result.status_code,200)
+        self.assertEqual(result.status_code, 200)
+
+    # def test_basic_insert(self)
+    #     """
+    #     Try to
+    #     """
 
 
       # def test_string_insert(self):
