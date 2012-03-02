@@ -37,8 +37,10 @@ def check_scala_host_reachable(scala_api_host, scala_api_port):
     obp_logger.debug("try to connect to api host")
     # Try to call the web root of the  scala_api_host
     try:
-        requests.get('http://' + scala_api_host + ':' + scala_api_port + '/', timeout=5)
         obp_logger.debug("requested http://%s:%s/" % (scala_api_host, scala_api_port))
+        result = requests.get('http://' + scala_api_host + ':' + scala_api_port + '/', timeout=5)
+        obp_logger.debug("request result is: %s" % result)
+        return result
     except:
         obp_logger.critical("ERROR! -  Can't connect to Scala API")
         obp_logger.critical("Check the API Host!")
