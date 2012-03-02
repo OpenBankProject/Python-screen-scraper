@@ -18,14 +18,14 @@ __license__ = """
 """
 
 __doc__ = """
-This file is to set some Option of the Importer,
-Here you able to set the Host and Port configuration of
+This file sets some importer options:X
+Here you are able to set the Host and Port configuration of
 your Database or API.
 """
 
 
 #from libs.import_helper import show_here
-from libs.debugger import logger
+from libs.debugger import obp_logger
 from os import path
 from os import getcwd
 # Currently unused but approved.
@@ -40,15 +40,16 @@ MONGODB_SERVER_PORT = 27017
 MONGODB_DATABASE = 'OBP006'
 MONGODB_COLLECTION = 'obptransactions'
 
-# There Importer Version
+# The importer version
 OBP_VERSION = '0.0.1'
 
 # Files:
-# The Folder where the CSV file get saved
+# The folder where the CSV file gets saved
 SAVEDIR = ''
 TMP = path.join(getcwd(), 'tmp/')
+TMP_CSV_SUFFIX = "csv"
 
-# This can be used, to special a local file.
+# This can be used to specify a local CSV file.
 # TODO: When this file is define. Don't run the postbank_importer
 CSV_FILE_PATH = 'usr/PB_Umsatzauskunft_198_rows.csv'
 # There is also the alternative of using a HTML file. This
@@ -56,14 +57,18 @@ CSV_FILE_PATH = 'usr/PB_Umsatzauskunft_198_rows.csv'
 
 HTML_FILE_PATH = ''
 
-# This need the Hostname of the Scala Host with the Port.
-SCALA_HOST = 'localhost'
-SCALA_PORT = '8080'
+# This sets the hostname and port of the Scala API.
+SCALA_HOST = 'localhost'  # xE.S : better to call this API_HOST?
+SCALA_PORT = '8080'  # E.S : better to call this API_PORT?
 
-# Here you can define a file, where the sha512 hashes get saved for the JSON.
-# This will track the Transaction. It tries to ensure, that we don't get double entry's.
+# Defines a file where the sha512 hashes of transactions get saved. The hash
+# values are used to detect transactions that have already been imported.
 HASH_FILE = 'var/cache'
 
 
 # Logger Settings
 # Define Path and Debug level.
+
+LOGGER_NAME = "ImportLogger"
+LOGGER_LEVEL = "DEBUG"
+LOGGER_TIME_FORMAT = '[%d %h %Y - %H:%M:%S]'
