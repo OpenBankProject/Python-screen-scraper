@@ -9,11 +9,11 @@ Open Bank Project (http://www.openbankproject.com)
 
 
 About:
-This is the OpenBankPrject Importer. It can currently login automatly to a Postbank Account and get
+This is the OpenBankProject Importer. It can currently login automatically to a Postbank Account and get
 a CSV file. This will then insert via HTTP to the OpenBankProject Server. 
 
 
-Software Requierments:
+Software Requirements:
  =>python.2.7 <= python3.0
  =>pymongo2.0.1 
  =>mongodb1.8
@@ -25,19 +25,21 @@ Software Requierments:
 and the OpenBankProject-Server
 https://github.com/OpenBankProject/OpenBankProject-Server
 
+Other Requirements:
 
+You need a Online Banking Account on Postbank! 
 
-Importen Note!
-We need UTF-8 in the bash envoirment!
+Important Note!
+We need UTF-8 in the bash environment!
 
 
 How to run it:
-Install all need packages via pip. Then go to the root folder and run
+Install all needed packages with pip. Then go to the root folder and run
 
     ./main.py
 
 This will start the program, which will ask for you Postbank Login data. 
-When you have insert them, the program will go to the Postbank online Banking Page
+When you have insert them, the program will go to the Postbank Banking Page
 and get the CSV File of you last Transaction. 
 
 
