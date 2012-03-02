@@ -56,6 +56,7 @@ class ThreadClass(threading.Thread):
         Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
         httpd = SocketServer.TCPServer(("", 8888), Handler)
         httpd.handle_request()
+        #httpd.serve_forever()
 
 
 # class TestSelenium(unittest.TestCase):
@@ -107,6 +108,7 @@ class TestBasicScalaAPI(unittest.TestCase):
         # httpd = SocketServer.TCPServer(("", 8888), Handler)
         # httpd.server_()
         local_simple_http_server = ThreadClass()
+        local_simple_http_server.deamon = False
         local_simple_http_server.start()
 
     def test_basic_connection(self):
@@ -114,15 +116,25 @@ class TestBasicScalaAPI(unittest.TestCase):
         Setup a basic HTTP Server and try to get the root via request
         module.
         """
-
         result = check_scala_host_reachable("localhost", "8888")
         #print result.status_code
         self.assertEqual(result.status_code, 200)
 
-    # def test_basic_insert(self)
-    #     """
-    #     Try to
-    #     """
+
+# class TestBasicScalaAPIinsert(unittest.TestCase):
+
+#     def setUp(self):
+#         local_simple_http_server = ThreadClass()
+#         local_simple_http_server.deamon = False
+#         local_simple_http_server.start()
+
+
+#     def test_basic_insert(self):
+#         """
+#         Try to insert data to the localhost
+#         """
+#         result = insert_into_scala("localhost", "8888", "Nothing")
+#         print result
 
 
       # def test_string_insert(self):

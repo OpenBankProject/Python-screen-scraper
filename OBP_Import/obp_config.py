@@ -68,3 +68,7 @@ HASH_FILE = 'var/cache'
 
 # Logger Settings
 # Define Path and Debug level.
+
+LOGGER_NAME = "ImportLogger"
+LOGGER_LEVEL = "DEBUG"
+LOGGER_TIME_FORMAT = '[%d %h %Y - %H:%M:%S]'
