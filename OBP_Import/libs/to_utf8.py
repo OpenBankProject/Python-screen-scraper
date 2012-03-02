@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import with_statement
+#from debugger import debug
 
 import os
 import sys
@@ -28,68 +29,65 @@ __license__ = """
 
 __doc__ = """
 This program will convert a latin1 file to UTF-8.
-
-That code comes from stackoverflow. 
+Some code parts coming from stackoverflow .
 LINK: http://stackoverflow.com/questions/191359/how-to-convert-a-file-to-utf-8-in-python
 """
 
 
-# We assume this is default for the CSV FILE.
-# TODO: Move to obp_config
-sourceFormats = ['windows-1252']
-targetFormat = 'utf-8'
-outputDir = TMP
+source_formats = ['windows-1252']
+target_format = 'utf-8'
+output_dir = TMP
 
 
-
-def convertFile(fileName):
+def convertFile(file_name):
     """Will convert a file to UTF-8"""
-    for format in sourceFormats:
+    for format in source_formats:
         try:
-            with codecs.open(fileName, 'rU', format) as sourceFile:
-                writeConversion(sourceFile)
+            with codecs.open(file_name, 'rU', format) as source_file:
+                write_conversion(source_file)
                 return
         except UnicodeDecodeError:
             pass
 
-    print("Error: failed to convert '" + fileName + "'.")
+    print("Error: failed to convert '" + file_name + "'.")
 
 
-def writeConversion(file):
-    with codecs.open(outputDir + '/' + fileName, 'w', targetFormat) as targetFile:
+def write_conversion(file):
+    with codecs.open(output_dir + '/' + file_name, 'w', target_format) as target_file:
         for line in file:
-            targetFile.write(line)
+            target_file.write(line)
 
 
-def spilt_path(unclean_input):
-    """First check for a real path, else return None,filename"""
-    if os.path.exists(unclean_input) ==  True:
-        return os.path.split(unclean_input)
+def spilt_path(unclean_path_to_file):
+    """First check for a real path, else return None, filename."""
+    if os.path.exists(unclean_path_to_file) == True:
+        return os.path.split(unclean_path_to_file)
     else:
-        return None,unclean_input
+        return None, unclean_path_to_file
 
 
-
-def main(input_file):
+def main(file):
     """Will convert a file to UTF-8 and return the Path + File"""
-    # Get pwd
+
+    # Get the current working directory.
     here = os.getcwd()
-    #Need the filename as Globle so other function can access to it.
-    global fileName
-    # Spilte the Input into Filepath and Fle Name
-    filePath = spilt_path(input_file)[0]
-    fileName = spilt_path(input_file)[1]
-    
-    # Try to get into the filePath, if exist
+    #Need the file_name to set globe, so that other functions can access to it.
+    global file_name
+    # Spite the Input into file_path and file_name.
+    file_path = spilt_path(file)[0]
+    file_name = spilt_path(file)[1]
+
+    # Try to get into the file_path, if exist
     try:
-        os.chdir(filePath)
-    except: IOError
+        os.chdir(file_path)
+    except IOError, e:
+        print e
 
     # Now convert it
-    convertFile(fileName)
-    # going back to orgin folder 
+    convertFile(file_name)
+    # going back to orgin folder
     os.chdir(here)
-    return os.path.join(TMP,fileName)
+    return os.path.join(output_dir, file_name)
 
 
 if __name__ == '__main__':
