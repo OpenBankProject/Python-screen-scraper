@@ -33,6 +33,7 @@ import libs.to_utf8
 import SimpleHTTPServer
 import SocketServer
 import threading
+import errno
 
 
 #from bson import son
@@ -107,9 +108,19 @@ class TestBasicScalaAPI(unittest.TestCase):
         # Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
         # httpd = SocketServer.TCPServer(("", 8888), Handler)
         # httpd.server_()
-        local_simple_http_server = ThreadClass()
-        local_simple_http_server.deamon = False
-        local_simple_http_server.start()
+        try:
+            local_simple_http_server = ThreadClass()
+            local_simple_http_server.deamon = False
+            local_simple_http_server.start()
+        except errno.EADDRINUSE:
+            pass
+
+    def test_basic_insert(self):
+        """
+        Try to insert data to the localhost
+        """
+        result = insert_into_scala("localhost", "8888", "Nothing")
+        print result
 
     def test_basic_connection(self):
         """
@@ -119,23 +130,6 @@ class TestBasicScalaAPI(unittest.TestCase):
         result = check_scala_host_reachable("localhost", "8888")
         #print result.status_code
         self.assertEqual(result.status_code, 200)
-
-
-# class TestBasicScalaAPIinsert(unittest.TestCase):
-
-#     def setUp(self):
-#         local_simple_http_server = ThreadClass()
-#         local_simple_http_server.deamon = False
-#         local_simple_http_server.start()
-
-
-#     def test_basic_insert(self):
-#         """
-#         Try to insert data to the localhost
-#         """
-#         result = insert_into_scala("localhost", "8888", "Nothing")
-#         print result
-
 
       # def test_string_insert(self):
       #     self.import_data ={u'Bank Account':u'1234561231'
@@ -242,7 +236,7 @@ class TestImportCSV(unittest.TestCase):
       #             u'obp_transaction_date_start': u'07.11.2011'
       #             }
       #     # This is a new test from Pyhon2.7, it will sort the input of the
-      #     # test and then comapre them like assertEqual
+      #     # test and then compare them like assertEqual
       #     # LINK:
       #     # http://docs.python.org/library/unittest.html#unittest.TestCase.assertItemsEqual
 
