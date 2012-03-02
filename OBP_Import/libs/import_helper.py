@@ -27,7 +27,7 @@ import fileinput
 import getpass
 import datetime
 import hashlib
-from debugger import obp_logger
+from debugger import obp_logger, debug
 
 
 def date_now_formatted():
@@ -61,13 +61,24 @@ def check_for_existing_csv(csv_file_path):
 def check_for_clean_folder(check_path):
     """Check for an empty folder. Else create it."""
 
+    obp_logger.info("Check for empty and exists folder")
+    obp_logger.debug("Check that %s exists" % check_path)
     if os.path.exists(check_path) != True:
+        obp_logger.debug("%s no there, create it")
         os.makedirs(check_path)
 
-    # Check for an empty folder.
+    # Check for an empty folder
+    obp_logger.debug("Check for empty folder")
     if len(os.listdir(check_path)) != 0:
-        for item in os.listdir(csv_save_path):
-            os.remove(os.path.join(csv_save_path, item))
+        obp_logger.debug("Getting length of items in %s" % check_path)
+        obp_logger.debug("Try to remove items in check_path")
+        for item in os.listdir(check_path):
+            item_to_remove = os.path.join(check_path, item)
+            obp_logger.debug("Item is %s" % item_to_remove)
+            try:
+                os.remove(item_to_remove)
+            except OSError, e:
+                obp_logger.warn("Can't remove %s" % e)
 
 
 def json_formatter(json):

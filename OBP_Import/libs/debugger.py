@@ -24,6 +24,7 @@ import os
 import pdb
 import logging
 
+
 def debug():
     pdb.set_trace()
 
@@ -31,29 +32,27 @@ def debug():
 LOGGER_PATH = os.path.join(os.getcwd() + '/log/')
 LOG_FILE_NAME = './var/log/file.log'
 
-logging.basicConfig(
-                    level=logging.DEBUG,
-                    format='%(asctime)s %(levelname)s %(filename)s:%(funcName)s(%(lineno)d) : %(message)s',
-                    filename=LOG_FILE_NAME,
-                    filemode='a',
-                    datefmt='[%d %h %Y - %H:%M:%S]')
-
 #print "Logging messages to %s" % LOG_FILE_NAME
 
+DEFAULT_LOGGER = "ImporterLogger"
+LOG_FILENAME = "./var/log/%s.log" % DEFAULT_LOGGER
+LOG_LEVEL = "DEBUG"
+LOG_MSG_FORMAT = "%(asctime)s %(levelname)s %(filename)s:%(funcName)s(%(lineno)d) : %(message)s"
+LOG_MSG_TIME_FORMAT = '[%d %h %Y - %H:%M:%S]'
 
-class NoParsingFilter(logging.Filter):
-    def filter(self, record):
-        # debug()
-        return not record.getMessage().startswith('POST')
+logger = logging.getLogger(DEFAULT_LOGGER)
+logger.setLevel(LOG_LEVEL)
+handler = logging.FileHandler(LOG_FILENAME)
+formatter = logging.Formatter(LOG_MSG_FORMAT, LOG_MSG_TIME_FORMAT)
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
 
-obp_logger = logging.getLogger(LOGGER_PATH)
+obp_logger = logging.getLogger(DEFAULT_LOGGER)
 obp_logger.setLevel(logging.DEBUG)
-obp_logger.addFilter(NoParsingFilter())
+
 
 obp_logger.info("Initialization obp_logger")
 obp_logger.debug("obp_logger settings:")
 obp_logger.debug("obp_logger path: %s" % LOGGER_PATH)
 obp_logger.debug("obp_logger file: %s" % LOG_FILE_NAME)
-
-

@@ -54,11 +54,12 @@ def get_csv_with_selenium(path_to_save_csv, username, password):
     obp_logger.info("Setting csv_folder...")
 
     # Check for existing and empty tmp
-    check_for_clean_tmp(path_to_save)
+    check_for_clean_folder(path_to_save_csv)
 
-    csv_save_path = os.path.join(os.getcwd(), path_to_save, TMP_SUFFIX)
-    obp_logger.debug("csv_folder is: %s" % csv_folder)
-    check_for_clean_tmp
+    csv_save_path = os.path.join(os.getcwd(), path_to_save_csv, TMP_CSV_SUFFIX)
+    obp_logger.debug("csv_folder is: %s" % csv_save_path)
+
+    check_for_clean_folder(csv_save_path)
 
     obp_logger.info("Start Selenium")
     obp_logger.debug("csv_save_path: %s" % csv_save_path)
@@ -91,7 +92,7 @@ def get_csv_with_selenium(path_to_save_csv, username, password):
     assert "Postbank Online-Banking" in browser.title
 
     #selenium.set_browser_log_level("error")
-
+    
     # Here we will insert the username and password:
     # find the element that's name attribute is nutzername and kennwort
     obp_logger.info("Inserting Username and Password to Login")
@@ -124,12 +125,13 @@ def get_csv_with_selenium(path_to_save_csv, username, password):
     result = browser.get(postbank_main_url_value_download)
     obp_logger.info("closing Firefox")
     browser.close()
+    return csv_save_path
 
 
 def main():
     obp_logger.info("Start main")
-    path_to_save = check_for_clean_tmp()
-    get_csv_with_selenium(path_to_save)
+    check_for_clean_folder()
+    get_csv_with_selenium(TMP)
     obp_logger.info("Done main")
 
 

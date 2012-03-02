@@ -44,20 +44,19 @@ def get_transactions_from_bank_as_csv(username, password):
     starts the Selenium Browser (Firefox) to access Postbank.
     Returns the full path to the csv file.
     """
-    
     # Get a new csv file using selenium
     obp_logger.debug("About to start Selenium, with csv_path")
-    libs.postbank_get_csv.get_csv_with_selenium(csv_folder, username, password)
+    csv_save_path = libs.postbank_get_csv.get_csv_with_selenium(obp_config.TMP, username, password)
 
     # Now check that one file exists in the folder and return its name
     obp_logger.info("Getting the csv_file...")
-    csv_file = libs.import_helper.check_and_return_csv_file_name(csv_folder)
+    csv_file = libs.import_helper.check_and_return_csv_file_name(csv_save_path)
     obp_logger.debug("csv_file is: %s " % csv_file)
 
     # Now return the full path of the file.
     #E.S. 'csv/'? <- "magic number". Should this be csv_folder?
     csv_path = os.path.join(obp_config.TMP, 'csv/', csv_file)
-    obp_logger.debug("joining csv_file and TMP to: %s" % csv_path) #E.S. again, the ref to TMP
+    obp_logger.debug("joining csv_file and TMP to: %s" % csv_path)  # E.S. again, the ref to TMP
     obp_logger.debug("returning csv_path: %s" % csv_path)
     return csv_path
 
@@ -67,7 +66,7 @@ def transactions_to_obp(username, password):
     Retrieves the csv from postbank and posts it to the OpenBankProject server
     """
 
-    # TODO: Some of this functionality should probably move inside the csv parser/importer.
+    #TODO: Some of this functionality should probably move inside the csv parser/importer.
     #       This function should in theory only call two functions:
     #       1. get_transactions_from_bank_as_csv()
     #       2. push_csv_to_obp(csv)
@@ -90,7 +89,7 @@ def transactions_to_obp(username, password):
     libs.import_helper.remove_empty_lines(csv_file)
 
     # Now read the file and push it to the Scala API
-    # TODO: 
+    # TODO:
     #       Need to return the JSON and then call the desired Insert function
     obp_logger.info("Converting to JSON, inserting to Scala API")
     libs.csv_importer.main(csv_file)
