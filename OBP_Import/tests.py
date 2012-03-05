@@ -108,5 +108,4 @@ if __name__ == '__main__':
     local_simple_http_server = ThreadClass()
     local_simple_http_server.deamon = False
     local_simple_http_server.start()
-
     unittest.main()

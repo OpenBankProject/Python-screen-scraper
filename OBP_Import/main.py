@@ -125,7 +125,9 @@ def main():
             transactions_to_obp(login_data[0], login_data[1])
             # TODO: Need another exception for not getting the CSV File.
             # wait 10 minutes
-            sleep(10 * 60)
+            obp_logger.info("Done with reading CSV file, restart in %d hour(s)." % obp_config.TIME_TO_SLEEP)
+            print "Done with reading CSV file, restart in %d hour(s)." % obp_config.TIME_TO_SLEEP
+            sleep(obp_config.TIME_TO_SLEEP * 60 * 60)
 
         except KeyboardInterrupt:
                 obp_logger.critical("KeyboardInterrupt!")
@@ -135,11 +137,12 @@ def main():
             # TODO: need a cleanup as well, just to be sure no sensitive data left on the disk.
             obp_logger.error("Something went wrong")
             obp_logger.error("Error is:\n%s" % e)
-            obp_logger.error("restart in 60 seconds")
+            obp_logger.error("restart in %d seconds" % obp_config.TIME_TILL_RETRY)
             print "%s:Something went wrong" % libs.import_helper.date_now_formatted()
             print "%s:Error is:\n%s" % (libs.import_helper.date_now_formatted(), e)
-            # When something went wrong wait 1 minute.
-            sleep(60)
+            print "restart in %d seconds" % obp_config.TIME_TILL_RETRY
+            # When something went wrong wait some time.
+            sleep(obp_config.TIME_TILL_RETRY)
 
 
 if __name__ == '__main__':

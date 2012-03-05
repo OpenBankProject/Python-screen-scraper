@@ -31,7 +31,7 @@ import os
 import simplejson as json
 
 from import_helper import *
-from debugger import obp_logger
+from debugger import obp_logger, debug
 from scala_api_handler import insert_into_scala
 
 
@@ -43,7 +43,11 @@ from obp_config import *
 
 # Here we'll append the Header information of the first rows in
 # the CSV before reading the row transaction.
+obp_logger.debug("Create empty csv_header_info list.")
 csv_header_info = []
+
+obp_logger.debug("Create empty transaction_chunks list.")
+transaction_chunks_list = []
 
 
 def get_info_from_row(input_row):
@@ -195,6 +199,7 @@ def parse_row_of_csv(csv_file_to_parse):
             else:
                 # When we have a valid date, call get_info_from_row.
                 obp_transaction_dict = get_info_from_row(row)
+
                 obp_logger.debug("call get_info_from_row")
 
             # This will create a hash and return it.
@@ -206,32 +211,39 @@ def parse_row_of_csv(csv_file_to_parse):
             print "%s:The hash of the JSON is: %s" % (date_now_formatted(), json_hash)
 
             # Insert the hash into the cache. If it worked (the hash did not yet exist)
-	    # send it to the API.
-            result = insert_hash_to_cache(json_hash, HASH_FILE)
-            if result == True:
-                result = insert_into_scala(
-                    SCALA_HOST,
-                    SCALA_PORT,
-                    json_formatter(obp_transaction_dict))
-
-                obp_logger.debug("HTTP POST result is: %s" % result)
-                #obp_logger.debug("HTTP POST text from result is: %s" % result.text)
+            # send it to the API.
+            is_inserted_to_cache = insert_hash_to_cache(json_hash, HASH_FILE)
+            if is_inserted_to_cache == True:
+                #print json_formatter(json_formatter(obp_transaction_dict))
+                transaction_chunks_list.append(json_formatter(obp_transaction_dict))
             else:
-                obp_logger.info("Transaction is already in hash file, not inserting")
-                print "%s:Transaction is already in hash file, not inserting" % date_now_formatted()
+                obp_logger.info("Transaction is already in hash file, not returned")
+                #print "%s:Transaction is already in hash file, not returned" % date_now_formatted()
+
+        return transaction_chunks_list
 
 
 def main(csv_file_path):
     """Will check for a valid CSV and import it to the Scala API"""
 
-    obp_logger.info("Start Main")
+    obp_logger.info("Start Main:")
     obp_logger.debug("csv_file_path is: %s" % csv_file_path)
-    obp_logger.debug("Check that csv_file_path is valid path")
+    obp_logger.debug("Check that csv_file_path is valid path.")
     check_for_existing_csv(csv_file_path)
 
     obp_logger.debug("Start parse_row_of_csv")
-    parse_row_of_csv(csv_file_path)
+    transaction_chunks_to_insert = parse_row_of_csv(csv_file_path)
 
+    obp_logger.debug("Start inserting to API.")
+    api_respone_result = insert_into_scala(
+        SCALA_HOST,
+        SCALA_PORT,
+        json_formatter(', '.join(transaction_chunks_to_insert))
+        )
+
+    print json.dumps(transaction_chunks_to_insert)
+    obp_logger.debug("HTTP POST api_respone_result is: %s" % api_respone_result)
+    #obp_logger.debug("HTTP POST text from api_respone_result is: %s" % api_respone_result.text)
 
 if __name__ == '__main__':
     print 'Main'

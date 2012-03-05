@@ -32,7 +32,6 @@ from os import getcwd
 MONGODB_SERVER = 'obp_mongod'
 MONGODB_SERVER_PORT = 27017
 
-
 #MongoDB Setting
 # Name of the Database and the Mongo Collection.
 # How to setup a MongoDB:
@@ -60,6 +59,13 @@ HTML_FILE_PATH = ''
 # This sets the hostname and port of the Scala API.
 SCALA_HOST = 'localhost'  # xE.S : better to call this API_HOST?
 SCALA_PORT = '8080'  # E.S : better to call this API_PORT?
+
+
+# This amount in hours, when it should restart the fetching process.
+TIME_TO_SLEEP = 1
+
+# The amount of minutes, when it should restart after a exception.
+TIME_TILL_RETRY = 15
 
 # Defines a file where the sha512 hashes of transactions get saved. The hash
 # values are used to detect transactions that have already been imported.
