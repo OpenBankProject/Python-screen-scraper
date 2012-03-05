@@ -116,6 +116,7 @@ def get_info_from_row(input_row):
 
     # Don't print out the JSON, to ensure no sensitive data gets displayed.
     obp_logger.debug("create json dump")
+
     obp_transaction_data = json.dumps([
     {
     "obp_transaction": {
@@ -203,7 +204,7 @@ def parse_row_of_csv(csv_file_to_parse):
                 obp_logger.debug("call get_info_from_row")
 
             # This will create a hash and return it.
-            json_hash = create_hash(json_formatter(obp_transaction_dict))
+            json_hash = create_hash(obp_transaction_dict)
             obp_logger.debug("create json_hash from obp_transaction_dict")
             # Some debug output. So that we may can see the content of the JSON
             # and the hash.
@@ -214,8 +215,8 @@ def parse_row_of_csv(csv_file_to_parse):
             # send it to the API.
             is_inserted_to_cache = insert_hash_to_cache(json_hash, HASH_FILE)
             if is_inserted_to_cache == True:
-                #print json_formatter(json_formatter(obp_transaction_dict))
-                transaction_chunks_list.append(json_formatter(obp_transaction_dict))
+                # Need to decode the JSON, else the later JSON will be messy.
+                transaction_chunks_list.append(json.loads(json_formatter(obp_transaction_dict)))
             else:
                 obp_logger.info("Transaction is already in hash file, not returned")
                 #print "%s:Transaction is already in hash file, not returned" % date_now_formatted()
@@ -235,10 +236,12 @@ def main(csv_file_path):
     transaction_chunks_to_insert = parse_row_of_csv(csv_file_path)
 
     obp_logger.debug("Start inserting to API.")
+    debug()
     api_respone_result = insert_into_scala(
         SCALA_HOST,
         SCALA_PORT,
-        json_formatter(', '.join(transaction_chunks_to_insert))
+        json_formatter(json.dumps(transaction_chunks_to_insert))
+        #json.dumps(transaction_chunks_to_insert)
         )
 
     print json.dumps(transaction_chunks_to_insert)

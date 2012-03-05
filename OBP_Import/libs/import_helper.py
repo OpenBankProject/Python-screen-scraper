@@ -27,6 +27,7 @@ import fileinput
 import getpass
 import datetime
 import hashlib
+import simplejson
 from debugger import obp_logger, debug
 
 
@@ -83,7 +84,6 @@ def check_for_clean_folder(check_path):
 
 def json_formatter(json):
     """
-    This is needed for the API! The API can't handle[ and ].
     This will remove the first [ and the last ] of the JSON.
     """
 
