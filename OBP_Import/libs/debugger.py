@@ -30,19 +30,19 @@ def debug():
 
 
 LOGGER_PATH = os.path.join(os.getcwd() + '/log/')
-LOG_FILE_NAME = './var/log/file.log'
+#LOG_FILE_NAME = './var/log/file.log'
 
 #print "Logging messages to %s" % LOG_FILE_NAME
 
 DEFAULT_LOGGER = "ImporterLogger"
-LOG_FILENAME = "./var/log/%s.log" % DEFAULT_LOGGER
-LOG_LEVEL = "DEBUG"
+LOG_FILE_NAME = "./var/log/%s.log" % DEFAULT_LOGGER
+LOG_LEVEL = "INFO"
 LOG_MSG_FORMAT = "%(asctime)s %(levelname)s %(filename)s:%(funcName)s(%(lineno)d) : %(message)s"
 LOG_MSG_TIME_FORMAT = '[%d %h %Y - %H:%M:%S]'
 
 logger = logging.getLogger(DEFAULT_LOGGER)
 logger.setLevel(LOG_LEVEL)
-handler = logging.FileHandler(LOG_FILENAME)
+handler = logging.FileHandler(LOG_FILE_NAME)
 formatter = logging.Formatter(LOG_MSG_FORMAT, LOG_MSG_TIME_FORMAT)
 handler.setFormatter(formatter)
 logger.addHandler(handler)

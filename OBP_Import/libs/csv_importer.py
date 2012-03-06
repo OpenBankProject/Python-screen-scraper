@@ -31,7 +31,7 @@ import os
 import simplejson as json
 
 from import_helper import *
-from debugger import obp_logger
+from debugger import obp_logger, debug
 from scala_api_handler import insert_into_scala
 
 
@@ -43,7 +43,11 @@ from obp_config import *
 
 # Here we'll append the Header information of the first rows in
 # the CSV before reading the row transaction.
+obp_logger.debug("Create empty csv_header_info list.")
 csv_header_info = []
+
+obp_logger.debug("Create empty transaction_chunks list.")
+transaction_chunks_list = []
 
 
 def get_info_from_row(input_row):
@@ -112,6 +116,7 @@ def get_info_from_row(input_row):
 
     # Don't print out the JSON, to ensure no sensitive data gets displayed.
     obp_logger.debug("create json dump")
+
     obp_transaction_data = json.dumps([
     {
     "obp_transaction": {
@@ -195,10 +200,11 @@ def parse_row_of_csv(csv_file_to_parse):
             else:
                 # When we have a valid date, call get_info_from_row.
                 obp_transaction_dict = get_info_from_row(row)
+
                 obp_logger.debug("call get_info_from_row")
 
             # This will create a hash and return it.
-            json_hash = create_hash(json_formatter(obp_transaction_dict))
+            json_hash = create_hash(obp_transaction_dict)
             obp_logger.debug("create json_hash from obp_transaction_dict")
             # Some debug output. So that we may can see the content of the JSON
             # and the hash.
@@ -206,32 +212,42 @@ def parse_row_of_csv(csv_file_to_parse):
             print "%s:The hash of the JSON is: %s" % (date_now_formatted(), json_hash)
 
             # Insert the hash into the cache. If it worked (the hash did not yet exist)
-	    # send it to the API.
-            result = insert_hash_to_cache(json_hash, HASH_FILE)
-            if result == True:
-                result = insert_into_scala(
-                    SCALA_HOST,
-                    SCALA_PORT,
-                    json_formatter(obp_transaction_dict))
-
-                obp_logger.debug("HTTP POST result is: %s" % result)
-                #obp_logger.debug("HTTP POST text from result is: %s" % result.text)
+            # send it to the API.
+            is_inserted_to_cache = insert_hash_to_cache(json_hash, HASH_FILE)
+            if is_inserted_to_cache == True:
+                obp_logger.debug("Decode obp_transaction_dict and append to transaction_chunks_list")
+                # Append the last filled JSON as decode python list to the transaction_chunks_list.
+                # It needs to decode the JSON, else the later JSON will be messy.
+                # It has to ensure, that not too many [ ] are in the list.
+                transaction_chunks_list.append(json.loads(json_formatter(obp_transaction_dict)))
             else:
-                obp_logger.info("Transaction is already in hash file, not inserting")
-                print "%s:Transaction is already in hash file, not inserting" % date_now_formatted()
+                obp_logger.info("Transaction is already in hash file, not append")
+                #print "%s:Transaction is already in hash file, not append" % date_now_formatted()
+
+        return transaction_chunks_list
 
 
 def main(csv_file_path):
     """Will check for a valid CSV and import it to the Scala API"""
 
-    obp_logger.info("Start Main")
+    obp_logger.info("Start Main:")
     obp_logger.debug("csv_file_path is: %s" % csv_file_path)
-    obp_logger.debug("Check that csv_file_path is valid path")
+    obp_logger.debug("Check that csv_file_path is valid path.")
     check_for_existing_csv(csv_file_path)
 
     obp_logger.debug("Start parse_row_of_csv")
-    parse_row_of_csv(csv_file_path)
+    transaction_chunks_to_insert = parse_row_of_csv(csv_file_path)
 
+    obp_logger.debug("Start inserting to API.")
+    # Encode the transaction_chunks_to_insert and insert it to the API.
+    api_respone_result = insert_into_scala(
+        SCALA_HOST,
+        SCALA_PORT,
+        json.dumps(transaction_chunks_to_insert)
+        )
+
+    obp_logger.debug("HTTP POST api_respone_result is: %s" % api_respone_result)
+    #obp_logger.debug("HTTP POST text from api_respone_result is: %s" % api_respone_result.text)
 
 if __name__ == '__main__':
     print 'Main'
