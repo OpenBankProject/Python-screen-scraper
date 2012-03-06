@@ -215,11 +215,14 @@ def parse_row_of_csv(csv_file_to_parse):
             # send it to the API.
             is_inserted_to_cache = insert_hash_to_cache(json_hash, HASH_FILE)
             if is_inserted_to_cache == True:
-                # Need to decode the JSON, else the later JSON will be messy.
+                obp_logger.debug("Decode obp_transaction_dict and append to transaction_chunks_list")
+                # Append the last filled JSON as decode python list to the transaction_chunks_list.
+                # It needs to decode the JSON, else the later JSON will be messy.
+                # It has to ensure, that not too many [ ] are in the list.
                 transaction_chunks_list.append(json.loads(json_formatter(obp_transaction_dict)))
             else:
-                obp_logger.info("Transaction is already in hash file, not returned")
-                #print "%s:Transaction is already in hash file, not returned" % date_now_formatted()
+                obp_logger.info("Transaction is already in hash file, not append")
+                #print "%s:Transaction is already in hash file, not append" % date_now_formatted()
 
         return transaction_chunks_list
 
@@ -236,15 +239,13 @@ def main(csv_file_path):
     transaction_chunks_to_insert = parse_row_of_csv(csv_file_path)
 
     obp_logger.debug("Start inserting to API.")
-    debug()
+    # Encode the transaction_chunks_to_insert and insert it to the API.
     api_respone_result = insert_into_scala(
         SCALA_HOST,
         SCALA_PORT,
-        json_formatter(json.dumps(transaction_chunks_to_insert))
-        #json.dumps(transaction_chunks_to_insert)
+        json.dumps(transaction_chunks_to_insert)
         )
 
-    print json.dumps(transaction_chunks_to_insert)
     obp_logger.debug("HTTP POST api_respone_result is: %s" % api_respone_result)
     #obp_logger.debug("HTTP POST text from api_respone_result is: %s" % api_respone_result.text)
 
