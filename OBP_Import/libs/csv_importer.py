@@ -200,29 +200,13 @@ def parse_row_of_csv(csv_file_to_parse):
             else:
                 # When we have a valid date, call get_info_from_row.
                 obp_transaction_dict = get_info_from_row(row)
-
                 obp_logger.debug("call get_info_from_row")
 
-            # This will create a hash and return it.
-            json_hash = create_hash(obp_transaction_dict)
-            obp_logger.debug("create json_hash from obp_transaction_dict")
-            # Some debug output. So that we may can see the content of the JSON
-            # and the hash.
-            obp_logger.info("The hash of the JSON is: %s" % json_hash)
-            print "%s:The hash of the JSON is: %s" % (date_now_formatted(), json_hash)
-
-            # Insert the hash into the cache. If it worked (the hash did not yet exist)
-            # send it to the API.
-            is_inserted_to_cache = insert_hash_to_cache(json_hash, HASH_FILE)
-            if is_inserted_to_cache == True:
-                obp_logger.debug("Decode obp_transaction_dict and append to transaction_chunks_list")
-                # Append the last filled JSON as decode python list to the transaction_chunks_list.
-                # It needs to decode the JSON, else the later JSON will be messy.
-                # It has to ensure, that not too many [ ] are in the list.
-                transaction_chunks_list.append(json.loads(json_formatter(obp_transaction_dict)))
-            else:
-                obp_logger.info("Transaction is already in hash file, not append")
-                #print "%s:Transaction is already in hash file, not append" % date_now_formatted()
+            obp_logger.debug("Decode obp_transaction_dict and append to transaction_chunks_list")
+            # Append the last filled JSON as decode python list to the transaction_chunks_list.
+            # It needs to decode the JSON, else the later JSON will be messy.
+            # It has to ensure, that not too many [ ] are in the list.
+            transaction_chunks_list.append(json.loads(json_formatter(obp_transaction_dict)))
 
         return transaction_chunks_list
 
