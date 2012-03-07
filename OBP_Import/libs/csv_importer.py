@@ -46,9 +46,6 @@ from obp_config import *
 obp_logger.debug("Create empty csv_header_info list.")
 csv_header_info = []
 
-obp_logger.debug("Create empty transaction_chunks list.")
-transaction_chunks_list = []
-
 
 def get_info_from_row(input_row):
     """Read rows and get the transaction data, print as JSON"""
@@ -176,6 +173,9 @@ def parse_row_of_csv(csv_file_to_parse):
         quote_char = '"'
         obp_logger.debug("Set CSV delimiter to: %s" % delimiter)
         obp_logger.debug("Set CSV quote_char to: %s" % quote_char)
+
+        obp_logger.debug("Create empty transaction_chunks list.")
+        transaction_chunks_list = []
 
         # re : \d\d\.\d\d\.\d\d\d\d
         # This will check if date is formatted like this: 23.01.2001
