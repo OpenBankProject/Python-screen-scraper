@@ -65,7 +65,7 @@ SCALA_PORT = '8080'  # E.S : better to call this API_PORT?
 TIME_TO_SLEEP = 1
 
 # The amount of minutes, when it should restart after a exception.
-TIME_TILL_RETRY = 15
+TIME_TILL_RETRY = 1
 
 # Defines a file where the sha512 hashes of transactions get saved. The hash
 # values are used to detect transactions that have already been imported.
@@ -74,6 +74,10 @@ HASH_FILE = 'var/cache'
 
 # Logger Settings
 # Define Path and Debug level.
+
+MAIL_ADDRESS = "system@openbank.org"
+MAIL_SERVER = "10.0.1.4"
+MAIL_FOR_ERRORS = "alex@tesobe.com"
 
 LOGGER_NAME = "ImportLogger"
 LOGGER_LEVEL = "DEBUG"

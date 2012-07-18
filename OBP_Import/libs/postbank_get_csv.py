@@ -33,9 +33,9 @@ J.A.S
 
 import os
 
-from obp_config import TMP, TMP_CSV_SUFFIX
+from obp_config import TMP, TMP_CSV_SUFFIX, TIME_TILL_RETRY, MAIL_ADDRESS, MAIL_SERVER, MAIL_FOR_ERRORS
 from libs.import_helper import check_for_clean_folder
-#from libs.debugger import debug
+from libs.debugger import send_error_mail
 from selenium import webdriver
 from debugger import obp_logger
 
@@ -116,8 +116,11 @@ def get_csv_with_selenium(path_to_save_csv, username, password):
     browser.get(postbank_main_url_value_page)
     assert "Postbank Online-Banking" in browser.title
 
+    global TIME_TILL_RETRY
     #Check that we're login and can find your username.
-    assert username in browser.find_element_by_id("content-sales-hd").text
+    if not username in browser.find_element_by_id("content-sales-hd").text:
+        TIME_TILL_RETRY = 0.1
+        send_error_mail(MAIL_ADDRESS, MAIL_SERVER, MAIL_FOR_ERRORS)
 
     # Call the CSV Link.
     # Warning!

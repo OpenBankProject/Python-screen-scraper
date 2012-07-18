@@ -23,6 +23,23 @@ __license__ = """
 import os
 import pdb
 import logging
+import smtplib
+from email.mime.text import MIMEText
+
+
+def send_error_mail(mail_address, to, mail_server):
+    """
+      This will send a mail to someone to info when something bad happends.
+    """
+    mail_content = "This is a warning: %s went wrong on OBP-Importer\n You may have to restart the services"
+    msg = MIMEText(mail_content)
+    msg['Subject'] = 'msg from OBP-Importer'
+    msg['From'] = mail_address
+    msg['To'] = to
+
+    connection = smtplib.SMTP('mail_server')
+    connection.sendmail(mail_address, [to], msg.as_string())
+    connection.quit()
 
 
 def debug():
