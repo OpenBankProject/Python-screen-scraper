@@ -22,26 +22,27 @@ __license__ = """
 """
 
 
-import os
+#import os
 #import csv
 #import bson
 import unittest
-import obp_config
-import libs.to_utf8
+#import obp_config
+#import libs.to_utf8
 #import libs.transactions
 #import libs.postbank_get_csv
 import SimpleHTTPServer
 import SocketServer
 import threading
-import errno
+#import errno
 
 
 #from bson import son
 #from pymongo import Connection
 #from socket import gethostbyname
-#from libs.debugger import debug, obp_logger
+from libs.debugger import debug
 #from libs.import_helper import *
 from libs.scala_api_handler import *
+from threading import *
 
 
 # This will start checking Database
@@ -60,8 +61,8 @@ class ThreadClass(threading.Thread):
     def run(self):
         Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
         httpd = SocketServer.TCPServer(("", 8888), Handler)
-        httpd.handle_request()
-        #httpd.serve_forever()
+        #httpd.handle_request()
+        httpd.serve_forever()
 
 
 class TestBasicScalaAPI(unittest.TestCase):
@@ -70,38 +71,43 @@ class TestBasicScalaAPI(unittest.TestCase):
     It's only check that the function will send some date.
     """
 
-    def setUp(self):
-        #pass
-        # Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
-        # httpd = SocketServer.TCPServer(("", 8888), Handler)
-        # httpd.server_()
+    # def setUp(self):
+    #     Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
+    #     httpd = SocketServer.TCPServer(("", 8888), Handler)
+    #     httpd.server_()
 
-            pass
-
-    # def test_basic_insert(self):
-    #     """
-    #     Try to insert data to the localhost
-    #     """
-    #     result = insert_into_scala("localhost", "8888", "Nothing")
-    #     print result
-    # Disable till the right HTTP Server used.
+    def test_basic_insert(self):
+        """
+        Try to insert data to the localhost
+        """
+        result = insert_into_scala("localhost", "8888", "Nothing")
+        # Accept a 501 status_code for now. SimpleHTTPServer can't handle
+        # POST/PUT requests.
+        self.assertEqual(result.status_code, 501)
 
     def test_basic_connection(self):
         """
-        Setup a basic HTTP Server and try to get the root via request
+        Setup a basic HTTP Server and try to get the root via re3quest
         module.
         """
         result = check_scala_host_reachable("localhost", "8888")
-        #print result.status_code
         self.assertEqual(result.status_code, 200)
 
+    @classmethod
+    def tearDownClass(cls):
+        for thread in enumerate():
+            if thread.isAlive():
+                try:
+                    thread._Thread__stop()
+                except:
+                    print str(thread.getName()) + ' could not be terminated'
 
-class TestImportCSV(unittest.TestCase):
-        """
-        This Test will parse a CSV file.
-        TODO:
-        Need to import the CSV File via Scala APIself.
-        """
+# class TestImportCSV(unittest.TestCase):
+#         """
+#         This Test will parse a CSV file.
+#         TODO:
+#         Need to import the CSV File via Scala APIself.
+#         """
 
 
 if __name__ == '__main__':
@@ -110,3 +116,4 @@ if __name__ == '__main__':
     local_simple_http_server.start()
 
     unittest.main()
+    #local_simple_http_server.stop()
