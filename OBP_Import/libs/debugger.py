@@ -49,7 +49,7 @@ logger.addHandler(handler)
 
 
 obp_logger = logging.getLogger(DEFAULT_LOGGER)
-obp_logger.setLevel(logging.DEBUG)
+obp_logger.setLevel(logging.INFO)
 
 
 obp_logger.info("Initialization obp_logger")
