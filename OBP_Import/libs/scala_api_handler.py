@@ -26,7 +26,6 @@ Using liburl2 for Human, requests:
 
 import requests
 from debugger import obp_logger
-from urllib2 import HTTPError
 
 
 def check_scala_host_reachable(scala_api_host, scala_api_port):

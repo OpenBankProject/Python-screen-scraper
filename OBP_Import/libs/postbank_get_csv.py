@@ -32,11 +32,10 @@ J.A.S
 
 
 import os
-import sys
 
 from obp_config import TMP, TMP_CSV_SUFFIX
-from libs.import_helper import show_here, check_for_clean_folder
-from libs.debugger import debug
+from libs.import_helper import check_for_clean_folder
+#from libs.debugger import debug
 from selenium import webdriver
 from debugger import obp_logger
 
@@ -117,12 +116,16 @@ def get_csv_with_selenium(path_to_save_csv, username, password):
     browser.get(postbank_main_url_value_page)
     assert "Postbank Online-Banking" in browser.title
 
+    #Check that we're login and can find your username.
+    assert username in browser.find_element_by_id("content-sales-hd").text
+
     # Call the CSV Link.
     # Warning!
     # The Postbank uses a :page counter, and when the URL doesn't have the right page counter it will return
     # an error message.
     obp_logger.debug("Open URL: %s" % postbank_main_url_value_download)
-    result = browser.get(postbank_main_url_value_download)
+    browser.get(postbank_main_url_value_download)
+
     obp_logger.info("closing Firefox")
     browser.close()
     return csv_save_path
