@@ -68,7 +68,7 @@ def get_completed_date(bank, row):
 
 def get_this_account_holder(bank, header):
     if bank == "POSTBANK":
-        return this_account_holder[1]
+        return header[1]
     elif bank == "GLS":
         return None
     else:
@@ -95,7 +95,7 @@ def get_account_currency(bank, row, header):
         return row[24]
 
 
-def get__this_acccount_kind():
+def get_this_acccount_kind():
     obp_logger.debug("set this_account_kind")
     return "current"
 
@@ -154,10 +154,10 @@ def get_info_from_row(input_row):
         comma_to_dot_new_balance)
 
     obp_logger.debug("set this_account_holder")
-    this_account_holder = csv_header_info[1]
+    #this_account_holder = csv_header_info[1]
 
     obp_logger.debug("set this_account_number")
-    this_account_number = csv_header_info[3]
+    #this_account_number = csv_header_info[3]
 
     # There is still some value inside that we need to remove
 
@@ -170,25 +170,23 @@ def get_info_from_row(input_row):
     # Need to use row 4 if we're sending money,
     # and row 5 when we're getting money.
 
-
     # Don't print out the JSON, to ensure no sensitive data gets displayed.
     obp_logger.debug("create json dump")
-
     obp_transaction_data = json.dumps([
     {
     "obp_transaction": {
         "this_account": {
             "holder": get_this_account_holder(BANK, csv_header_info),
-            "number": get_this_account_number(BANK, ),
+            "number": get_this_account_number(BANK, input_row, csv_header_info),
             "kind": get_this_acccount_kind(),
          "bank": {
-                "IBAN": get_this_account_bank_IBAN(BANK),
+                "IBAN": get_this_account_bank_IBAN(BANK, csv_header_info),
                 "national_identifier": this_account_ni,
                 "name": this_account_bank_name
             }
         },
         "other_account": {
-            "holder": other_account_holder,
+            "holder": get_other_account_holder(BANK, input_row, csv_header_info),
             "number": input_row[3].rstrip(),
             "kind": "",
             "bank": {
