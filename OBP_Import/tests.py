@@ -90,7 +90,7 @@ class TestBasicScalaAPI(unittest.TestCase):
         Setup a basic HTTP Server and try to get the root via re3quest
         module.
         """
-        result = check_scala_host_reachable("localhost", "8888")
+        result = check_API_HOST_reachable("localhost", "8888")
         self.assertEqual(result.status_code, 200)
 
     @classmethod
@@ -108,6 +108,11 @@ class TestBasicScalaAPI(unittest.TestCase):
 #         TODO:
 #         Need to import the CSV File via Scala APIself.
 #         """
+
+
+class TestSeleniumWebSite(unittest.TestCase):
+    setUp(self):
+    
 
 
 if __name__ == '__main__':

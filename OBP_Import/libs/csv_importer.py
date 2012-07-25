@@ -30,8 +30,9 @@ import sys
 import os
 import simplejson as json
 
+
 from import_helper import *
-from debugger import obp_logger, debug
+from debugger import obp_logger
 from scala_api_handler import insert_into_scala
 
 
@@ -159,6 +160,7 @@ def get_info_from_row(input_row):
     }
     }], sort_keys=False)
 
+    obp_logger.debug("obp_transaction_data is %s" % obp_transaction_data)
     obp_logger.debug("Done filling json, returning obp_transaction_data")
     return obp_transaction_data
 
@@ -225,8 +227,8 @@ def main(csv_file_path):
     obp_logger.debug("Start inserting to API.")
     # Encode the transaction_chunks_to_insert and insert it to the API.
     api_respone_result = insert_into_scala(
-        SCALA_HOST,
-        SCALA_PORT,
+        API_HOST,
+        API_HOST_PORT,
         json.dumps(transaction_chunks_to_insert)
         )
 

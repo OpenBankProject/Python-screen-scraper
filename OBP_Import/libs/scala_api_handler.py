@@ -28,7 +28,7 @@ import requests
 from debugger import obp_logger
 
 
-def check_scala_host_reachable(scala_api_host, scala_api_port):
+def check_API_HOST_reachable(scala_api_host, scala_api_port):
     """
     Check for a reachable System of the Scala API Host.
     """
@@ -55,7 +55,7 @@ def insert_into_scala(scala_api_host, scala_api_port, JSON_to_insert):
 
     obp_logger.info("Insert JSON to Scala API")
     obp_logger.debug("test connection to Scala API Host")
-    check_scala_host_reachable(scala_api_host, scala_api_port)
+    check_API_HOST_reachable(scala_api_host, scala_api_port)
 
     # Set content-type to JSON in the HTTP Header
     headers = {'content-type': 'application/json'}
