@@ -38,7 +38,7 @@ import time
 from obp_config import TMP, TMP_CSV_SUFFIX
 from libs.import_helper import check_for_clean_folder
 from selenium import webdriver
-from debugger import obp_logger, debug
+from debugger import obp_logger
 from selenium.common.exceptions import (NoSuchElementException,
     ElementNotVisibleException)
 
@@ -87,11 +87,7 @@ def gls_get_csv_with_selenium(path_to_save_csv, username, password):
 
     # Need to set CSV to saveToDisk, else it's unknown to FF and it will ask for it
     #fp.set_preference("browser.helperApps.neverAsk.saveToDisk", "text/csv")
-    # fp.set_preference("browser.helperApps.neverAsk.saveToDisk", "csv")
     fp.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/x-unknown-content-type")
-    # # fp.set_preference("browser.helperApps.neverAsk.saveToDisk", "text/CSV")
-    # # fp.set_preference("browser.helperApps.neverAsk.saveToDisk", "CSV")
-    # obp_logger.debug("browser.helperApps.neverAsk.saveToDisk text/csv")
 
     obp_logger.info("Start Firefox")
     browser = webdriver.Firefox(firefox_profile=fp)  # Get local session of firefox
