@@ -46,7 +46,7 @@ def get_transactions_from_bank_as_csv(username, password):
     """
     # Get a new csv file using selenium
     obp_logger.debug("About to start Selenium, with csv_path")
-    if obp_config.BANK == "gls":
+    if obp_config.BANK == "GLS":
         csv_save_path = libs.gls_get_csv.gls_get_csv_with_selenium(obp_config.TMP, username, password)
     else:
         csv_save_path = libs.postbank_get_csv.get_csv_with_selenium(obp_config.TMP, username, password)
@@ -136,16 +136,16 @@ def main():
                 obp_logger.critical("KeyboardInterrupt!")
                 obp_logger.critical("Caught Ctrl-C from user")
                 raise
-        except Exception, e:
-            # TODO: need a cleanup as well, just to be sure no sensitive data left on the disk.
-            obp_logger.error("Something went wrong")
-            obp_logger.error("Error is:\n%s" % e)
-            obp_logger.error("restart in %d seconds" % obp_config.TIME_TILL_RETRY)
-            print "%s:Something went wrong" % libs.import_helper.date_now_formatted()
-            print "%s:Error is:\n%s" % (libs.import_helper.date_now_formatted(), e)
-            print "restart in %d seconds" % obp_config.TIME_TILL_RETRY
-            # When something went wrong wait some time.
-            sleep(obp_config.TIME_TILL_RETRY)
+        # except Exception, e:
+        #     # TODO: need a cleanup as well, just to be sure no sensitive data left on the disk.
+        #     obp_logger.error("Something went wrong")
+        #     obp_logger.error("Error is:\n%s" % e)
+        #     obp_logger.error("restart in %d seconds" % obp_config.TIME_TILL_RETRY)
+        #     print "%s:Something went wrong" % libs.import_helper.date_now_formatted()
+        #     print "%s:Error is:\n%s" % (libs.import_helper.date_now_formatted(), e)
+        #     print "restart in %d seconds" % obp_config.TIME_TILL_RETRY
+        #     # When something went wrong wait some time.
+        #     sleep(obp_config.TIME_TILL_RETRY)
 
 
 if __name__ == '__main__':

@@ -71,8 +71,8 @@ TIME_TILL_RETRY = 1
 # values are used to detect transactions that have already been imported.
 HASH_FILE = 'var/cache'
 
-
-BANK = 'gls'
+# For the different Banks, works with POSTBANK and GLS.
+BANK = 'GLS'
 
 # Logger Settings
 # Define Path and Debug level.
