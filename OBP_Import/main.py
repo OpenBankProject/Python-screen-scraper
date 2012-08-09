@@ -47,10 +47,8 @@ def get_transactions_from_bank_as_csv(username, password):
     # Get a new csv file using selenium
     obp_logger.debug("About to start Selenium, with csv_path")
     if obp_config.BANK == "GLS":
-        print "Login for Bank: %s" % obp_config.BANK
         csv_save_path = libs.gls_get_csv.gls_get_csv_with_selenium(obp_config.TMP, username, password)
     else:
-        print "Login for Bank: %s" % obp_config.BANK
         csv_save_path = libs.postbank_get_csv.get_csv_with_selenium(obp_config.TMP, username, password)
 
     # Now check that one file exists in the folder and return its name
@@ -119,6 +117,7 @@ def main():
     obp_logger.debug("API_HOST_PORT: %s " % obp_config.API_HOST_PORT)
 
     obp_logger.info("Getting login information")
+    print "Login for Bank: %s" % obp_config.BANK
     login_data = libs.import_helper.set_bank_account_login()
 
     obp_logger.info("Start endless while loop")
