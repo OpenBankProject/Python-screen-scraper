@@ -54,16 +54,17 @@ def get_posted_date(bank, row):
     elif bank == "GLS":
         return convert_date(row[2])
     else:
-        ValueError("Bank no supported")
+        raise ValueError("Bank no supported")
 
 
 def get_completed_date(bank, row):
     if bank == "POSTBANK":
         return convert_date(row[2])
     elif bank == "GLS":
+        debug()
         return convert_date(row[3])
     else:
-        ValueError("Bank no supported")
+        raise ValueError("Bank no supported")
 
 
 def get_this_account_holder(bank, header):
@@ -72,7 +73,7 @@ def get_this_account_holder(bank, header):
     elif bank == "GLS":
         return None
     else:
-        ValueError("Bank no supported")
+        raise ValueError("Bank no supported")
 
 
 def get_this_account_number(bank, row, header):
@@ -81,7 +82,7 @@ def get_this_account_number(bank, row, header):
     elif bank == "GLS":
         return row[0]
     else:
-        ValueError("Bank no supported")
+        raise ValueError("Bank no supported")
 
 
 def get_account_currency(bank, row, header):
@@ -107,7 +108,7 @@ def get_this_account_bank_IBAN(bank, header):
     elif bank == "GLS":
         return None
     else:
-        ValueError("Bank no supported")
+        raise ValueError("Bank no supported")
 
 
 def get_other_account_holder(bank, row, header):
@@ -122,7 +123,7 @@ def get_other_account_holder(bank, row, header):
     elif bank == "GLS":
         return None
     else:
-        ValueError("Bank no supported")
+        raise ValueError("Bank no supported")
 
 
 def get_info_from_row(input_row):
@@ -199,10 +200,10 @@ def get_info_from_row(input_row):
             "type_en": "",
             "type_de": input_row[2],
             "posted": {
-                "$dt": get_posted_date(convert_date(BANK, input_row))
+                "$dt": get_posted_date(BANK, input_row)
                 },
             "completed": {
-                "$dt": get_completed_date(convert_date(input_row))  # Have to set to $dt so Scala can work with it.
+                "$dt": get_completed_date(BANK, input_row)  # Have to set to $dt so Scala can work with it.
                 },
             "new_balance":{
                 "currency": currency_sign_to_text(this_account_currency.group()),
@@ -219,7 +220,7 @@ def get_info_from_row(input_row):
 
     obp_logger.debug("obp_transaction_data is %s" % obp_transaction_data)
     obp_logger.debug("Done filling json, returning obp_transaction_data")
-    debug()
+    #debug()
     return obp_transaction_data
 
 
@@ -275,7 +276,7 @@ def parse_row_of_csv(csv_file_to_parse):
             debug()
             for row in transaction_reader:
                 obp_logger.debug("checking for date in first row from csv")
-                if number_expression.match(row[0]) != None:
+                if number_expression.match(row[0]) is None:
                     continue
                 else:
                     # When we have a valid date, call get_info_from_row.
@@ -290,7 +291,7 @@ def parse_row_of_csv(csv_file_to_parse):
 
             return transaction_chunks_list
         else:
-            ValueError("Bank no supported")
+            raise ValueError("Bank no supported")
 
 
 def main(csv_file_path):
@@ -303,7 +304,6 @@ def main(csv_file_path):
 
     obp_logger.debug("Start parse_row_of_csv")
     transaction_chunks_to_insert = parse_row_of_csv(csv_file_path)
-    debug()
 
     obp_logger.debug("Start inserting to API.")
     # Encode the transaction_chunks_to_insert and insert it to the API.
