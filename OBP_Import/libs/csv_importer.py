@@ -52,7 +52,7 @@ def get_posted_date(bank, row):
     if bank == "POSTBANK":
         return convert_date(row[1])
     elif bank == "GLS":
-        return convert_date(row[2])
+        return convert_date(row[1])
     else:
         raise ValueError("Bank no supported")
 
@@ -61,8 +61,7 @@ def get_completed_date(bank, row):
     if bank == "POSTBANK":
         return convert_date(row[2])
     elif bank == "GLS":
-        debug()
-        return convert_date(row[3])
+        return convert_date(row[2])
     else:
         raise ValueError("Bank no supported")
 
