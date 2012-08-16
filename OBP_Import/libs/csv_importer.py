@@ -92,7 +92,23 @@ def get_account_currency(bank, row, header):
             '\xe2\x82\xac',
             this_account_unclean_currency[1])
     elif bank == "GLS":
-        return row[24]
+        return row[-2]
+
+
+def get_acccout_ammout(bank, row):
+    if bank == "POSTBANK":
+        obp_logger.debug("replace . with empty string")
+        dotless_new_balance = re.sub('\.', '', input_row[7])
+        comma_to_dot_new_balance = re.sub(',', '.', dotless_new_balance)
+
+        new_balance = re.match(
+        "[+-]?((\d+(\.\d*)1?)|\.\d+)([eE][+-]?[0-9]+)?",
+        comma_to_dot_new_balance)
+        return new_balance.group()
+    elif bank == "GLS":
+        return None
+    else:
+        raise ValueError("Bank no supported")
 
 
 def get_this_acccount_kind():
@@ -205,12 +221,12 @@ def get_info_from_row(input_row):
                 "$dt": get_completed_date(BANK, input_row)  # Have to set to $dt so Scala can work with it.
                 },
             "new_balance":{
-                "currency": currency_sign_to_text(this_account_currency.group()),
-                "amount": new_balance.group()
+                "currency": get_account_currency(BANK, input_row, csv_header_info),
+                "amount": get_acccout_ammout(BANK, input_row)
                 },
             "value": {
-                "currency": currency_sign_to_text(this_account_currency.group()),
-                "amount": amount.group()
+                "currency": get_account_currency(BANK, input_row, csv_header_info),
+                "amount": get_acccout_ammout(BANK, input_row)
             },
             "other_data": input_row[5]
             }
