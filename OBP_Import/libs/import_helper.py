@@ -53,8 +53,7 @@ def check_for_existing_csv(csv_file_path):
     if os.path.exists(csv_file_path) == False:
         print "ERROR! - NO CSV FILE!"
         obp_logger.error("ERROR! - NO CSV FILE!")
-        raise
-
+        raise IOError
     else:
         obp_logger.debug("csv_file_path %s exist" % csv_file_path)
 

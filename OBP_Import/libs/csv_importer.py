@@ -70,7 +70,8 @@ def get_this_account_holder(bank, header):
     if bank == "POSTBANK":
         return header[1]
     elif bank == "GLS":
-        return None
+        # We can't find the Name of the Holder in the CSV. Hard coded this for now.
+        return "Max Mustermann"
     else:
         raise ValueError("Bank no supported")
 
@@ -141,6 +142,22 @@ def get_other_account_holder(bank, row, header):
         raise ValueError("Bank no supported")
 
 
+def get_transaction_type_de(BANK, row):
+    if BANK == "POSTBANK":
+        return row[2]
+    elif BANK == "GSL":
+        return None
+    else:
+        raise ValueError("Bank no supported")
+
+
+def get_other_account_number(bank, row):
+    if bank == "POSTBANK":
+        row[3].rstrip()
+    elif bank == "GLS":
+        return None
+
+
 def get_info_from_row(input_row):
     """Read rows and get the transaction data, print as JSON"""
 
@@ -203,7 +220,7 @@ def get_info_from_row(input_row):
         },
         "other_account": {
             "holder": get_other_account_holder(BANK, input_row, csv_header_info),
-            "number": input_row[3].rstrip(),
+            "number": get_other_account_number(BANK, input_row),
             "kind": "",
             "bank": {
                 "IBAN": "",
