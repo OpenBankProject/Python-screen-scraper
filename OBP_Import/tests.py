@@ -43,15 +43,26 @@ import threading
 from threading import *
 from shutil import copyfile
 from obp_config import TMP
-from to_utf8 import main as utf8_main
+from libs.to_utf8 import main as utf8_main
 from libs.scala_api_handler import *
-from libs.import_helper import check_for_existing_csv
+from libs.import_helper import check_for_existing_csv, check_for_clean_folder
 
 
 # This will start checking Database
 # Drop, Create, Insert, Tables Style ,Drop
 # Using the testcase assertisNot instead of assertEqual,
 # http://docs.python.org/library/unittest.html#deprecated-aliases
+
+class TestImportHelper(unittest.TestCase):
+    def test_check_for_existing_csv(self):
+
+        self.path_to_no_csv = "false"
+        with self.assertRaises(IOError):
+            check_for_existing_csv(self.path_to_no_csv)
+
+    def test_check_for_clean_folder(self):
+        check_for_clean_folder()
+
 
 class ThreadClass(threading.Thread):
     """
@@ -115,18 +126,6 @@ class TestBasicScalaAPI(unittest.TestCase):
 
 # class TestSeleniumWebSite(unittest.TestCase):
 #     setUp(self):
-
-
-class ConvertGLSCsvTest(unittest.TestCase):
-
-    def setUp(self):
-        check_for_clean_folder(TMP)
-        # Copy from usr to Download folder
-        copyfile('./usr/tests/test_example_latin2.csv', TMP)
-
-    def test_to_pb_style(self):
-        check_for_existing_csv(file_to_convert)
-        utf8_main(file_to_convert)
 
 
 if __name__ == '__main__':
