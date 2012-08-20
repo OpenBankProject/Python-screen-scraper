@@ -22,7 +22,7 @@ __license__ = """
 """
 
 
-#import os
+import os
 #import csv
 #import bson
 import unittest
@@ -45,23 +45,14 @@ from shutil import copyfile
 from obp_config import TMP
 from libs.to_utf8 import main as utf8_main
 from libs.scala_api_handler import *
-from libs.import_helper import check_for_existing_csv, check_for_clean_folder
+from shutil import copy
+from libs.import_helper import check_for_existing_csv, check_for_clean_folder, json_formatter
 
 
 # This will start checking Database
 # Drop, Create, Insert, Tables Style ,Drop
 # Using the testcase assertisNot instead of assertEqual,
 # http://docs.python.org/library/unittest.html#deprecated-aliases
-
-class TestImportHelper(unittest.TestCase):
-    def test_check_for_existing_csv(self):
-
-        self.path_to_no_csv = "false"
-        with self.assertRaises(IOError):
-            check_for_existing_csv(self.path_to_no_csv)
-
-    def test_check_for_clean_folder(self):
-        check_for_clean_folder()
 
 
 class ThreadClass(threading.Thread):
@@ -116,16 +107,34 @@ class TestBasicScalaAPI(unittest.TestCase):
                 except:
                     print str(thread.getName()) + ' could not be terminated'
 
-# class TestImportCSV(unittest.TestCase):
-#         """
-#         This Test will parse a CSV file.
-#         TODO:
-#         Need to import the CSV File via Scala APIself.
-#         """
 
+class TestImportHelper(unittest.TestCase):
 
-# class TestSeleniumWebSite(unittest.TestCase):
-#     setUp(self):
+    def setUp(self):
+        # Need an extra Folder for the tests.
+        self.test_folder = "/tmp/OBP_TEST_FOLDER"
+        if not os.path.exists(self.test_folder):
+            os.makedirs(self.test_folder)
+
+    def test_check_for_existing_csv(self):
+
+        self.path_to_no_csv = "false"
+        with self.assertRaises(IOError):
+            check_for_existing_csv(self.path_to_no_csv)
+
+    def test_check_for_clean_folder(self):
+        check_for_clean_folder(self.test_folder)
+        self.assertEqual(0, len(os.listdir(self.test_folder)))
+
+        # Create a file that should be removed.
+        copy("/bin/false", self.test_folder)
+        self.assertEqual(1, len(os.listdir(self.test_folder)))
+        check_for_clean_folder(self.test_folder)
+        self.assertEqual(0, len(os.listdir(self.test_folder)))
+
+    def test_json_formatter(self):
+        #json_formatter(json)
+        pass
 
 
 if __name__ == '__main__':
