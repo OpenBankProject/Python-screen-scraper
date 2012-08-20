@@ -41,12 +41,12 @@ import threading
 #from socket import gethostbyname
 #from libs.debugger import debug
 from threading import *
-from shutil import copyfile
+from simplejson import dumps
 from obp_config import TMP
 from libs.to_utf8 import main as utf8_main
 from libs.scala_api_handler import *
 from shutil import copy
-from libs.import_helper import check_for_existing_csv, check_for_clean_folder, json_formatter
+from libs.import_helper import *
 
 
 # This will start checking Database
@@ -123,6 +123,7 @@ class TestImportHelper(unittest.TestCase):
             check_for_existing_csv(self.path_to_no_csv)
 
     def test_check_for_clean_folder(self):
+
         check_for_clean_folder(self.test_folder)
         self.assertEqual(0, len(os.listdir(self.test_folder)))
 
@@ -133,8 +134,20 @@ class TestImportHelper(unittest.TestCase):
         self.assertEqual(0, len(os.listdir(self.test_folder)))
 
     def test_json_formatter(self):
-        #json_formatter(json)
-        pass
+
+        self.result = json_formatter(dumps([{}], sort_keys=False))
+        self.assertEqual(" {} ", self.result)
+
+    def test_remove_empty_lines(self):
+        self.test_file_name = os.path.join(self.test_folder, "test_example_utf8_headers.csv")
+        copy("usr/tests/test_example_utf8_headers.csv", self.test_file_name)
+        self.assertTrue(os.path.exists(self.test_file_name))
+
+        check_for_existing_csv(self.test_file_name)
+
+        remove_empty_lines(self.test_file_name)
+
+
 
 
 if __name__ == '__main__':
