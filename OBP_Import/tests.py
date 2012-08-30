@@ -22,7 +22,7 @@ __license__ = """
 """
 
 
-#import os
+import os
 #import csv
 #import bson
 import unittest
@@ -40,15 +40,20 @@ import threading
 #from pymongo import Connection
 #from socket import gethostbyname
 #from libs.debugger import debug
-#from libs.import_helper import *
-from libs.scala_api_handler import *
 from threading import *
+from simplejson import dumps
+from obp_config import TMP
+from libs.to_utf8 import main as utf8_main
+from libs.scala_api_handler import *
+from shutil import copy
+from libs.import_helper import *
 
 
 # This will start checking Database
 # Drop, Create, Insert, Tables Style ,Drop
 # Using the testcase assertisNot instead of assertEqual,
 # http://docs.python.org/library/unittest.html#deprecated-aliases
+
 
 class ThreadClass(threading.Thread):
     """
@@ -90,7 +95,7 @@ class TestBasicScalaAPI(unittest.TestCase):
         Setup a basic HTTP Server and try to get the root via re3quest
         module.
         """
-        result = check_scala_host_reachable("localhost", "8888")
+        result = check_API_HOST_reachable("localhost", "8888")
         self.assertEqual(result.status_code, 200)
 
     @classmethod
@@ -102,12 +107,45 @@ class TestBasicScalaAPI(unittest.TestCase):
                 except:
                     print str(thread.getName()) + ' could not be terminated'
 
-# class TestImportCSV(unittest.TestCase):
-#         """
-#         This Test will parse a CSV file.
-#         TODO:
-#         Need to import the CSV File via Scala APIself.
-#         """
+
+class TestImportHelper(unittest.TestCase):
+
+    def setUp(self):
+        # Need an extra Folder for the tests.
+        self.test_folder = "/tmp/OBP_TEST_FOLDER"
+        if not os.path.exists(self.test_folder):
+            os.makedirs(self.test_folder)
+
+    def test_check_for_existing_csv(self):
+
+        self.path_to_no_csv = "false"
+        with self.assertRaises(IOError):
+            check_for_existing_csv(self.path_to_no_csv)
+
+    def test_check_for_clean_folder(self):
+
+        check_for_clean_folder(self.test_folder)
+        self.assertEqual(0, len(os.listdir(self.test_folder)))
+
+        # Create a file that should be removed.
+        copy("/bin/false", self.test_folder)
+        self.assertEqual(1, len(os.listdir(self.test_folder)))
+        check_for_clean_folder(self.test_folder)
+        self.assertEqual(0, len(os.listdir(self.test_folder)))
+
+    def test_json_formatter(self):
+
+        self.result = json_formatter(dumps([{}], sort_keys=False))
+        self.assertEqual(" {} ", self.result)
+
+    def test_remove_empty_lines(self):
+        self.test_file_name = os.path.join(self.test_folder, "test_example_utf8_headers.csv")
+        copy("usr/tests/test_example_utf8_headers.csv", self.test_file_name)
+        self.assertTrue(os.path.exists(self.test_file_name))
+
+        check_for_existing_csv(self.test_file_name)
+
+        remove_empty_lines(self.test_file_name)
 
 
 if __name__ == '__main__':

@@ -25,7 +25,7 @@ your Database or API.
 
 
 #from libs.import_helper import show_here
-from libs.debugger import obp_logger
+#from libs.debugger import obp_logger
 from os import path
 from os import getcwd
 # Currently unused but approved.
@@ -40,7 +40,7 @@ MONGODB_DATABASE = 'OBP006'
 MONGODB_COLLECTION = 'obptransactions'
 
 # The importer version
-OBP_VERSION = '0.0.1'
+OBP_VERSION = '0.0.2a'
 
 # Files:
 # The folder where the CSV file gets saved
@@ -71,6 +71,8 @@ TIME_TILL_RETRY = 1
 # values are used to detect transactions that have already been imported.
 HASH_FILE = 'var/cache'
 
+# For the different Banks, works with POSTBANK and GLS.
+BANK = 'GLS'
 
 # Logger Settings
 # Define Path and Debug level.
