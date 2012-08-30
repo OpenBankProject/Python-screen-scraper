@@ -252,7 +252,6 @@ def get_info_from_row(input_row):
 
     obp_logger.debug("obp_transaction_data is %s" % obp_transaction_data)
     obp_logger.debug("Done filling json, returning obp_transaction_data")
-    #debug()
     return obp_transaction_data
 
 
@@ -305,7 +304,6 @@ def parse_row_of_csv(csv_file_to_parse):
             return transaction_chunks_list
 
         elif BANK == "GLS":
-            debug()
             for row in transaction_reader:
                 obp_logger.debug("checking for date in first row from csv")
                 if number_expression.match(row[0]) is None:
