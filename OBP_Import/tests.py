@@ -148,8 +148,6 @@ class TestImportHelper(unittest.TestCase):
         remove_empty_lines(self.test_file_name)
 
 
-
-
 if __name__ == '__main__':
     local_simple_http_server = ThreadClass()
     local_simple_http_server.deamon = False
