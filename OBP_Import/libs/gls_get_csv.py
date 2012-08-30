@@ -43,12 +43,12 @@ from selenium.common.exceptions import (NoSuchElementException,
     ElementNotVisibleException)
 
 #gls_main_url_login_page = "https://internetbanking.gad.de/ptlweb/WebPortal?bankid=4967&modus=demo"
-gls_main_url_login_page = "https://internetbanking.gad.de/ptlweb/WebPortal?bankid=4967"
+
 gls_main_url_value_page = "https://internetbanking.gad.de/ptlweb/WebPortal?timeout=4967&applId=obaban&frame=content&wp_token_obaban=1364634655&event=anzeigenKontoUmsatzUebersicht&idEuroKontoGewaehlt=0"
 gls_main_url_value_download = "https://internetbanking.gad.de/ptlweb/WebPortal?timeout=4967&applId=obaban&frame=content&wp_token_obaban=291125145&event___export=Link"
 
 
-def gls_get_csv_with_selenium(path_to_save_csv, username, password):
+def gls_get_csv_with_selenium(gls_main_url_login_page, path_to_save_csv, username, password):
     """Getting CSV file via Firefox, controlled by Selenium webdriver"""
     # TODO: When no username and password is set, use the demo login.
     # Clean up the OBP temp folder (delete all csv files there).
@@ -110,10 +110,9 @@ def gls_get_csv_with_selenium(path_to_save_csv, username, password):
     # send Username and Password
     obp_logger.debug("Inserting username into login box: %s " % username)
     inputElement_username.send_keys(username)
-    #inputElement_username.send_keys("6666700")
+
     obp_logger.debug("Inserting password into login box")
     inputElement_password.send_keys(password)
-    #inputElement_password.send_keys("13579")
 
     # submit the Username and Password to GLS.
     obp_logger.info("submitting login_data to login")
@@ -149,6 +148,8 @@ def gls_get_csv_with_selenium(path_to_save_csv, username, password):
 
     obp_logger.info("closing Firefox")
     browser.close()
+    # TODO:
+    #       Need to return a file name.
     return csv_save_path
 
 

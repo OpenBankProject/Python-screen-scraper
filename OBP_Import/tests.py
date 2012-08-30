@@ -42,11 +42,13 @@ import threading
 #from libs.debugger import debug
 from threading import *
 from simplejson import dumps
-from obp_config import TMP
+from obp_config import TMP, TMP_CSV_SUFFIX
 from libs.to_utf8 import main as utf8_main
 from libs.scala_api_handler import *
 from shutil import copy
 from libs.import_helper import *
+from libs.csv_importer import *
+from libs.gls_get_csv import *
 
 
 # This will start checking Database
@@ -62,12 +64,46 @@ class ThreadClass(threading.Thread):
         Using the BaseHTTPServer, the SimpleHTTPServer can't handle POST/PUT
         request.
         http://docs.python.org/library/basehttpserver.html#module-BaseHTTPServer
+
+        There is still a problem with an open connection, after a successfull run.
+
     """
     def run(self):
         Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
         httpd = SocketServer.TCPServer(("", 8888), Handler)
         #httpd.handle_request()
         httpd.serve_forever()
+
+
+class TestGetGLSCSV(unittest.TestCase):
+
+    def setUp(self):
+        self.test_folder = "/tmp/OBP_TEST_FOLDER"
+        if not os.path.exists(self.test_folder):
+            os.makedirs(self.test_folder)
+
+    def test_gls_get_csv_with_selenium(self):
+        """
+            This should return a Path to a vaild CSV File.
+        """
+        self.gls_main_url_login_page = "https://internetbanking.gad.de/ptlweb/WebPortal?bankid=4967&modus=demo"
+        self.user = "6666700"
+        self.password = "13579"
+        self.result = gls_get_csv_with_selenium(self.gls_main_url_login_page, self.test_folder, self.user, self.password)
+        self.assertEqual(os.path.join(self.test_folder, TMP_CSV_SUFFIX), self.result)
+
+        self.path_to_csv = self.result
+        self.result = os.listdir(self.path_to_csv)
+        self.assertTrue(self.result[0].endswith('csv'))
+        # Now getting the file name and check for a .csv ending.
+
+    @classmethod
+    def tearDownClass(cls):
+            # For now we remove this file. Need this for late to genareate the JSON.
+            dir_to_remove = os.path.join("/tmp/OBP_TEST_FOLDER", TMP_CSV_SUFFIX)
+            file_to_remove = os.listdir(dir_to_remove)
+            os.remove(os.path.join(dir_to_remove, file_to_remove[0]))
+            os.removedirs(dir_to_remove)
 
 
 class TestBasicScalaAPI(unittest.TestCase):
@@ -146,6 +182,18 @@ class TestImportHelper(unittest.TestCase):
         check_for_existing_csv(self.test_file_name)
 
         remove_empty_lines(self.test_file_name)
+
+
+
+
+# class TestCSVImporterGLS(unittest.TestCase):
+
+#     def setup(self):
+#         BANK = "GLS"
+#         row =
+
+#     def test_get_posted_date(self):
+#         get_posted_date(BANK)
 
 
 if __name__ == '__main__':
