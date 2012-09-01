@@ -49,7 +49,7 @@ from shutil import copy
 from libs.import_helper import *
 from libs.csv_importer import *
 from libs.gls_get_csv import *
-
+import libs.csv_importer
 
 # This will start checking Database
 # Drop, Create, Insert, Tables Style ,Drop
@@ -96,6 +96,20 @@ class TestGetGLSCSV(unittest.TestCase):
         self.result = os.listdir(self.path_to_csv)
         self.assertTrue(self.result[0].endswith('csv'))
         # Now getting the file name and check for a .csv ending.
+
+
+class TestCSVImporterGLS(unittest.TestCase):
+
+    def setUp(self):
+        #self.BANK = "GLS"
+        self.dir_with_csv = os.path.join("/tmp/OBP_TEST_FOLDER", TMP_CSV_SUFFIX)
+        self.file_to_csv = os.listdir(self.dir_with_csv)
+        self.converted_file = libs.to_utf8.main(os.path.join(self.dir_with_csv, self.file_to_csv[0]))
+
+    def test_parse_row_of_csv(self):
+        #get_posted_date(BANK)
+        result = parse_row_of_csv(self.converted_file)
+        print result
 
     @classmethod
     def tearDownClass(cls):
@@ -182,18 +196,6 @@ class TestImportHelper(unittest.TestCase):
         check_for_existing_csv(self.test_file_name)
 
         remove_empty_lines(self.test_file_name)
-
-
-
-
-# class TestCSVImporterGLS(unittest.TestCase):
-
-#     def setup(self):
-#         BANK = "GLS"
-#         row =
-
-#     def test_get_posted_date(self):
-#         get_posted_date(BANK)
 
 
 if __name__ == '__main__':

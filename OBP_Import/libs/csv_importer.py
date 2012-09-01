@@ -71,7 +71,7 @@ def get_this_account_holder(bank, header):
         return header[1]
     elif bank == "GLS":
         # We can't find the Name of the Holder in the CSV. Hard coded this for now.
-        return "Max Mustermann"
+        return GLS_BANK_OWERNER
     else:
         raise ValueError("Bank no supported")
 
@@ -93,7 +93,7 @@ def get_account_currency(bank, row, header):
             '\xe2\x82\xac',
             this_account_unclean_currency[1])
     elif bank == "GLS":
-        return row[-2]
+        return row[-1]
 
 
 def get_acccout_ammout(bank, row):
@@ -124,7 +124,7 @@ def get_this_account_bank_IBAN(bank, header):
     elif bank == "GLS":
         return None
     else:
-        raise ValueError("Bank no supported")
+        raise ValueError("Bank not supported")
 
 
 def get_other_account_holder(bank, row, header):
@@ -139,7 +139,7 @@ def get_other_account_holder(bank, row, header):
     elif bank == "GLS":
         return None
     else:
-        raise ValueError("Bank no supported")
+        raise ValueError("Bank not supported")
 
 
 def get_transaction_type_de(BANK, row):
@@ -148,14 +148,34 @@ def get_transaction_type_de(BANK, row):
     elif BANK == "GSL":
         return None
     else:
-        raise ValueError("Bank no supported")
+        raise ValueError("Bank not supported")
 
 
 def get_other_account_number(bank, row):
     if bank == "POSTBANK":
-        row[3].rstrip()
+        return row[3].rstrip()
     elif bank == "GLS":
         return None
+    else:
+        raise ValueError("Bank not supported")
+
+
+def get_other_data(bank, row):
+    if bank == "POSTBANK":
+        return row[5]
+    elif bank == "GLS":
+        return None
+    else:
+        raise ValueError("Bank not supported")
+
+
+def get_type_de(bank, row):
+    if bank == "POSTBANK":
+        return row[2]
+    elif bank == "GLS":
+        return None
+    else:
+        raise ValueError("Bank not supported")
 
 
 def get_info_from_row(input_row):
@@ -230,7 +250,7 @@ def get_info_from_row(input_row):
         },
         "details": {
             "type_en": "",
-            "type_de": input_row[2],
+            "type_de": get_type_de(BANK, input_row),
             "posted": {
                 "$dt": get_posted_date(BANK, input_row)
                 },
@@ -245,7 +265,7 @@ def get_info_from_row(input_row):
                 "currency": get_account_currency(BANK, input_row, csv_header_info),
                 "amount": get_acccout_ammout(BANK, input_row)
             },
-            "other_data": input_row[5]
+            "other_data": get_other_data(BANK, input_row)
             }
     }
     }], sort_keys=False)
