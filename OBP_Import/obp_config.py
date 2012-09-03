@@ -74,6 +74,9 @@ HASH_FILE = 'var/cache'
 # For the different Banks, works with POSTBANK and GLS.
 BANK = 'GLS'
 
+# There is no entry in the GLS CSV file.
+GLS_BANK_OWERNER = "Max Mustermann"
+
 # Logger Settings
 # Define Path and Debug level.
 

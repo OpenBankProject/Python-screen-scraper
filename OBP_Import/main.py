@@ -47,7 +47,8 @@ def get_transactions_from_bank_as_csv(username, password):
     # Get a new csv file using selenium
     obp_logger.debug("About to start Selenium, with csv_path")
     if obp_config.BANK == "GLS":
-        csv_save_path = libs.gls_get_csv.gls_get_csv_with_selenium(obp_config.TMP, username, password)
+        gls_main_url_login_page = "https://internetbanking.gad.de/ptlweb/WebPortal?bankid=4967"
+        csv_save_path = libs.gls_get_csv.gls_get_csv_with_selenium(gls_main_url_login_page, obp_config.TMP, username, password)
     else:
         csv_save_path = libs.postbank_get_csv.get_csv_with_selenium(obp_config.TMP, username, password)
 
