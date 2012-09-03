@@ -107,7 +107,16 @@ def get_acccout_ammout(bank, row):
         comma_to_dot_new_balance)
         return new_balance.group()
     elif bank == "GLS":
-        return None
+        return row[-3]
+    else:
+        raise ValueError("Bank no supported")
+
+
+def get_acccout_balance(bank, row):
+    if bank == "POSTBANK":
+        return row[-1]
+    elif bank == "GLS":
+        return row[-2]
     else:
         raise ValueError("Bank no supported")
 
@@ -122,7 +131,7 @@ def get_this_account_bank_IBAN(bank, header):
     if bank == "POSTBANK":
         return header[4]
     elif bank == "GLS":
-        return None
+        return ""
     else:
         raise ValueError("Bank not supported")
 
@@ -130,14 +139,14 @@ def get_this_account_bank_IBAN(bank, header):
 def get_other_account_holder(bank, row, header):
     if bank == "POSTBANK":
         obp_logger.debug("check that this_account_holder is not other_account_holder")
-        if input_row[5].rstrip() != this_account_holder[1]:
-            return input_row[5].rstrip()
+        if row[5].rstrip() != this_account_holder[1]:
+            return row[5].rstrip()
             obp_logger.debug("set other_account_holder")
         else:
-            return input_row[4].rstrip()
+            return row[4].rstrip()
             obp_logger.debug("set other_account_holder")
     elif bank == "GLS":
-        return None
+        return ""
     else:
         raise ValueError("Bank not supported")
 
@@ -146,7 +155,7 @@ def get_transaction_type_de(BANK, row):
     if BANK == "POSTBANK":
         return row[2]
     elif BANK == "GSL":
-        return None
+        return ""
     else:
         raise ValueError("Bank not supported")
 
@@ -155,7 +164,7 @@ def get_other_account_number(bank, row):
     if bank == "POSTBANK":
         return row[3].rstrip()
     elif bank == "GLS":
-        return None
+        return ""
     else:
         raise ValueError("Bank not supported")
 
@@ -164,7 +173,7 @@ def get_other_data(bank, row):
     if bank == "POSTBANK":
         return row[5]
     elif bank == "GLS":
-        return None
+        return ""
     else:
         raise ValueError("Bank not supported")
 
@@ -173,7 +182,7 @@ def get_type_de(bank, row):
     if bank == "POSTBANK":
         return row[2]
     elif bank == "GLS":
-        return None
+        return ""
     else:
         raise ValueError("Bank not supported")
 
@@ -259,7 +268,7 @@ def get_info_from_row(input_row):
                 },
             "new_balance":{
                 "currency": get_account_currency(BANK, input_row, csv_header_info),
-                "amount": get_acccout_ammout(BANK, input_row)
+                "amount": get_acccout_balance(BANK, input_row)
                 },
             "value": {
                 "currency": get_account_currency(BANK, input_row, csv_header_info),
