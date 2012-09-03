@@ -99,7 +99,7 @@ def get_account_currency(bank, row, header):
 def get_acccout_ammout(bank, row):
     if bank == "POSTBANK":
         obp_logger.debug("replace . with empty string")
-        dotless_new_balance = re.sub('\.', '', input_row[7])
+        dotless_new_balance = re.sub('\.', '', row[7])
         comma_to_dot_new_balance = re.sub(',', '.', dotless_new_balance)
 
         new_balance = re.match(
@@ -107,7 +107,12 @@ def get_acccout_ammout(bank, row):
         comma_to_dot_new_balance)
         return new_balance.group()
     elif bank == "GLS":
-        return row[-3]
+        dotless_new_balance = re.sub('\.', '', row[-3])
+        comma_to_dot_new_balance = re.sub(',', '.', dotless_new_balance)
+        new_balance = re.match(
+        "[+-]?((\d+(\.\d*)1?)|\.\d+)([eE][+-]?[0-9]+)?",
+        comma_to_dot_new_balance)
+        return new_balance.group()
     else:
         raise ValueError("Bank no supported")
 
@@ -116,7 +121,12 @@ def get_acccout_balance(bank, row):
     if bank == "POSTBANK":
         return row[-1]
     elif bank == "GLS":
-        return row[-2]
+        dotless_new_balance = re.sub('\.', '', row[-2])
+        comma_to_dot_new_balance = re.sub(',', '.', dotless_new_balance)
+        new_balance = re.match(
+        "[+-]?((\d+(\.\d*)1?)|\.\d+)([eE][+-]?[0-9]+)?",
+        comma_to_dot_new_balance)
+        return new_balance.group()
     else:
         raise ValueError("Bank no supported")
 
