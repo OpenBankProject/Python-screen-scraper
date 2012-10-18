@@ -184,7 +184,7 @@ def get_other_data(bank, row):
     if bank == "POSTBANK":
         return row[3]
     elif bank == "GLS":
-        return ""
+        return "\n".join(row[4:-3]).strip()
     else:
         raise ValueError("Bank not supported")
 

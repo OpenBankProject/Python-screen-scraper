@@ -35,7 +35,7 @@ J.A.S
 import os
 import time
 
-from obp_config import TMP, TMP_CSV_SUFFIX, GLS_BANK_ACCOUNT_NUMBER
+from obp_config import TMP, TMP_CSV_SUFFIX
 from libs.import_helper import check_for_clean_folder
 from selenium import webdriver
 from debugger import obp_logger, debug
@@ -110,9 +110,11 @@ def gls_get_csv_with_selenium(gls_main_url_login_page, path_to_save_csv, usernam
 
     # send Username and Password
     obp_logger.debug("Inserting username into login box: %s " % username)
+    inputElement_username.clear()
     inputElement_username.send_keys(username)
 
     obp_logger.debug("Inserting password into login box")
+    inputElement_password.clear()
     inputElement_password.send_keys(password)
 
     # submit the Username and Password to GLS.
@@ -128,14 +130,8 @@ def gls_get_csv_with_selenium(gls_main_url_login_page, path_to_save_csv, usernam
     #browser.refresh()
     time.sleep(0.5)
     obp_logger.debug("Open URL: %s" % gls_main_url_value_page)
-    try:
-        browser.find_element_by_link_text("Umsätze & Kontoauszüge").click()
-    except ElementNotVisibleException:
-        browser.find_element_by_link_text("Finanzübersicht").click()
-        browser.find_element_by_link_text("Umsätze & Kontoauszüge").click()
+    browser.find_element_by_partial_link_text(username).click()
 
-    select_account = Select(browser.find_element_by_name("idKontoGewaehlt"))
-    select_account.select_by_value(GLS_BANK_ACCOUNT_NUMBER)
     #browser.get(gls_main_url_value_page)
     assert "GLS Gemeinschaftsbank eG Online-Filiale" in browser.title
 
