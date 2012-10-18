@@ -50,7 +50,7 @@ csv_header_info = []
 
 def get_posted_date(bank, row):
     if bank == "POSTBANK":
-        return convert_date(row[1])
+        return convert_date(row[0])
     elif bank == "GLS":
         return convert_date(row[1])
     else:
@@ -59,7 +59,7 @@ def get_posted_date(bank, row):
 
 def get_completed_date(bank, row):
     if bank == "POSTBANK":
-        return convert_date(row[2])
+        return convert_date(row[1])
     elif bank == "GLS":
         return convert_date(row[2])
     else:
@@ -89,9 +89,10 @@ def get_account_currency(bank, row, header):
     obp_logger.debug("set this_account_currency")
     if bank == "POSTBANK":
         this_account_unclean_currency = header[5]
+        # warning: EUR-only solution
         return re.search(
             '\xe2\x82\xac',
-            this_account_unclean_currency[1])
+            this_account_unclean_currency[1]).group()
     elif bank == "GLS":
         return row[-1]
 
@@ -149,7 +150,7 @@ def get_this_account_bank_IBAN(bank, header):
 def get_other_account_holder(bank, row, header):
     if bank == "POSTBANK":
         obp_logger.debug("check that this_account_holder is not other_account_holder")
-        if row[5].rstrip() != this_account_holder[1]:
+        if row[5].rstrip() != get_this_account_holder(bank, header)[1]:
             return row[5].rstrip()
             obp_logger.debug("set other_account_holder")
         else:
