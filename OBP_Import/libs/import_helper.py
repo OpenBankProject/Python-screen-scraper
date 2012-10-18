@@ -278,7 +278,7 @@ def set_bank_account_login():
     username = raw_input("Account Number: ")
     obp_logger.debug("account number is set")
 
-    if len(sys.argv) > 0 and os.path.exists(sys.argv[1]):
+    if len(sys.argv) > 1 and os.path.exists(sys.argv[1]):
         pinfile = sys.argv[1]
         obp_logger.info("switching to 'encrypted PIN' mode")
         print "trying to use file '%s' as encrypted PIN container" % pinfile
@@ -291,7 +291,7 @@ def set_bank_account_login():
           print "sorry, decryption failed"
           sys.exit(1)
     else:
-        if len(sys.argv) > 0: # ... but sys.argv[1] is not a file
+        if len(sys.argv) > 1: # ... but sys.argv[1] is not a file
             print "'%s' is not a proper file, falling back to password mode" % sys.argv[1]
         # Now getting the password via getpass lib.
         obp_logger.info("get password")
