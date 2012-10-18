@@ -129,11 +129,16 @@ def gls_get_csv_with_selenium(gls_main_url_login_page, path_to_save_csv, usernam
     # Call the Transaction Page
     #browser.refresh()
     time.sleep(0.5)
-    obp_logger.debug("Open URL: %s" % gls_main_url_value_page)
-    browser.find_element_by_partial_link_text(username).click()
+    elem = browser.find_element_by_partial_link_text(username)
+    url = elem.get_attribute('href')
+    obp_logger.debug("switching to " + str(url))
+    browser.get(url)
+    # the command below doesn't always seem to work... -- tp.
+    #browser.find_element_by_partial_link_text(username).click()
 
     #browser.get(gls_main_url_value_page)
     assert "GLS Gemeinschaftsbank eG Online-Filiale" in browser.title
+    assert "Aktueller Kontostand" in browser.page_source
 
     gls_main_url_value_download = browser.find_element_by_link_text("Exportieren").get_attribute('href')
 
