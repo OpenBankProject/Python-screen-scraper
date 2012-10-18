@@ -57,8 +57,8 @@ CSV_FILE_PATH = 'usr/PB_Umsatzauskunft_198_rows.csv'
 HTML_FILE_PATH = ''
 
 # This sets the hostname and port of the Scala API.
-SCALA_HOST = '10.0.1.14'  # xE.S : better to call this API_HOST?
-SCALA_PORT = '8080'  # E.S : better to call this API_PORT?
+API_HOST = '10.0.1.14'
+API_HOST_PORT = '8080'
 
 
 # This amount in hours, when it should restart the fetching process.
