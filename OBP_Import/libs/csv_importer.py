@@ -100,7 +100,7 @@ def get_account_currency(bank, row, header):
 def get_acccout_ammout(bank, row):
     if bank == "POSTBANK":
         obp_logger.debug("replace . with empty string")
-        dotless_new_balance = re.sub('\.', '', row[7])
+        dotless_new_balance = re.sub('\.', '', row[-2])
         comma_to_dot_new_balance = re.sub(',', '.', dotless_new_balance)
 
         new_balance = re.match(
@@ -150,7 +150,7 @@ def get_this_account_bank_IBAN(bank, header):
 def get_other_account_holder(bank, row, header):
     if bank == "POSTBANK":
         obp_logger.debug("check that this_account_holder is not other_account_holder")
-        if row[5].rstrip() != get_this_account_holder(bank, header)[1]:
+        if row[5].rstrip() != get_this_account_holder(bank, header):
             return row[5].rstrip()
             obp_logger.debug("set other_account_holder")
         else:
@@ -173,7 +173,7 @@ def get_transaction_type_de(BANK, row):
 
 def get_other_account_number(bank, row):
     if bank == "POSTBANK":
-        return row[3].rstrip()
+        return ""
     elif bank == "GLS":
         return ""
     else:
@@ -182,7 +182,7 @@ def get_other_account_number(bank, row):
 
 def get_other_data(bank, row):
     if bank == "POSTBANK":
-        return row[5]
+        return row[3]
     elif bank == "GLS":
         return ""
     else:
