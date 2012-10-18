@@ -53,7 +53,7 @@ def spilt_path(unclean_path_to_file):
         return None, unclean_path_to_file
 
 
-def main(file, tmp_folder):
+def main(file):
     """Will convert a file to UTF-8 and return the Path + File"""
 
     # Get the current working directory.
@@ -64,10 +64,10 @@ def main(file, tmp_folder):
     target_format = 'utf-8'
 
     # Spite the Input into file_path and file_name.
-    file_path = spilt_path(file)[0]
-    file_name = spilt_path(file)[1]
+    file_path = spilt_path(file)[0] # "/home/obp/.../tmp/csv"
+    file_name = spilt_path(file)[1] # "XYZ.csv"
 
-    file_utf8 = file_name.split(".")[0] + "_utf8.csv"
+    file_utf8 = file_name.split(".")[0] + "_utf8.csv" # "XYZ_utf8.csv"
 
     # Try to get into the file_path, if exist
     try:
@@ -80,7 +80,7 @@ def main(file, tmp_folder):
     # going back to orgin folder
     os.remove(file_name)
     os.chdir(here)
-    return os.path.join(tmp_folder, file_utf8)
+    return os.path.join(file_path, file_utf8)
 
 
 if __name__ == '__main__':
