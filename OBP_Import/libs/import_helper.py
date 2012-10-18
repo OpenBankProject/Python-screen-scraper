@@ -28,6 +28,7 @@ import getpass
 import datetime
 import hashlib
 import simplejson
+import gnupg
 from debugger import obp_logger, debug
 
 
@@ -273,23 +274,38 @@ def set_bank_account_login():
     """
 
     # Getting the login name from a raw_input.
-    obp_logger.info("get username")
-    username = raw_input("Username: ")
-    obp_logger.debug("username is set")
+    obp_logger.info("getting account number")
+    username = raw_input("Account Number: ")
+    obp_logger.debug("account number is set")
 
-    # Now getting the password via getpass lib.
-    obp_logger.info("get password")
-    password = getpass.getpass()
-    obp_logger.debug("password has set")
-
-    # We know from the Web Page that we need at least 5 characters.
-    # This will check for the right length of the password.
-    obp_logger.debug("start while loop")
-    while len(password) < 5:
-        obp_logger.error("Password was not 5 character long")
-        print "Password has to contain at least 5 letters"
+    if len(sys.argv) > 0 and os.path.exists(sys.argv[1]):
+        pinfile = sys.argv[1]
+        obp_logger.info("switching to 'encrypted PIN' mode")
+        print "trying to use file '%s' as encrypted PIN container" % pinfile
+        passphrase = getpass.getpass("Enter passphrase for file: ")
+        gpg = gnupg.GPG()
+        decrypted = str(gpg.decrypt_file(open(pinfile), passphrase=passphrase)).strip()
+        if decrypted:
+          password = decrypted
+        else:
+          print "sorry, decryption failed"
+          sys.exit(1)
+    else:
+        if len(sys.argv) > 0: # ... but sys.argv[1] is not a file
+            print "'%s' is not a proper file, falling back to password mode" % sys.argv[1]
+        # Now getting the password via getpass lib.
+        obp_logger.info("get password")
         password = getpass.getpass()
         obp_logger.debug("Password has set")
+
+        # We know from the Web Page that we need at least 5 characters.
+        # This will check for the right length of the password.
+        obp_logger.debug("start while loop")
+        while len(password) < 5:
+            obp_logger.error("Password was not 5 character long")
+            print "Password has to contain at least 5 letters"
+            password = getpass.getpass()
+            obp_logger.debug("Password has set")
 
     obp_logger.debug("Will return username: %s ,password is set" % username)
     # Return username and password.
