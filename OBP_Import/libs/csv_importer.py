@@ -68,7 +68,7 @@ def get_completed_date(bank, row):
 
 def get_this_account_holder(bank, header):
     if bank == "POSTBANK":
-        return header[1]
+        return header[1][1]
     elif bank == "GLS":
         # We can't find the Name of the Holder in the CSV. Hard coded this for now.
         return GLS_BANK_OWERNER
@@ -78,7 +78,7 @@ def get_this_account_holder(bank, header):
 
 def get_this_account_number(bank, row, header):
     if bank == "POSTBANK":
-        return header[3]
+        return header[3][1]
     elif bank == "GLS":
         return row[0]
     else:
@@ -140,7 +140,7 @@ def get_this_acccount_kind():
 def get_this_account_bank_IBAN(bank, header):
     obp_logger.debug("set this_account_IBAN")
     if bank == "POSTBANK":
-        return header[4]
+        return header[4][1]
     elif bank == "GLS":
         return ""
     else:
