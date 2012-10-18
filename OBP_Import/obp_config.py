@@ -40,7 +40,7 @@ MONGODB_DATABASE = 'OBP006'
 MONGODB_COLLECTION = 'obptransactions'
 
 # The importer version
-OBP_VERSION = '0.0.2a'
+OBP_VERSION = '0.0.2b'
 
 # Files:
 # The folder where the CSV file gets saved
@@ -76,6 +76,7 @@ BANK = 'GLS'
 
 # There is no entry in the GLS CSV file.
 GLS_BANK_OWERNER = "Max Mustermann"
+GLS_BANK_ACCOUNT_NUMBER = "3"
 
 # Logger Settings
 # Define Path and Debug level.
