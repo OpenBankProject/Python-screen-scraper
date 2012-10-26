@@ -120,7 +120,14 @@ def get_acccout_ammout(bank, row):
 
 def get_acccout_balance(bank, row):
     if bank == "POSTBANK":
-        return row[-1]
+        obp_logger.debug("replace . with empty string")
+        dotless_new_balance = re.sub('\.', '', row[-1])
+        comma_to_dot_new_balance = re.sub(',', '.', dotless_new_balance)
+
+        new_balance = re.match(
+        "[+-]?((\d+(\.\d*)1?)|\.\d+)([eE][+-]?[0-9]+)?",
+        comma_to_dot_new_balance)
+        return new_balance.group()
     elif bank == "GLS":
         dotless_new_balance = re.sub('\.', '', row[-2])
         comma_to_dot_new_balance = re.sub(',', '.', dotless_new_balance)
@@ -157,7 +164,8 @@ def get_other_account_holder(bank, row, header):
             return row[4].rstrip()
             obp_logger.debug("set other_account_holder")
     elif bank == "GLS":
-        return ""
+        obp_logger.debug("set other_account_holder")
+        return row[3]
     else:
         raise ValueError("Bank not supported")
 
