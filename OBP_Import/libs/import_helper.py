@@ -278,8 +278,8 @@ def set_bank_account_login():
     username = raw_input("Account Number: ")
     obp_logger.debug("account number is set")
 
-    if len(sys.argv) > 1 and os.path.exists(sys.argv[1]):
-        pinfile = sys.argv[1]
+    if len(sys.argv) > 1 and os.path.exists(sys.argv[-1]):
+        pinfile = sys.argv[-1]
         obp_logger.info("switching to 'encrypted PIN' mode")
         print "trying to use file '%s' as encrypted PIN container" % pinfile
         passphrase = getpass.getpass("Enter passphrase for file: ")

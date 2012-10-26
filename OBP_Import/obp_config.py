@@ -23,6 +23,7 @@ Here you are able to set the Host and Port configuration of
 your Database or API.
 """
 
+import sys
 
 #from libs.import_helper import show_here
 #from libs.debugger import obp_logger
@@ -72,7 +73,13 @@ TIME_TILL_RETRY = 1
 HASH_FILE = 'var/cache'
 
 # For the different Banks, works with POSTBANK and GLS.
-BANK = 'GLS'
+if "--gls" in sys.argv:
+  BANK = 'GLS'
+elif "--postbank" in sys.argv:
+  BANK = 'POSTBANK'
+else:
+  print "please specify either --gls or --postbank"
+  sys.exit(1)
 
 # There is no entry in the GLS CSV file.
 GLS_BANK_OWERNER = "Max Mustermann"
