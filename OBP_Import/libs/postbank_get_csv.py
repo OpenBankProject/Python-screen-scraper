@@ -42,7 +42,7 @@ from debugger import obp_logger
 
 postbank_main_url_login_page = " https://banking.postbank.de/rai/login"
 postbank_main_url_value_page = "https://banking.postbank.de/rai/?wicket:bookmarkablePage=:de.postbank.ucp.application.rai.fs.umsatzauskunft.UmsatzauskunftPage"
-postbank_main_url_value_download = "https://banking.postbank.de/rai/?wicket:interface=:3:umsatzauskunftpanel:panel:form:umsatzanzeigeGiro:umsatzaktionen:umsatzanzeigeUndFilterungDownloadlinksPanel:csvHerunterladen::IResourceListener::"
+postbank_main_url_value_download = "https://banking.postbank.de/rai/?wicket:interface=:3:umsatzauskunftContainer:umsatzauskunftpanel:panel:form:umsatzanzeigeGiro:umsatzaktionen:umsatzanzeigeUndFilterungDownloadlinksPanel:csvHerunterladen::IResourceListener::"
 
 
 def get_csv_with_selenium(path_to_save_csv, username, password):
