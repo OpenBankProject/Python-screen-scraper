@@ -138,6 +138,9 @@ def main():
                 obp_logger.critical("KeyboardInterrupt!")
                 obp_logger.critical("Caught Ctrl-C from user")
                 raise
+        except Exception, e:
+                obp_logger.critical("Problem discovered: "+str(e))
+                sleep(obp_config.TIME_TO_SLEEP * 60 * 60)
         # except Exception, e:
         #     # TODO: need a cleanup as well, just to be sure no sensitive data left on the disk.
         #     obp_logger.error("Something went wrong")
