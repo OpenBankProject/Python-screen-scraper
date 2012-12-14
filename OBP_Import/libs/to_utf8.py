@@ -5,10 +5,8 @@ from __future__ import with_statement
 #from debugger import debug
 
 import os
-import sys
 import codecs
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
-from obp_config import TMP
+
 
 __author__ = [' Jan Alexander Slabiak (alex@tesobe.com)']
 __license__ = """
@@ -34,28 +32,17 @@ LINK: http://stackoverflow.com/questions/191359/how-to-convert-a-file-to-utf-8-i
 """
 
 
-source_formats = ['windows-1252']
-target_format = 'utf-8'
-output_dir = TMP
-
-
-def convertFile(file_name):
+def convert_file(file, utf8_file, source_format, target_format):
     """Will convert a file to UTF-8"""
-    for format in source_formats:
-        try:
-            with codecs.open(file_name, 'rU', format) as source_file:
-                write_conversion(source_file)
-                return
-        except UnicodeDecodeError:
-            pass
 
-    print("Error: failed to convert '" + file_name + "'.")
+    with codecs.open(file, 'rU', source_format) as source_file:
+        write_to(source_file, utf8_file, target_format)
 
 
-def write_conversion(file):
-    with codecs.open(output_dir + '/' + file_name, 'w', target_format) as target_file:
-        for line in file:
-            target_file.write(line)
+def write_to(source_file, utf8_file, target_format):
+    with codecs.open(utf8_file, 'w', target_format) as target_file:
+        for line in source_file:
+                target_file.write(line)
 
 
 def spilt_path(unclean_path_to_file):
@@ -72,10 +59,15 @@ def main(file):
     # Get the current working directory.
     here = os.getcwd()
     #Need the file_name to set globe, so that other functions can access to it.
-    global file_name
+
+    source_format = 'windows-1252'
+    target_format = 'utf-8'
+
     # Spite the Input into file_path and file_name.
-    file_path = spilt_path(file)[0]
-    file_name = spilt_path(file)[1]
+    file_path = spilt_path(file)[0] # "/home/obp/.../tmp/csv"
+    file_name = spilt_path(file)[1] # "XYZ.csv"
+
+    file_utf8 = file_name.split(".")[0] + "_utf8.csv" # "XYZ_utf8.csv"
 
     # Try to get into the file_path, if exist
     try:
@@ -84,10 +76,11 @@ def main(file):
         print e
 
     # Now convert it
-    convertFile(file_name)
+    convert_file(file_name, file_utf8, source_format, target_format)
     # going back to orgin folder
+    os.remove(file_name)
     os.chdir(here)
-    return os.path.join(output_dir, file_name)
+    return os.path.join(file_path, file_utf8)
 
 
 if __name__ == '__main__':

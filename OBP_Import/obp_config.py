@@ -23,15 +23,15 @@ Here you are able to set the Host and Port configuration of
 your Database or API.
 """
 
+import sys
 
 #from libs.import_helper import show_here
-from libs.debugger import obp_logger
+#from libs.debugger import obp_logger
 from os import path
 from os import getcwd
 # Currently unused but approved.
 MONGODB_SERVER = 'obp_mongod'
 MONGODB_SERVER_PORT = 27017
-
 
 #MongoDB Setting
 # Name of the Database and the Mongo Collection.
@@ -41,7 +41,7 @@ MONGODB_DATABASE = 'OBP006'
 MONGODB_COLLECTION = 'obptransactions'
 
 # The importer version
-OBP_VERSION = '0.0.1'
+OBP_VERSION = '0.0.2b'
 
 # Files:
 # The folder where the CSV file gets saved
@@ -58,16 +58,38 @@ CSV_FILE_PATH = 'usr/PB_Umsatzauskunft_198_rows.csv'
 HTML_FILE_PATH = ''
 
 # This sets the hostname and port of the Scala API.
-SCALA_HOST = 'localhost'  # xE.S : better to call this API_HOST?
-SCALA_PORT = '8080'  # E.S : better to call this API_PORT?
+API_HOST = '10.0.1.14'
+API_HOST_PORT = '8080'
+
+
+# This amount in hours, when it should restart the fetching process.
+TIME_TO_SLEEP = 1
+
+# The amount of minutes, when it should restart after a exception.
+TIME_TILL_RETRY = 1
 
 # Defines a file where the sha512 hashes of transactions get saved. The hash
 # values are used to detect transactions that have already been imported.
 HASH_FILE = 'var/cache'
 
+# For the different Banks, works with POSTBANK and GLS.
+if "--gls" in sys.argv:
+  BANK = 'GLS'
+elif "--postbank" in sys.argv:
+  BANK = 'POSTBANK'
+else:
+  print "please specify either --gls or --postbank"
+  sys.exit(1)
+
+# There is no entry in the GLS CSV file.
+GLS_BANK_OWERNER = "Max Mustermann"
 
 # Logger Settings
 # Define Path and Debug level.
+
+MAIL_ADDRESS = "system@openbank.org"
+MAIL_SERVER = "10.0.1.4"
+MAIL_FOR_ERRORS = "alex@tesobe.com"
 
 LOGGER_NAME = "ImportLogger"
 LOGGER_LEVEL = "DEBUG"

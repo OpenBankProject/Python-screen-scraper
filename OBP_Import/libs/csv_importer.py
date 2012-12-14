@@ -30,8 +30,9 @@ import sys
 import os
 import simplejson as json
 
+
 from import_helper import *
-from debugger import obp_logger
+from debugger import *
 from scala_api_handler import insert_into_scala
 
 
@@ -43,7 +44,166 @@ from obp_config import *
 
 # Here we'll append the Header information of the first rows in
 # the CSV before reading the row transaction.
+obp_logger.debug("Create empty csv_header_info list.")
 csv_header_info = []
+
+
+def get_posted_date(bank, row):
+    if bank == "POSTBANK":
+        return convert_date(row[0])
+    elif bank == "GLS":
+        return convert_date(row[1])
+    else:
+        raise ValueError("Bank no supported")
+
+
+def get_completed_date(bank, row):
+    if bank == "POSTBANK":
+        return convert_date(row[1])
+    elif bank == "GLS":
+        return convert_date(row[2])
+    else:
+        raise ValueError("Bank no supported")
+
+
+def get_this_account_holder(bank, header):
+    if bank == "POSTBANK":
+        return header[1][1]
+    elif bank == "GLS":
+        # We can't find the Name of the Holder in the CSV. Hard coded this for now.
+        return GLS_BANK_OWERNER
+    else:
+        raise ValueError("Bank no supported")
+
+
+def get_this_account_number(bank, row, header):
+    if bank == "POSTBANK":
+        return header[3][1]
+    elif bank == "GLS":
+        return row[0]
+    else:
+        raise ValueError("Bank no supported")
+
+
+def get_account_currency(bank, row, header):
+    obp_logger.debug("set this_account_currency")
+    if bank == "POSTBANK":
+        this_account_unclean_currency = header[5]
+        # warning: EUR-only solution
+        return re.search(
+            '\xe2\x82\xac',
+            this_account_unclean_currency[1]).group()
+    elif bank == "GLS":
+        return row[-1]
+
+
+def get_acccout_ammout(bank, row):
+    if bank == "POSTBANK":
+        obp_logger.debug("replace . with empty string")
+        dotless_new_balance = re.sub('\.', '', row[-2])
+        comma_to_dot_new_balance = re.sub(',', '.', dotless_new_balance)
+
+        new_balance = re.match(
+        "[+-]?((\d+(\.\d*)1?)|\.\d+)([eE][+-]?[0-9]+)?",
+        comma_to_dot_new_balance)
+        return new_balance.group()
+    elif bank == "GLS":
+        dotless_new_balance = re.sub('\.', '', row[-3])
+        comma_to_dot_new_balance = re.sub(',', '.', dotless_new_balance)
+        new_balance = re.match(
+        "[+-]?((\d+(\.\d*)1?)|\.\d+)([eE][+-]?[0-9]+)?",
+        comma_to_dot_new_balance)
+        return new_balance.group()
+    else:
+        raise ValueError("Bank no supported")
+
+
+def get_acccout_balance(bank, row):
+    if bank == "POSTBANK":
+        obp_logger.debug("replace . with empty string")
+        dotless_new_balance = re.sub('\.', '', row[-1])
+        comma_to_dot_new_balance = re.sub(',', '.', dotless_new_balance)
+
+        new_balance = re.match(
+        "[+-]?((\d+(\.\d*)1?)|\.\d+)([eE][+-]?[0-9]+)?",
+        comma_to_dot_new_balance)
+        return new_balance.group()
+    elif bank == "GLS":
+        dotless_new_balance = re.sub('\.', '', row[-2])
+        comma_to_dot_new_balance = re.sub(',', '.', dotless_new_balance)
+        new_balance = re.match(
+        "[+-]?((\d+(\.\d*)1?)|\.\d+)([eE][+-]?[0-9]+)?",
+        comma_to_dot_new_balance)
+        return new_balance.group()
+    else:
+        raise ValueError("Bank no supported")
+
+
+def get_this_acccount_kind():
+    obp_logger.debug("set this_account_kind")
+    return "current"
+
+
+def get_this_account_bank_IBAN(bank, header):
+    obp_logger.debug("set this_account_IBAN")
+    if bank == "POSTBANK":
+        return header[4][1]
+    elif bank == "GLS":
+        return ""
+    else:
+        raise ValueError("Bank not supported")
+
+
+def get_other_account_holder(bank, row, header):
+    if bank == "POSTBANK":
+        obp_logger.debug("check that this_account_holder is not other_account_holder")
+        if row[5].rstrip() != get_this_account_holder(bank, header):
+            return row[5].rstrip()
+            obp_logger.debug("set other_account_holder")
+        else:
+            return row[4].rstrip()
+            obp_logger.debug("set other_account_holder")
+    elif bank == "GLS":
+        obp_logger.debug("set other_account_holder")
+        return row[3]
+    else:
+        raise ValueError("Bank not supported")
+
+
+def get_transaction_type_de(BANK, row):
+    if BANK == "POSTBANK":
+        return row[2]
+    elif BANK == "GSL":
+        return ""
+    else:
+        raise ValueError("Bank not supported")
+
+
+def get_other_account_number(bank, row):
+    if bank == "POSTBANK":
+        return ""
+    elif bank == "GLS":
+        return ""
+    else:
+        raise ValueError("Bank not supported")
+
+
+def get_other_data(bank, row):
+    if bank == "POSTBANK":
+        return row[3]
+    elif bank == "GLS":
+        return "\n".join(row[4:-3]).strip()
+    else:
+        raise ValueError("Bank not supported")
+
+
+def get_type_de(bank, row):
+    if bank == "POSTBANK":
+        return row[2]
+    elif bank == "GLS":
+        return ""
+    else:
+        raise ValueError("Bank not supported")
 
 
 def get_info_from_row(input_row):
@@ -75,40 +235,21 @@ def get_info_from_row(input_row):
         comma_to_dot_new_balance)
 
     obp_logger.debug("set this_account_holder")
-    this_account_holder = csv_header_info[1]
-
-    obp_logger.debug("set this_account_IBAN")
-    this_account_IBAN = csv_header_info[4]
+    #this_account_holder = csv_header_info[1]
 
     obp_logger.debug("set this_account_number")
-    this_account_number = csv_header_info[3]
+    #this_account_number = csv_header_info[3]
 
     # There is still some value inside that we need to remove
-    this_account_unclean_currency = csv_header_info[5]
-    this_account_currency = re.search(
-        '\xe2\x82\xac',
-        this_account_unclean_currency[1])
-
-    obp_logger.debug("set this_account_currency")
-
-    obp_logger.debug("set this_account_kind")
-    this_account_kind = 'current'
 
     obp_logger.debug("set this_account_ni")
     this_account_ni = ""  # ni = national_identifier
 
     obp_logger.debug("set this_account_bank_name")
-    this_account_bank_name = 'Postbank'
+    this_account_bank_name = BANK
 
     # Need to use row 4 if we're sending money,
     # and row 5 when we're getting money.
-    obp_logger.debug("check that this_account_holder is not other_account_holder")
-    if input_row[5].rstrip() != this_account_holder[1]:
-        other_account_holder = input_row[5].rstrip()
-        obp_logger.debug("set other_account_holder")
-    else:
-        other_account_holder = input_row[4].rstrip()
-        obp_logger.debug("set other_account_holder")
 
     # Don't print out the JSON, to ensure no sensitive data gets displayed.
     obp_logger.debug("create json dump")
@@ -116,18 +257,18 @@ def get_info_from_row(input_row):
     {
     "obp_transaction": {
         "this_account": {
-            "holder": this_account_holder[1],
-            "number": this_account_number[1],
-            "kind": this_account_kind,
+            "holder": get_this_account_holder(BANK, csv_header_info),
+            "number": get_this_account_number(BANK, input_row, csv_header_info),
+            "kind": get_this_acccount_kind(),
          "bank": {
-                "IBAN": this_account_IBAN[1],
+                "IBAN": get_this_account_bank_IBAN(BANK, csv_header_info),
                 "national_identifier": this_account_ni,
                 "name": this_account_bank_name
             }
         },
         "other_account": {
-            "holder": other_account_holder,
-            "number": input_row[3].rstrip(),
+            "holder": get_other_account_holder(BANK, input_row, csv_header_info),
+            "number": get_other_account_number(BANK, input_row),
             "kind": "",
             "bank": {
                 "IBAN": "",
@@ -137,26 +278,27 @@ def get_info_from_row(input_row):
         },
         "details": {
             "type_en": "",
-            "type_de": input_row[2],
+            "type_de": get_type_de(BANK, input_row),
             "posted": {
-                "$dt": convert_date(input_row[0])  # Have to set to $dt so Scala can work with it.
+                "$dt": get_posted_date(BANK, input_row)
                 },
             "completed": {
-                "$dt": convert_date(input_row[1])  # Have to set to $dt so Scala can work with it.
+                "$dt": get_completed_date(BANK, input_row)  # Have to set to $dt so Scala can work with it.
                 },
             "new_balance":{
-                "currency": currency_sign_to_text(this_account_currency.group()),
-                "amount": new_balance.group()
+                "currency": get_account_currency(BANK, input_row, csv_header_info),
+                "amount": get_acccout_balance(BANK, input_row)
                 },
             "value": {
-                "currency": currency_sign_to_text(this_account_currency.group()),
-                "amount": amount.group()
+                "currency": get_account_currency(BANK, input_row, csv_header_info),
+                "amount": get_acccout_ammout(BANK, input_row)
             },
-            "other_data": input_row[5]
+            "other_data": get_other_data(BANK, input_row)
             }
     }
     }], sort_keys=False)
 
+    obp_logger.debug("obp_transaction_data is %s" % obp_transaction_data)
     obp_logger.debug("Done filling json, returning obp_transaction_data")
     return obp_transaction_data
 
@@ -172,10 +314,14 @@ def parse_row_of_csv(csv_file_to_parse):
         obp_logger.debug("Set CSV delimiter to: %s" % delimiter)
         obp_logger.debug("Set CSV quote_char to: %s" % quote_char)
 
+        obp_logger.debug("Create empty transaction_chunks list.")
+        transaction_chunks_list = []
+
         # re : \d\d\.\d\d\.\d\d\d\d
         # This will check if date is formatted like this: 23.01.2001
         obp_logger.debug("Set regular expression to: \d\d\.\d\d\.\d\d")
         data_expression = re.compile('\d\d\.\d\d\.\d\d\d\d')
+        number_expression = re.compile("[0-9]")
         obp_logger.debug("starting csv reader")
         transaction_reader = csv.reader(
             open(csv_file_to_parse, 'rb'),
@@ -183,55 +329,70 @@ def parse_row_of_csv(csv_file_to_parse):
             quotechar=quote_char)
 
         obp_logger.debug("Start of for loop of transaction_reader")
-        for row in transaction_reader:
+        if BANK == "POSTBANK":
+            for row in transaction_reader:
+                # The first valid entry always has a date: check for it.
+                # If it doesn't exist, add this row to the csv_header_info and then continue.
+                obp_logger.debug("checking for date in first row from csv")
+                if data_expression.match(row[0]) == None:
+                    csv_header_info.append(row)
+                    obp_logger.debug("append row to csv_header_info, row is: %s" % row)
+                    continue
+                else:
+                    # When we have a valid date, call get_info_from_row.
+                    obp_transaction_dict = get_info_from_row(row)
+                    obp_logger.debug("call get_info_from_row")
 
-            # The first valid entry always has a date: check for it.
-            # If it doesn't exist, add this row to the csv_header_info and then continue.
-            obp_logger.debug("checking for date in first row from csv")
-            if data_expression.match(row[0]) == None:
-                csv_header_info.append(row)
-                obp_logger.debug("append row to csv_header_info, row is: %s" % row)
-                continue
-            else:
-                # When we have a valid date, call get_info_from_row.
-                obp_transaction_dict = get_info_from_row(row)
-                obp_logger.debug("call get_info_from_row")
+                obp_logger.debug("Decode obp_transaction_dict and append to transaction_chunks_list")
+                # Append the last filled JSON as decode python list to the transaction_chunks_list.
+                # It needs to decode the JSON, else the later JSON will be messy.
+                # It has to ensure, that not too many [ ] are in the list.
+                transaction_chunks_list.append(json.loads(json_formatter(obp_transaction_dict)))
 
-            # This will create a hash and return it.
-            json_hash = create_hash(json_formatter(obp_transaction_dict))
-            obp_logger.debug("create json_hash from obp_transaction_dict")
-            # Some debug output. So that we may can see the content of the JSON
-            # and the hash.
-            obp_logger.info("The hash of the JSON is: %s" % json_hash)
-            print "%s:The hash of the JSON is: %s" % (date_now_formatted(), json_hash)
+            return transaction_chunks_list
 
-            # Insert the hash into the cache. If it worked (the hash did not yet exist)
-	    # send it to the API.
-            result = insert_hash_to_cache(json_hash, HASH_FILE)
-            if result == True:
-                result = insert_into_scala(
-                    SCALA_HOST,
-                    SCALA_PORT,
-                    json_formatter(obp_transaction_dict))
+        elif BANK == "GLS":
+            for row in transaction_reader:
+                obp_logger.debug("checking for date in first row from csv")
+                if number_expression.match(row[0]) is None:
+                    continue
+                else:
+                    # When we have a valid date, call get_info_from_row.
+                    obp_transaction_dict = get_info_from_row(row)
+                    obp_logger.debug("call get_info_from_row")
 
-                obp_logger.debug("HTTP POST result is: %s" % result)
-                #obp_logger.debug("HTTP POST text from result is: %s" % result.text)
-            else:
-                obp_logger.info("Transaction is already in hash file, not inserting")
-                print "%s:Transaction is already in hash file, not inserting" % date_now_formatted()
+                obp_logger.debug("Decode obp_transaction_dict and append to transaction_chunks_list")
+                # Append the last filled JSON as decode python list to the transaction_chunks_list.
+                # It needs to decode the JSON, else the later JSON will be messy.
+                # It has to ensure, that not too many [ ] are in the list.
+                transaction_chunks_list.append(json.loads(json_formatter(obp_transaction_dict)))
+
+            return transaction_chunks_list
+        else:
+            raise ValueError("Bank no supported")
 
 
 def main(csv_file_path):
     """Will check for a valid CSV and import it to the Scala API"""
 
-    obp_logger.info("Start Main")
+    obp_logger.info("Start Main:")
     obp_logger.debug("csv_file_path is: %s" % csv_file_path)
-    obp_logger.debug("Check that csv_file_path is valid path")
+    obp_logger.debug("Check that csv_file_path is valid path.")
     check_for_existing_csv(csv_file_path)
 
     obp_logger.debug("Start parse_row_of_csv")
-    parse_row_of_csv(csv_file_path)
+    transaction_chunks_to_insert = parse_row_of_csv(csv_file_path)
 
+    obp_logger.debug("Start inserting to API.")
+    # Encode the transaction_chunks_to_insert and insert it to the API.
+    api_respone_result = insert_into_scala(
+        API_HOST,
+        API_HOST_PORT,
+        json.dumps(transaction_chunks_to_insert)
+        )
+
+    obp_logger.debug("HTTP POST api_respone_result is: %s" % api_respone_result)
+    #obp_logger.debug("HTTP POST text from api_respone_result is: %s" % api_respone_result.text)
 
 if __name__ == '__main__':
     print 'Main'

@@ -23,6 +23,23 @@ __license__ = """
 import os
 import pdb
 import logging
+import smtplib
+from email.mime.text import MIMEText
+
+
+def send_error_mail(mail_address, to, mail_server):
+    """
+      This will send a mail to someone to info when something bad happends.
+    """
+    mail_content = "This is a warning: %s went wrong on OBP-Importer\n You may have to restart the services"
+    msg = MIMEText(mail_content)
+    msg['Subject'] = 'msg from OBP-Importer'
+    msg['From'] = mail_address
+    msg['To'] = to
+
+    connection = smtplib.SMTP('mail_server')
+    connection.sendmail(mail_address, [to], msg.as_string())
+    connection.quit()
 
 
 def debug():
@@ -30,26 +47,26 @@ def debug():
 
 
 LOGGER_PATH = os.path.join(os.getcwd() + '/log/')
-LOG_FILE_NAME = './var/log/file.log'
+#LOG_FILE_NAME = './var/log/file.log'
 
 #print "Logging messages to %s" % LOG_FILE_NAME
 
 DEFAULT_LOGGER = "ImporterLogger"
-LOG_FILENAME = "./var/log/%s.log" % DEFAULT_LOGGER
-LOG_LEVEL = "DEBUG"
+LOG_FILE_NAME = "./var/log/%s.log" % DEFAULT_LOGGER
+LOG_LEVEL = "INFO"
 LOG_MSG_FORMAT = "%(asctime)s %(levelname)s %(filename)s:%(funcName)s(%(lineno)d) : %(message)s"
 LOG_MSG_TIME_FORMAT = '[%d %h %Y - %H:%M:%S]'
 
 logger = logging.getLogger(DEFAULT_LOGGER)
 logger.setLevel(LOG_LEVEL)
-handler = logging.FileHandler(LOG_FILENAME)
+handler = logging.FileHandler(LOG_FILE_NAME)
 formatter = logging.Formatter(LOG_MSG_FORMAT, LOG_MSG_TIME_FORMAT)
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 
 obp_logger = logging.getLogger(DEFAULT_LOGGER)
-obp_logger.setLevel(logging.DEBUG)
+obp_logger.setLevel(logging.INFO)
 
 
 obp_logger.info("Initialization obp_logger")

@@ -27,10 +27,10 @@ __license__ = """
 """
 
 import os
-import sys
 import obp_config
 import libs.to_utf8
 import libs.postbank_get_csv
+import libs.gls_get_csv
 import libs.import_helper
 import libs.csv_importer
 
@@ -46,7 +46,11 @@ def get_transactions_from_bank_as_csv(username, password):
     """
     # Get a new csv file using selenium
     obp_logger.debug("About to start Selenium, with csv_path")
-    csv_save_path = libs.postbank_get_csv.get_csv_with_selenium(obp_config.TMP, username, password)
+    if obp_config.BANK == "GLS":
+        gls_main_url_login_page = "https://internetbanking.gad.de/ptlweb/WebPortal?bankid=4967"
+        csv_save_path = libs.gls_get_csv.gls_get_csv_with_selenium(gls_main_url_login_page, obp_config.TMP, username, password)
+    else:
+        csv_save_path = libs.postbank_get_csv.get_csv_with_selenium(obp_config.TMP, username, password)
 
     # Now check that one file exists in the folder and return its name
     obp_logger.info("Getting the csv_file...")
@@ -110,10 +114,11 @@ def main():
     """
     obp_logger.info("Starting OpenBankProject-Importer")
     obp_logger.debug("Version: %s " % obp_config.OBP_VERSION)
-    obp_logger.debug("SCALA_HOST: %s " % obp_config.SCALA_HOST)
-    obp_logger.debug("SCALA_PORT: %s " % obp_config.SCALA_PORT)
+    obp_logger.debug("API_HOST: %s " % obp_config.API_HOST)
+    obp_logger.debug("API_HOST_PORT: %s " % obp_config.API_HOST_PORT)
 
     obp_logger.info("Getting login information")
+    print "Login for Bank: %s" % obp_config.BANK
     login_data = libs.import_helper.set_bank_account_login()
 
     obp_logger.info("Start endless while loop")
@@ -125,21 +130,27 @@ def main():
             transactions_to_obp(login_data[0], login_data[1])
             # TODO: Need another exception for not getting the CSV File.
             # wait 10 minutes
-            sleep(10 * 60)
+            obp_logger.info("Done with reading CSV file, restart in %d hour(s)." % obp_config.TIME_TO_SLEEP)
+            print "Done with reading CSV file, restart in %d hour(s)." % obp_config.TIME_TO_SLEEP
+            sleep(obp_config.TIME_TO_SLEEP * 60 * 60)
 
         except KeyboardInterrupt:
                 obp_logger.critical("KeyboardInterrupt!")
                 obp_logger.critical("Caught Ctrl-C from user")
                 raise
         except Exception, e:
-            # TODO: need a cleanup as well, just to be sure no sensitive data left on the disk.
-            obp_logger.error("Something went wrong")
-            obp_logger.error("Error is:\n%s" % e)
-            obp_logger.error("restart in 60 seconds")
-            print "%s:Something went wrong" % libs.import_helper.date_now_formatted()
-            print "%s:Error is:\n%s" % (libs.import_helper.date_now_formatted(), e)
-            # When something went wrong wait 1 minute.
-            sleep(60)
+                obp_logger.critical("Problem discovered: "+str(e))
+                sleep(obp_config.TIME_TO_SLEEP * 60 * 60)
+        # except Exception, e:
+        #     # TODO: need a cleanup as well, just to be sure no sensitive data left on the disk.
+        #     obp_logger.error("Something went wrong")
+        #     obp_logger.error("Error is:\n%s" % e)
+        #     obp_logger.error("restart in %d seconds" % obp_config.TIME_TILL_RETRY)
+        #     print "%s:Something went wrong" % libs.import_helper.date_now_formatted()
+        #     print "%s:Error is:\n%s" % (libs.import_helper.date_now_formatted(), e)
+        #     print "restart in %d seconds" % obp_config.TIME_TILL_RETRY
+        #     # When something went wrong wait some time.
+        #     sleep(obp_config.TIME_TILL_RETRY)
 
 
 if __name__ == '__main__':

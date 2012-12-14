@@ -1,4 +1,5 @@
-#!/usr/bin/env python
+    #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 __author__ = [' Jan Alexander Slabiak (alex@tesobe.com)']
 __license__ = """
   Copyright 211 Music Pictures Ltd / TESOBE
@@ -32,24 +33,28 @@ J.A.S
 
 
 import os
+import time
 
-from obp_config import TMP, TMP_CSV_SUFFIX, TIME_TILL_RETRY, MAIL_ADDRESS, MAIL_SERVER, MAIL_FOR_ERRORS
+from obp_config import TMP, TMP_CSV_SUFFIX
 from libs.import_helper import check_for_clean_folder
-from libs.debugger import send_error_mail
 from selenium import webdriver
-from debugger import obp_logger
+from debugger import obp_logger, debug
+from selenium.common.exceptions import (NoSuchElementException,
+    ElementNotVisibleException)
+
+from selenium.webdriver.support.ui import Select
+
+#gls_main_url_login_page = "https://internetbanking.gad.de/ptlweb/WebPortal?bankid=4967&modus=demo
+gls_main_url_value_page = "https://internetbanking.gad.de/ptlweb/WebPortal?timeout=4967&applId=obaban&frame=content&wp_token_obaban=1364634655&event=anzeigenKontoUmsatzUebersicht&idEuroKontoGewaehlt=0"
+gls_main_url_value_download = "https://internetbanking.gad.de/ptlweb/WebPortal?timeout=4967&applId=obaban&frame=content&wp_token_obaban=291125145&event___export=Link"
 
 
-postbank_main_url_login_page = " https://banking.postbank.de/rai/login"
-postbank_main_url_value_page = "https://banking.postbank.de/rai/?wicket:bookmarkablePage=:de.postbank.ucp.application.rai.fs.umsatzauskunft.UmsatzauskunftPage"
-postbank_main_url_value_download = "https://banking.postbank.de/rai/?wicket:interface=:3:umsatzauskunftContainer:umsatzauskunftpanel:panel:form:umsatzanzeigeGiro:umsatzaktionen:umsatzanzeigeUndFilterungDownloadlinksPanel:csvHerunterladen::IResourceListener::"
-
-
-def get_csv_with_selenium(path_to_save_csv, username, password):
+def gls_get_csv_with_selenium(gls_main_url_login_page, path_to_save_csv, username, password):
     """Getting CSV file via Firefox, controlled by Selenium webdriver"""
     # TODO: When no username and password is set, use the demo login.
     # Clean up the OBP temp folder (delete all csv files there).
     # LINK: http://seleniumhq.org/docs/03_webdriver.html#getting-started-with-selenium-webdriver
+    obp_logger.info("Starting gls_get_csv")
     obp_logger.info("Setting csv_folder...")
 
     # Check for existing and empty tmp
@@ -69,26 +74,28 @@ def get_csv_with_selenium(path_to_save_csv, username, password):
     # Proxy is disabled and download files without asking.
     obp_logger.info("Setup Firefox Profile")
     fp = webdriver.FirefoxProfile()
+
     obp_logger.debug("webdriver firefox")
     fp.set_preference("network.proxy.type", 0)
     obp_logger.debug("network.proxy.type 0")
     fp.set_preference("browser.download.folderList", 2)
-    obp_logger.debug("rowser.download.fold 2")
+    obp_logger.debug("browser.download.fold 2")
+
     fp.set_preference("browser.download.manager.showWhenStarting", False)
-    obp_logger.debug("rowser.download.manager.showWhenStarting False ")
+    obp_logger.debug("browser.download.manager.showWhenStarting False")
     fp.set_preference("browser.download.dir", csv_save_path)
     obp_logger.debug("browser.download.dir %s" % csv_save_path)
 
     # Need to set CSV to saveToDisk, else it's unknown to FF and it will ask for it
-    fp.set_preference("browser.helperApps.neverAsk.saveToDisk", "text/csv")
-    obp_logger.debug("browser.helperApps.neverAsk.saveToDisk text/csv")
+    #fp.set_preference("browser.helperApps.neverAsk.saveToDisk", "text/csv")
+    fp.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/x-unknown-content-type")
 
     obp_logger.info("Start Firefox")
     browser = webdriver.Firefox(firefox_profile=fp)  # Get local session of firefox
 
-    obp_logger.debug("Open URL: %s" % postbank_main_url_login_page)
-    browser.get(postbank_main_url_login_page)  # Load page
-    assert "Postbank Online-Banking" in browser.title
+    obp_logger.debug("Open URL: %s" % gls_main_url_login_page)
+    browser.get(gls_main_url_login_page)  # Load page
+    assert "GLS Gemeinschaftsbank eG Online-Filiale" in browser.title
 
     #selenium.set_browser_log_level("error")
 
@@ -96,41 +103,57 @@ def get_csv_with_selenium(path_to_save_csv, username, password):
     # find the element that's name attribute is nutzername and kennwort
     obp_logger.info("Inserting Username and Password to Login")
     obp_logger.debug("searching for login box")
-    inputElement_username = browser.find_element_by_name("nutzername")
+
+    inputElement_username = browser.find_element_by_name("sBAuthentifizierungInpVO.nrKonto")
     obp_logger.debug("searching for password box")
-    inputElement_password = browser.find_element_by_name("kennwort")
+    inputElement_password = browser.find_element_by_name("sBAuthentifizierungInpVO.stringPin")
 
     # send Username and Password
     obp_logger.debug("Inserting username into login box: %s " % username)
+    inputElement_username.clear()
     inputElement_username.send_keys(username)
+
     obp_logger.debug("Inserting password into login box")
+    inputElement_password.clear()
     inputElement_password.send_keys(password)
 
-    # submit the Username and Password to Postbank.
+    # submit the Username and Password to GLS.
     obp_logger.info("submitting login_data to login")
-    inputElement_password.submit()
+
+    # Find login button, submit() function is not working, using click() instead.
+    login_button = browser.find_element_by_class_name("gad-button-bg-left")
+    login_button.click()
+    assert "GLS Gemeinschaftsbank eG Online-Filiale" in browser.title
 
     # This opens the main page for accounts, and checks the name.
     # Call the Transaction Page
-    obp_logger.debug("Open URL: %s" % postbank_main_url_value_page)
-    browser.get(postbank_main_url_value_page)
-    assert "Postbank Online-Banking" in browser.title
+    #browser.refresh()
+    time.sleep(0.5)
+    elem = browser.find_element_by_partial_link_text(username)
+    url = elem.get_attribute('href')
+    obp_logger.debug("switching to " + str(url))
+    browser.get(url)
+    # the command below doesn't always seem to work... -- tp.
+    #browser.find_element_by_partial_link_text(username).click()
 
-    global TIME_TILL_RETRY
-    #Check that we're login and can find your username.
-    if not username in browser.find_element_by_id("content-sales-hd").text:
-        TIME_TILL_RETRY = 0.1
-        send_error_mail(MAIL_ADDRESS, MAIL_SERVER, MAIL_FOR_ERRORS)
+    #browser.get(gls_main_url_value_page)
+    assert "GLS Gemeinschaftsbank eG Online-Filiale" in browser.title
+    assert "Aktueller Kontostand" in browser.page_source
 
+    gls_main_url_value_download = browser.find_element_by_link_text("Exportieren").get_attribute('href')
+
+    obp_logger.debug("Open URL: %s" % gls_main_url_value_download)
+    browser.get(gls_main_url_value_download)
     # Call the CSV Link.
     # Warning!
     # The Postbank uses a :page counter, and when the URL doesn't have the right page counter it will return
     # an error message.
-    obp_logger.debug("Open URL: %s" % postbank_main_url_value_download)
-    browser.get(postbank_main_url_value_download)
+    #browser.get(gls_main_url_value_download)
 
     obp_logger.info("closing Firefox")
     browser.close()
+    # TODO:
+    #       Need to return a file name.
     return csv_save_path
 
 

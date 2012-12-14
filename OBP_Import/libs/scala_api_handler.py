@@ -26,10 +26,9 @@ Using liburl2 for Human, requests:
 
 import requests
 from debugger import obp_logger
-from urllib2 import HTTPError
 
 
-def check_scala_host_reachable(scala_api_host, scala_api_port):
+def check_API_HOST_reachable(scala_api_host, scala_api_port):
     """
     Check for a reachable System of the Scala API Host.
     """
@@ -38,7 +37,7 @@ def check_scala_host_reachable(scala_api_host, scala_api_port):
     # Try to call the web root of the  scala_api_host
     try:
         obp_logger.debug("requested http://%s:%s/" % (scala_api_host, scala_api_port))
-        result = requests.get('http://' + scala_api_host + ':' + scala_api_port + '/', timeout=5)
+        result = requests.get('http://' + scala_api_host + ':' + scala_api_port + '/', timeout=15)
         obp_logger.debug("request result is: %s" % result)
         return result
     except:
@@ -56,7 +55,7 @@ def insert_into_scala(scala_api_host, scala_api_port, JSON_to_insert):
 
     obp_logger.info("Insert JSON to Scala API")
     obp_logger.debug("test connection to Scala API Host")
-    check_scala_host_reachable(scala_api_host, scala_api_port)
+    check_API_HOST_reachable(scala_api_host, scala_api_port)
 
     # Set content-type to JSON in the HTTP Header
     headers = {'content-type': 'application/json'}
